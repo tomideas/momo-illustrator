@@ -1,7 +1,7 @@
 ## [2.101] — 2026-06-21
 
 ### 改善 / Improvements
-- **网格系统 v1.2.0 移除行数 sync 复选框 / Grid System remove row sync checkbox**：行数改用独立的「间距」复选框（与列数、等分网格统一），不再使用 sync 复选框。
+- **网格系统 v1.2.0 移除行数 sync 复选框 / Grid System remove row sync checkbox**：行数改用独立的「间距」复选框（与列数、等分网格统一），不再使用 sync 复选框。列/行/等分三个间距复选框完全独立，样式统一。
 
 ## [2.100] — 2026-06-21
 
@@ -9,27 +9,60 @@
 - **网格系统 v1.1.0 保留上次网格 / Grid System keep previous grids**：「应用」时新增「保留上次网格」复选框，勾选后不清除上次网格线，支持叠加多种网格。
 - **网格系统 v1.1.0 间距开关 / Grid System gutter toggle**：瑞士网格的列数和行数、等分网格各新增一个间距复选框，取消勾选则对应间距强制为 0。三个复选框样式统一。
 
-## [2.89] — 2026-06-19
-
-### 新增 / New Features
-- **位置诊断 v1.0.0 / Position diagnostic**：面板底部连点 3 次展开开发工具，新增「📍 位置诊断」按钮。一键检查 10 个 `xxx_pos.json` 的存在性 + 文件内容 + `loadPos` 返回值。
-- **延续盘点编号 / Continue inventory numbering**：样式检查「延续」模式自动接续上次盘点编号（`text_style_inventory.json`），跨批次同一样式永远同一 ID。
+## [2.99] — 2026-06-20
 
 ### 修復 / Fixes
-- **位置记忆完全失效 / Position memory never worked**：ExtendScript 没有 `JSON` 对象，所有 `JSON.parse` 静默失败（被 try/catch 吃掉）。新增 `_parseJson()` 全局 polyfill（优先 `JSON.parse`，否则 `eval` 后备），适用于 `loadPrefs` / `loadPos` / `loadStyleInventory`。
-- **双屏负坐标被拒绝 / Negative coords rejected**：`if (pos.x >= 0)` 守卫把副屏负数坐标当非法，全部居中。移除全部 10 个脚本的该判断，改为 `try { dlg.location } catch { dlg.center }`。
-- **`dlg.show()` 被误删 / dlg.show() accidentally removed**：批量 regex 替换时，`dlg.show()` 与 `else dlg.center()` 同行的 3 个脚本被误删 show 调用 → 全部对话框打不开。已恢复并补验证脚本。
-- **样式检查载入崩溃 / Text checker load crash**：缺少 `$.evalFile(... _shared.jsx)` 引入 → `loadPrefs is not defined`。
-- **延续模式库存空文件 / Continue mode inventory empty**：`savePrefs` 对含中文长键名生成无效 JSON（0 字节）。改为直接 `File.write` + key 转义。`loadStyleInventory` 新增 0 字节保护。
+- **网格系统 v1.0.0 预览忽略 Scope / Preview ignores scope**：`preview()` 函数写死 `getAB()`（当前画板），点「已选图形」再点「预览」仍画在当前画板上。修复：新增 `buildOnePreview()` 共享画线逻辑，`preview()` 加入 scope 分支——「已选图形」遍历 `doc.selection` 的 `visibleBounds`、「全部画板」遍历所有画板、「当前画板」不变。预览现在与「应用」行为一致。
+
+## [2.98] — 2026-06-20
+
+### 修復 / Fixes
+- **面板高亮色根因修复 / Panel highlight root cause fix**：经过 4 轮排查（`style.css`→`manifest.xml`→ 缓存→`panel.js`），发现 `--bg-active` CSS 变量**被 `panel.js:49` 动态注入的 `systemHighlightColor` 覆盖**——即 Illustrator 的系统高亮色 `#ABCCF9` 在运行时注入 CSS 变量，硬编码的 CSS fallback 完全无效。修复：`panel.js` 改为固定 accent `#96a5be`（不再读取 `systemHighlightColor`），CSS 同步改为 `!important` 兜底。
+
+## [2.97] — 2026-06-20
+
+### 修復 / Fixes
+- **网格系统 v1.0.0 色块改用原生单选按钮 / Grid System swatches → radiobuttons**：经诊断，ScriptUI 在 macOS 上 `Button` 的 `graphics.foregroundColor`/`backgroundColor`/`fillBrush` 全部被 Aqua 主题覆盖，导致前 5 轮尝试（stack 组 + 彩色 statictext ÷ 透明按钮）均显示"空矩形"。**改用 `radiobutton` 原生控件**：天然圆形 `○`，选中态蓝点 `◉`，6 个互锁（同一组内自动单选），文字标签显示颜色名。调色板更新为用户指定的 6 种浅色：浅蓝 / 浅绿 / 浅红 / 浅黄 / 浅灰 / 浅橙。
+
+## [2.96] — 2026-06-20
+
+### 修復 / Fixes
+- **点选高亮色覆盖 `:focus` 伪类 / Active highlight covers `:focus`**：上一轮改 `button:active` 时漏了 Chromium 默认 `button:focus` 蓝色 ring (`#ABCCF9`)，导致点选按钮后焦点态显示浏览器默认色。把 `:focus`、`:focus-visible`、`:active` 三态合并到一条规则，并用 `outline: none` 抑制浏览器默认 ring。背景色从 `#3a4a5e` 改成用户指定 `#96a5be`（RGB 150,165,190，更柔和的蓝灰），同步全部 6 处 `--bg-active` 引用。
+
+## [2.95] — 2026-06-20
 
 ### 改善 / Improvements
-- **样式检查 v8.2.0 四大简化 / Text style checker simplification**:
-  - **画板选择双模式 / Dual artboard selection**：1. 范围面板新增多选画板列表 + 「全部」按钮，与「画板范围」输入框双向同步。
-  - **标记规则精简 / Attention rules simplified**：下拉从 5 项精简为 2 项（仅盘点 / 标记 ≤ N 次）。
-  - **输出简化 / Output simplified**：4 个 checkbox 简化为「生成说明」+ 全新／延续 radio。编号 + 需注意固定为开，同一图层「文字样式标注」输出。
-  - **移除高级面板 / Advanced panel removed**：删除「⚙ 高级」及「最多处理文本框」，以画板选择替代大文件卡顿。
-- **诊断按钮深红 / Diag buttons dark red**：溢出/尾端/位置三个诊断按钮统一深红（`#e06060`），不再用橙色。
-- **新建设计文档 / New design docs**：`docs/EXTENDSCRIPT_PITFALLS.md` 记录 ExtendScript 常见坑与约定（JSON 缺失、ES3 限制、loadPrefs 陷阱、双屏坐标等）。
+- **网格系统 v1.0.0 色块改为 stack 圆点 / Grid System swatches as stack dots**：放弃 macOS button（Aqua 主题会覆盖 graphics brush）。改用 `Group { orientation: "stack" }` 重叠叠加：底层 `statictext "●"`（U+25CF，黑圆）用 `foregroundColor` brush 显示颜色；中层 `statictext "○"`（U+25CB，空心圆）选中态显示作描边；顶层透明 `button` 接收点击事件（`opacity` 强制设为 1，`backgroundColor` 0.01 alpha）。`●` 字符通过 brush 上色后能稳定显示彩色圆点。
+
+## [2.94] — 2026-06-20
+
+### 改善 / Improvements
+- **点选高亮色全局改深蓝灰 / Active highlight to slate blue-gray**：主面板 `button:active` 状态色原为亮蓝 `#1473e6`（Adobe 调色板），与其它深色 UI 元素对比过于突兀。改为深蓝灰 `#3a4a5e`（VS Code 同款 slate）。同步更新 `.cl-group-select`、`cl-sw-dragover`、`.cl-ed-text-input:focus`、`.cl-ed-cmyk-input:focus`、`.cl-ed-btn-ok` 等 6 处使用 `--bg-active` 的位置。
+
+## [2.93] — 2026-06-20
+
+### 修復 / Fixes
+- **网格系统 v1.0.0 色块改为圆形 + 选中描边 / Grid System swatches as rings**：原来 6 个矩形 button 在 macOS Aqua 主题下被默认渲染覆盖，显示为无填充灰框。改用 `●`（U+25CF BLACK CIRCLE）字符 + `graphics.foregroundColor` brush 渲染为彩色圆点；选中态切换为 `◉`（U+25C9 FISHEYE，环形 + 中心点）形成描边效果。点击立即更新 `DEFAULT_STROKE_COLOR`。
+
+## [2.92] — 2026-06-20
+
+### 改善 / Improvements
+- **网格系统 v1.0.0 内联调色板 / Grid System inline palette**：6 个 Material Design 色块直接放在「网格线颜色:」标签后面（24×24 正方形），无需先点 swatch 再弹窗选色。点任意色块即更新 `DEFAULT_STROKE_COLOR`，去掉 `fillSwatch`、调色板弹窗、swatch 按钮等全部中介层。
+
+## [2.91] — 2026-06-20
+
+### 改善 / Improvements
+- **网格系统 v1.0.0 简化为色板选择 / Grid System to swatch palette**：移除 HSV 三滑块 + 十六进制输入的复杂调色界面，替换为 6 色 Material Design 浅色调色板（蓝/绿/黄/橙/紫/灰）。点击 swatch 弹出 32×32 px 的横排 6 格小窗，点选即生效并立即更新 `DEFAULT_STROKE_COLOR`，无确认按钮。HSV 转换函数与 hex 解析逻辑全部删除，体积由 1373 行缩减到 1253 行。
+
+## [2.90] — 2026-06-20
+
+### 改善 / Improvements
+- **网格系统 v1.0.0 调色重构 / Grid System picker rebuilt**：去除 macOS 原生 `$.colorPicker` 与 `grid_system_color.json` 持久化。点击 swatch 现在弹出内嵌 HSV 调色对话框（H/S/V 三滑块 + 实时预览 + 十六进制输入 + 确定/取消）。按「确定」才更新 `DEFAULT_STROKE_COLOR`；下次开启网格系统，颜色自动还原为默认灰 (170,170,170)。无需写文件。
+
+## [2.89] — 2026-06-20
+
+### 改善 / Improvements
+- **网格系统 v1.0.0 精修 / Grid System polish**：标题加上版本号「网格系统 v1.0.0」便于辨识。底部动作栏精简——移除「准备就绪」状态文字（之前预览/应用时会显示「预览中…」/「预览已生成」/「应用中…」），保留三个按钮：左下「预览」，右下「取消」「应用」。动作更干净，状态变化由 Illustrator 自身的图层（`_网格预览`）直接呈现。
 
 ## [2.88] — 2026-06-19
 

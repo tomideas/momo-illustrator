@@ -4,7 +4,7 @@
 
 **Momo Tools** 是一个为 Adobe Illustrator 开发的 CEP (Common Extensibility Platform) 扩展面板，提供实用的设计工具和颜色库管理功能。
 
-- **版本**: 2.89
+- **版本**: 2.101
 - **支持软件**: Adobe Illustrator (17.0 - 99.9)
 - **技术栈**: HTML5 + CSS3 + JavaScript + ExtendScript (JSX)
 - **架构**: CEP 6.0 + CEP Bridge
@@ -174,7 +174,7 @@ function evalAI(script, cb) {
 - 执行 ExtendScript 文件
 - 显示版本号
 
-**版本号**: v2.89
+**版本号**: v2.101
 
 ### color_library.js - 核心业务逻辑
 
@@ -483,8 +483,8 @@ menu.classList.toggle("cl-menu-open");  // display: block/none
 ## 许可与信息
 
 - **开发者**: Momo (tomideas)
-- **版本**: 2.89
-- **最后更新**: 2026-06-19
+- **版本**: 2.101
+- **最后更新**: 2026-05-26
 - **兼容性**: Illustrator 17.0 - 99.9
 
 ---

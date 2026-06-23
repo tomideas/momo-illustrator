@@ -1,5 +1,8 @@
 # Momo Tools - Adobe Illustrator 扩展
 
+- **仓库 / Repo**：https://github.com/tomideas/momo-illustrator  
+- **使用指南 / User Guide (GitHub Pages)**：https://tomideas.github.io/momo-illustrator/
+
 ## 项目概述
 
 **Momo Tools** 是一个为 Adobe Illustrator 开发的 CEP (Common Extensibility Platform) 扩展面板，提供实用的设计工具和颜色库管理功能。

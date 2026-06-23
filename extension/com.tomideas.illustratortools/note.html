@@ -2,8 +2,16 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <title>Momo Notes</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      width: 100%;
+      height: 100%;
+      min-height: 100px;
+      background: var(--bg, #525252);
+      overflow: hidden;
+    }
     body {
       background: var(--bg, #525252);
       color: var(--fg, #e8e8e8);
@@ -11,7 +19,9 @@
       font-size: 11px;
       user-select: none;
       overflow: hidden;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
+      min-height: 100px;
       display: flex;
       flex-direction: column;
     }
@@ -61,7 +71,7 @@
     .tab-add:hover { background: var(--bg-hover, #5a5a5a); color: var(--fg, #fff); }
 
     #content {
-      flex: 1; overflow-y: auto; padding: 10px 12px;
+      flex: 1 1 auto; min-height: 40px; overflow-y: auto; padding: 10px 12px;
       font-size: 13px;
       color: var(--fg, #e8e8e8);
       line-height: 1.6; outline: none;
@@ -113,6 +123,16 @@
       color: var(--fg-dim, #bbb); border-radius: 2px; cursor: pointer;
     }
     .tb-btn:hover { background: rgba(255,255,255,0.08); color: var(--fg-bright, #fff); }
+    #status {
+      font-size: 10px;
+      color: var(--fg-dim, #aaa);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #status.warn { color: #f0a030; }
+    #status.err { color: #e06060; }
   </style>
 </head>
 <body>
@@ -125,7 +145,9 @@
     <button id="zoom-in" class="zoom-btn" title="放大字体">+</button>
     <span class="sep"></span>
     <button id="clear-btn" class="tb-btn" title="清除目前分页内容">✕ 清除</button>
+    <button id="reload-btn" class="tb-btn" title="重新读取目前分页内容">↻ 重载</button>
     <span class="spacer"></span>
+    <span id="status"></span>
   </div>
 
   <script>
@@ -150,35 +172,122 @@
         root.style.setProperty("--scrollbar-track",dark?"#444444":"#dddddd");
         root.style.setProperty("--scrollbar-thumb",dark?"#777777":"#bbbbbb");
       }
-      applyTheme();
-      try{window.__adobe_cep__.addEventListener("com.adobe.csxs.events.ThemeColorChanged",applyTheme);}catch(e){}
+      // ── Fallback theme (no CEP needed, always works) ──
+      function applyFallback(){
+        var r=document.documentElement;
+        r.style.setProperty("--bg","#535353");
+        r.style.setProperty("--bg-secondary","#4c4c4c");
+        r.style.setProperty("--bg-hover","#585858");
+        r.style.setProperty("--bg-active","#1473e6");
+        r.style.setProperty("--fg","#e0e0e0");
+        r.style.setProperty("--fg-dim","#999999");
+        r.style.setProperty("--fg-bright","#ffffff");
+        r.style.setProperty("--border","rgba(160,160,160,0.15)");
+        r.style.setProperty("--border-strong","rgba(140,140,140,0.25)");
+        r.style.setProperty("--scrollbar-track","#444444");
+        r.style.setProperty("--scrollbar-thumb","#777777");
+      }
+      applyFallback();
+
+      // ── Real theme from CEP (background, never blocks init) ──
+      var _themeRetries=0;
+      function tryRealTheme(){
+        try{
+          var skin=JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo;
+          if(skin){
+            var bg=rgbToHex(skin.panelBackgroundColor)||"#535353";
+            var accent=rgbToHex(skin.systemHighlightColor)||"#1473e6";
+            var dark=isDark(bg),d=dark?-9:-8,h=dark?5:-7;
+            var r=document.documentElement;
+            r.style.setProperty("--bg",bg);
+            r.style.setProperty("--bg-secondary",shiftColor(bg,d));
+            r.style.setProperty("--bg-hover",shiftColor(bg,h));
+            r.style.setProperty("--bg-active",accent);
+            r.style.setProperty("--fg",dark?"#e0e0e0":"#222222");
+            r.style.setProperty("--fg-dim",dark?"#999999":"#777777");
+            r.style.setProperty("--fg-bright",dark?"#ffffff":"#000000");
+            r.style.setProperty("--border",dark?"rgba(160,160,160,0.15)":"rgba(0,0,0,0.12)");
+            r.style.setProperty("--border-strong",dark?"rgba(140,140,140,0.25)":"rgba(0,0,0,0.2)");
+            r.style.setProperty("--scrollbar-track",dark?"#444444":"#dddddd");
+            r.style.setProperty("--scrollbar-thumb",dark?"#777777":"#bbbbbb");
+            try{window.__adobe_cep__.addEventListener("com.adobe.csxs.events.ThemeColorChanged",tryRealTheme);}catch(e){}
+            return;
+          }
+        }catch(e){}
+        if(++_themeRetries<30)setTimeout(tryRealTheme,300);
+      }
+      setTimeout(tryRealTheme,100);
 
       // ── Note tabs ──
       var MAX_TABS=10,LS_TABS="MomoTools_NoteTabs",LS_PREFIX="MomoTools_NoteTab_",LS_ACTIVE="MomoTools_NoteActive",LS_SIZE="MomoTools_NoteFontSize";
-      var content=document.getElementById("content"),tabBar=document.getElementById("tab-bar"),fontLabel=document.getElementById("font-label");
+      var content=document.getElementById("content"),tabBar=document.getElementById("tab-bar"),fontLabel=document.getElementById("font-label"),statusEl=document.getElementById("status");
       var fontSize=13,MIN=9,MAX=32,STEP=1;
       var tabs=["笔记 1"],activeIdx=0,dragIdx=-1;
+      var hasLoaded=false,lastLoadFailed=false,allowSave=true,statusTimer=null;
 
       function updateFontLabel(){fontLabel.textContent=fontSize+"px";}
+      function setStatus(msg,kind){
+        if(!statusEl)return;
+        statusEl.textContent=msg||"";
+        statusEl.className=kind||"";
+        if(statusTimer)clearTimeout(statusTimer);
+        if(msg&&kind!=="err"){statusTimer=setTimeout(function(){statusEl.textContent="";statusEl.className="";},1800);}
+      }
       function getText(){
         var t = (typeof content.innerText === "string") ? content.innerText : content.textContent;
         return String(t || "").replace(/\r\n?/g, "\n");
       }
+      function storedContent(idx){
+        try{return {ok:true,value:window.localStorage.getItem(LS_PREFIX+idx)};}
+        catch(e){lastLoadFailed=true;setStatus("读取失败: "+e.message,"err");return {ok:false,value:null};}
+      }
       // 儲存用 innerHTML 才能保留貼上時渲染的 markdown 表格
-      function saveContent(idx){try{window.localStorage.setItem(LS_PREFIX+idx,content.innerHTML);}catch(e){}}
+      function saveContent(idx){
+        if(!allowSave||!hasLoaded||lastLoadFailed)return;
+        try{window.localStorage.setItem(LS_PREFIX+idx,content.innerHTML);}catch(e){setStatus("保存失败: "+e.message,"err");}
+      }
+      function applyStoredContent(v){
+        v=String(v||"").replace(/\r\n?/g,"\n");
+        // 舊資料相容：若不像 HTML（沒有 <），當純文字載入
+        if(v&&v.indexOf("<")===-1){content.textContent=v;}
+        else{content.innerHTML=v;}
+      }
       function loadContent(idx){
         try{
-          var v=window.localStorage.getItem(LS_PREFIX+idx)||"";
-          v=v.replace(/\r\n?/g,"\n");
-          // 舊資料相容：若不像 HTML（沒有 <），當純文字載入
-          if(v && v.indexOf("<")===-1){content.textContent=v;}
-          else{content.innerHTML=v;}
-        }catch(e){}
+          var stored=storedContent(idx);
+          if(!stored.ok)return false;
+          var v=stored.value;
+          if(v===null)v="";
+          allowSave=false;
+          applyStoredContent(v);
+          allowSave=true;
+          hasLoaded=true;
+          lastLoadFailed=false;
+          return true;
+        }catch(e){allowSave=true;lastLoadFailed=true;setStatus("载入失败: "+e.message,"err");}
+        return false;
       }
       function saveAllState(){try{window.localStorage.setItem(LS_TABS,JSON.stringify(tabs));window.localStorage.setItem(LS_ACTIVE,activeIdx);window.localStorage.setItem(LS_SIZE,fontSize);}catch(e){}}
       var saveTimer=null;
-      function ds(){if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(function(){saveContent(activeIdx);saveAllState();},200);}
+      function ds(){if(!allowSave)return;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(function(){saveContent(activeIdx);saveAllState();},200);}
       content.addEventListener("input",ds);
+      function reloadCurrent(showMsg){
+        var stored=storedContent(activeIdx);
+        if(!stored.ok)return false;
+        var v=stored.value;
+        if(v===null)v="";
+        if((content.innerHTML===""||lastLoadFailed)&&v!==""){
+          allowSave=false;
+          applyStoredContent(v);
+          allowSave=true;
+          hasLoaded=true;
+          lastLoadFailed=false;
+          if(showMsg)setStatus("已恢复","warn");
+          return true;
+        }
+        if(showMsg)setStatus("已重载","");
+        return false;
+      }
 
       function escapeHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
@@ -325,6 +434,7 @@
       document.getElementById("zoom-in").addEventListener("click",function(){if(fontSize<MAX){fontSize+=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
       document.getElementById("zoom-out").addEventListener("click",function(){if(fontSize>MIN){fontSize-=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
       document.getElementById("clear-btn").addEventListener("click",function(){content.textContent="";content.focus();ds();});
+      document.getElementById("reload-btn").addEventListener("click",function(){reloadCurrent(true);content.focus();});
 
 
       try{
@@ -333,7 +443,9 @@
         var sz=parseInt(window.localStorage.getItem(LS_SIZE),10);if(sz>=MIN&&sz<=MAX)fontSize=sz;
       }catch(e){}
       loadContent(activeIdx);content.style.fontSize=fontSize+"px";updateFontLabel();renderTabs();
-    })();
+      setTimeout(function(){reloadCurrent(false);},100);
+      setTimeout(function(){reloadCurrent(false);},500);
+  })();
   </script>
 </body>
 </html>

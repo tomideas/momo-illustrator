@@ -20,3 +20,6 @@ package-lock.json
 
 # 本地颜色库样例（含品牌色，勿提交）
 Kandao.json
+
+# CEP 本机调试（port 8088，勿提交）
+extension/**/.debug
