@@ -1,8 +1,9 @@
 ## [2.101] — 2026-06-21
 
 ### 文档
-- **README**：补充 macOS / Windows 安装路径、PlayerDebugMode、启动与卸载说明
-- **Releases**：新增 `momo-tools-*-cep.zip` 安装包与 `scripts/release-extension.sh`
+- **README**：精简为安装与使用说明（面向使用者）
+- **仓库范围**：`@Reference/`、内部 `docs/`、探针脚本等改为仅本地，不上 GitHub
+- **Releases**：`momo-tools-*-cep.zip` 排除开发诊断脚本
 
 ### 改善 / Improvements
 - **网格系统 v1.2.0 移除行数 sync 复选框 / Grid System remove row sync checkbox**：行数改用独立的「间距」复选框（与列数、等分网格统一），不再使用 sync 复选框。列/行/等分三个间距复选框完全独立，样式统一。

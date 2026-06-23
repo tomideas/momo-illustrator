@@ -14,12 +14,24 @@
 # Logs
 *.log
 
-# Node (if used in future)
+# Node
 node_modules/
 package-lock.json
 
-# 本地颜色库样例（含品牌色，勿提交）
+# ── 仅本地开发，不上 GitHub ──
+@Reference/
+docs/
+instructions.md
+CLAUDE.md
+PRD-Momo-Tools.md
+REPO-LAYOUT.md
 Kandao.json
 
-# CEP 本机调试（port 8088，勿提交）
+# CEP 本机调试
 extension/**/.debug
+
+# 扩展内开发专用（安装包 zip 亦排除）
+extension/com.tomideas.illustratortools/PROJECT_INFO.md
+extension/com.tomideas.illustratortools/jsx/scripts/research_*.jsx
+extension/com.tomideas.illustratortools/jsx/scripts/debug_*.jsx
+extension/com.tomideas.illustratortools/jsx/scripts/diagnose_*.jsx

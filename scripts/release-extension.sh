@@ -41,7 +41,11 @@ rm -f "$ZIP"
     -x "*/.DS_Store" \
     -x "*/._*" \
     -x "com.tomideas.illustratortools/.debug" \
-    -x "com.tomideas.illustratortools/.debug/*"
+    -x "com.tomideas.illustratortools/.debug/*" \
+    -x "com.tomideas.illustratortools/PROJECT_INFO.md" \
+    -x "com.tomideas.illustratortools/jsx/scripts/research_*.jsx" \
+    -x "com.tomideas.illustratortools/jsx/scripts/debug_*.jsx" \
+    -x "com.tomideas.illustratortools/jsx/scripts/diagnose_*.jsx"
 )
 
 echo "Created: $ZIP ($(du -h "$ZIP" | awk '{print $1}')"
