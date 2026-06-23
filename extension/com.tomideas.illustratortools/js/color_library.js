@@ -20,11 +20,31 @@
     
 
     // ── Path init (async via evalScript) ────────────────────────
+    // 用 ExtendScript 建立目录（cep.fs.makedir 在部分环境不可靠，会导致目录建不出来 → 写文件全失败）。
+    // Folder().create() 已在导入/导出功能验证可靠。
     function initPath(cb) {
         evalAI(
-            '(Folder.userData.fsName + "/MomoTools/color_library.json")',
+            '(function(){' +
+            'var dir=Folder.userData.fsName+"/MomoTools";' +
+            'var fdr=new Folder(dir);' +
+            'if(!fdr.exists){fdr.create();}' +
+            'return dir+"/color_library.json";' +
+            '})()',
             function (p) { libPath = p || ""; if (cb) cb(); }
         );
+    }
+
+    // ExtendScript 写文件后备：cep.fs.writeFile 仍失败时改用此法（与导出相同机制，可靠）。
+    function writeFileViaAI(json) {
+        if (!libPath) return;
+        var script =
+            '(function(){try{' +
+            'var f=new File(decodeURIComponent("' + encodeURIComponent(libPath) + '"));' +
+            'f.encoding="UTF-8";if(!f.open("w")){return "ERR";}' +
+            'f.write(decodeURIComponent("' + encodeURIComponent(json) + '"));' +
+            'f.close();return "OK";' +
+            '}catch(e){return "ERR:"+e;}})()';
+        evalAI(script, function () {});
     }
 
     // ── File I/O via cep.fs ──────────────────────────────────────
@@ -105,10 +125,12 @@
         var json = JSON.stringify(library, null, 2);
 
         var fsErr = false;
+        var fsAttempted = false;  // 是否真的尝试过写文件（libPath 有效 + cep.fs 可用）
 
         if (libPath) {
             var fs = getCepFs();
             if (fs) {
+                fsAttempted = true;
                 var dir = libPath.substring(0, libPath.lastIndexOf("/"));
                 var statDir = fs.stat(dir);
                 if (statDir.err !== 0) {
@@ -122,16 +144,39 @@
             }
         }
 
+        var lsErr = false;
         try {
             window.localStorage.setItem("MomoTools_ColorLibrary", json);
         } catch (e) {
-            if (fsErr) toast("保存失败：文件系统和本地存储均不可用");
+            lsErr = true;
+        }
+
+        // cep.fs 写文件失败时，改用 ExtendScript 后备写入（异步，通常可靠）
+        var aiFallback = false;
+        if (fsErr && libPath) {
+            writeFileViaAI(json);
+            aiFallback = true;
+        }
+
+        // 警告策略：只有在「文件确实写不进 + 也没有后备 + localStorage 也失败」时才强提示。
+        // 有 ExtendScript 后备时不再吓人提示（后备通常会成功，localStorage 也有副本）。
+        if (fsErr && !aiFallback && lsErr) {
+            toast("保存失败：文件与本地存储均不可用");
+        } else if (!fsAttempted && !libPath && lsErr) {
+            toast("保存失败：本地存储不可用");
         }
     }
 
     function saveLibraryDebounced() {
         if (saveTimer) clearTimeout(saveTimer);
         saveTimer = setTimeout(saveLibrary, 200);
+    }
+
+    // 立即落盘：清掉待执行的防抖计时器并同步保存。
+    // 面板关闭 / Illustrator 退出时调用，避免 200ms 防抖窗口内的改动丢失（问题 #1）。
+    function flushSave() {
+        if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+        saveLibrary();
     }
 
     function toast(msg, duration) {
@@ -370,14 +415,14 @@
         lbl.textContent = col.name;
         sw.appendChild(lbl);
 
-        var del = document.createElement("span");
-        del.className = "cl-sw-del";
-        del.textContent = "×";
-        del.title = "删除颜色";
-        del.addEventListener("click", (function (i) {
-            return function (e) { e.stopPropagation(); deleteColor(i); };
+        var edit = document.createElement("span");
+        edit.className = "cl-sw-edit";
+        edit.textContent = "✎";
+        edit.title = "编辑颜色";
+        edit.addEventListener("click", (function (i) {
+            return function (e) { e.stopPropagation(); openEditor(i); };
         })(idx));
-        sw.appendChild(del);
+        sw.appendChild(edit);
 
         sw.addEventListener("click", (function (i) {
             return function () { applyColor(i); };
@@ -439,6 +484,9 @@
         document.getElementById("cl-ed-k").value = k;
 
         updateEditorPreview();
+        // 删除键仅在编辑已有颜色时显示；新增颜色（-1）时隐藏
+        var delBtn = document.getElementById("cl-ed-del");
+        if (delBtn) delBtn.style.display = (colorIdx >= 0) ? "" : "none";
         document.getElementById("cl-editor").style.display = "block";
         var ni = document.getElementById("cl-ed-name");
         ni.focus(); ni.select();
@@ -993,15 +1041,30 @@
             });
         });
 
-        // Editor: Hex input → update preview only (no auto CMYK conversion)
+        // Editor: Hex input → 同步更新 CMYK 字段
+        // 颜色库以 CMYK 为准（refreshHexFromAI 每次载入会用 CMYK 重算 hex）。
+        // 若 hex 输入后不同步 CMYK，存下来 CMYK=0（白），重启后 hex 被覆盖成白色。
         var hexInput = document.getElementById("cl-ed-hex");
         hexInput.addEventListener("input", function () {
             var raw = this.value.replace(/^#/, "").replace(/[^0-9a-fA-F]/g, "");
             this.value = raw.toUpperCase();
+            if (raw.length === 6) {
+                var cmyk = hexToCmyk(raw);
+                if (cmyk) {
+                    document.getElementById("cl-ed-c").value = cmyk.c;
+                    document.getElementById("cl-ed-m").value = cmyk.m;
+                    document.getElementById("cl-ed-y").value = cmyk.y;
+                    document.getElementById("cl-ed-k").value = cmyk.k;
+                }
+            }
             updateEditorPreview();
         });
         document.getElementById("cl-ed-ok").addEventListener("click", saveEditorColor);
         document.getElementById("cl-ed-cancel").addEventListener("click", closeEditor);
+        document.getElementById("cl-ed-del").addEventListener("click", function () {
+            if (editingIdx >= 0) { deleteColor(editingIdx); }
+            closeEditor();
+        });
         document.getElementById("cl-editor").addEventListener("keydown", function (e) {
             if (e.key === "Enter") { e.preventDefault(); saveEditorColor(); }
             if (e.key === "Escape") closeEditor();
@@ -1010,18 +1073,17 @@
 
     // ── Init ──────────────────────────────────────────────────────
     function init() {
-        // One-time: clear stale localStorage from previous debugging sessions
-        try {
-            if (!window.localStorage.getItem("MomoTools_migrated_v16")) {
-                window.localStorage.removeItem("MomoTools_ColorLibrary");
-                window.localStorage.setItem("MomoTools_migrated_v16", "1");
-            }
-        } catch (e) {}
+        // 注意：旧版本曾在此清除 localStorage 颜色库（migrated_v16）。
+        // 已移除 —— CEF 缓存被清时该标记也会消失，导致重启后再次清空用户数据（问题 #4）。
 
         curGroup = 0;
         renderAll();
         bindUI();
         initPath(function () { loadLibrary(); });
+
+        // 面板关闭 / Illustrator 退出时立即落盘，避免 200ms 防抖窗口内的改动丢失（问题 #1）
+        window.addEventListener("beforeunload", flushSave);
+        window.addEventListener("pagehide", flushSave);
     }
 
     if (document.readyState === "loading") {

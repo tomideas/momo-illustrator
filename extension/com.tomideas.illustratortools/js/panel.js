@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.102";
+    var PANEL_VERSION = "2.108";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}
@@ -86,7 +86,7 @@
     bind("btn-duplicate",    "artboard_duplicate_v1.1.2.jsx");
     bind("btn-relayout",     "artboard_relayout_v1.5.8.jsx");
     bind("btn-renamer",      "artboard_renamer_v1.2.1.jsx");
-    bind("btn-grid",         "grid_system_v1.3.0.jsx");
+    bind("btn-grid",         "grid_system_v1.3.1.jsx");
     bind("btn-page-numbers", "add_page_numbers_tomideas.jsx");
     bind("btn-color-box",    "generate_color_box.jsx");
     bind("btn-text-checker", "illustrator_text_style_checker_v8.2.0_compact_cn.jsx");

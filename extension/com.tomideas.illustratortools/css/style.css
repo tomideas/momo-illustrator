@@ -121,7 +121,7 @@ button:active { background: #96a5be !important; border-color: #6e7e96 !important
   overflow: hidden; flex-shrink: 0; transition: border-color 0.1s;
 }
 .cl-swatch:hover { border-color: rgba(255,255,255,0.55); }
-.cl-swatch:hover .cl-sw-del { opacity: 1; }
+.cl-swatch:hover .cl-sw-edit { opacity: 1; }
 .cl-sw-dragover { border-color: var(--bg-active, #96a5be) !important; box-shadow: 0 0 6px rgba(150,165,190,0.6); }
 
 .cl-sw-label {
@@ -133,12 +133,12 @@ button:active { background: #96a5be !important; border-color: #6e7e96 !important
 }
 .cl-swatch:hover .cl-sw-label { opacity: 1; }
 
-.cl-sw-del {
-  position: absolute; top: -2px; right: 1px; font-size: 13px; line-height: 1;
+.cl-sw-edit {
+  position: absolute; top: 1px; right: 2px; font-size: 10px; line-height: 1;
   opacity: 0; cursor: pointer; color: #fff;
   text-shadow: 0 0 3px rgba(0,0,0,0.9); transition: opacity 0.12s;
 }
-.cl-sw-del:hover { color: #ff5555; }
+.cl-sw-edit:hover { color: var(--bg-active, #4a9eff); }
 
 .cl-editor {
   display: none;
@@ -190,6 +190,8 @@ button:active { background: #96a5be !important; border-color: #6e7e96 !important
 .cl-ed-btn { width: auto !important; min-width: 44px !important; padding: 3px 10px !important; margin-bottom: 0 !important; font-size: 10px !important; justify-content: center !important; }
 .cl-ed-btn-ok { background: var(--bg-active, #96a5be) !important; border-color: #6e7e96 !important; color: #fff !important; }
 .cl-ed-btn-ok:hover { background: #4a5a6e !important; }
+.cl-ed-btn-del { margin-right: auto !important; color: #d97070 !important; border-color: rgba(217,112,112,0.4) !important; }
+.cl-ed-btn-del:hover { background: #d97070 !important; color: #fff !important; }
 
 .cl-action-row { display: flex; gap: 4px; margin-bottom: 3px; }
 .cl-action-row:last-child { margin-bottom: 0; }

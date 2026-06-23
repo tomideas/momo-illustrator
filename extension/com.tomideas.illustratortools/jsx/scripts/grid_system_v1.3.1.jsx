@@ -826,7 +826,7 @@ var _gridColor = { r: 170, g: 170, b: 170 };
 var DEFAULT_STROKE_COLOR = rgb(_gridColor.r, _gridColor.g, _gridColor.b);
 var COLORS = {background: [248, 249, 250], border: [222, 226, 230], primary: [0, 120, 215], secondary: [108, 117, 125], success: [40, 167, 69], text: [33, 37, 41]};
 var SPACING = {lg: 15, md: 11, sm: 7, xl: 19, xs: 4, xxl: 23};
-var dlg = new Window("dialog", "\u7f51\u683c\u7cfb\u7edf v1.3.0");
+var dlg = new Window("dialog", "\u7f51\u683c\u7cfb\u7edf v1.3.1");
 dlg.orientation = "column";
 dlg.alignChildren = ["fill", "top"];
 dlg.spacing = SPACING.md;
@@ -911,7 +911,7 @@ rowValue.preferredSize = [50, 24];
 var rowSlider = rowGroup.add("slider", undefined, 8, 1, 32);
 rowSlider.preferredSize = [100, 20];
 var rowGutterCheck = rowGroup.add("checkbox", undefined, "\u95f4\u8ddd");
-rowGutterCheck.value = true;
+rowGutterCheck.value = false;
 var rowGutter = rowGroup.add("edittext", undefined, "20");
 rowGutter.preferredSize = [40, 24];
 var rowUnit = rowGroup.add("statictext", undefined, "px");
@@ -933,7 +933,7 @@ divValue.preferredSize = [50, 24];
 var divSlider = divGroup.add("slider", undefined, 6, 2, 32);
 divSlider.preferredSize = [100, 20];
 var equalGutterCheck = divGroup.add("checkbox", undefined, "\u95f4\u8ddd");
-equalGutterCheck.value = true;
+equalGutterCheck.value = false;
 var gutterValue = divGroup.add("edittext", undefined, "0");
 gutterValue.preferredSize = [40, 24];
 var gutterUnit = divGroup.add("statictext", undefined, "px");
@@ -1033,19 +1033,51 @@ var PALETTE = [
 var _swatchRow = colorGroup.add("group");
 _swatchRow.orientation = "row";
 _swatchRow.alignChildren = ["left", "center"];
-_swatchRow.spacing = SPACING.xs;
+_swatchRow.spacing = SPACING.sm;
+
+// 圆形色块（自绘）取代文字单选钮
+var SWATCH_D = 22;            // 色块直径
+var _swatches = [];
+var _selColorIdx = 0;
+
+// 初始套用第一个颜色，使默认选中的色块与实际网格颜色一致
+_gridColor.r = PALETTE[0].r; _gridColor.g = PALETTE[0].g; _gridColor.b = PALETTE[0].b;
+DEFAULT_STROKE_COLOR = rgb(_gridColor.r, _gridColor.g, _gridColor.b);
+
+function _redrawSwatches() {
+    for (var k = 0; k < _swatches.length; k += 1) {
+        try { _swatches[k].notify("onDraw"); } catch (e) {}
+    }
+}
 
 for (var ci = 0; ci < PALETTE.length; ci += 1) {
     (function (entry, idx) {
-        var rb = _swatchRow.add("radiobutton", undefined, entry.name);
-        rb.graphics.font = ScriptUI.newFont("Arial", "BOLD", 10);
-        rb.helpTip = "RGB(" + entry.r + "," + entry.g + "," + entry.b + ")";
-        if (idx === 0) rb.value = true;
-        rb.onClick = function () {
+        var sw = _swatchRow.add("iconbutton", undefined, undefined, { style: "toolbutton" });
+        sw.preferredSize = [SWATCH_D + 8, SWATCH_D + 8];
+        sw.helpTip = entry.name + "  RGB(" + entry.r + "," + entry.g + "," + entry.b + ")";
+        _swatches.push(sw);
+        sw.onDraw = function () {
+            var g = this.graphics;
+            var w = this.size[0], h = this.size[1];
+            var d = SWATCH_D, x = (w - d) / 2, y = (h - d) / 2;
+            var fill = g.newBrush(g.BrushType.SOLID_COLOR, [entry.r / 255, entry.g / 255, entry.b / 255, 1]);
+            g.newPath(); g.ellipsePath(x, y, d, d); g.fillPath(fill);
+            if (_selColorIdx === idx) {
+                var rw = 2.5;
+                var ring = g.newPen(g.PenType.SOLID_COLOR, [0.08, 0.45, 0.9, 1], rw);
+                g.newPath(); g.ellipsePath(x - rw, y - rw, d + rw * 2, d + rw * 2); g.strokePath(ring);
+            } else {
+                var bd = g.newPen(g.PenType.SOLID_COLOR, [0, 0, 0, 0.25], 1);
+                g.newPath(); g.ellipsePath(x, y, d, d); g.strokePath(bd);
+            }
+        };
+        sw.onClick = function () {
+            _selColorIdx = idx;
             _gridColor.r = entry.r;
             _gridColor.g = entry.g;
             _gridColor.b = entry.b;
-            DEFAULT_STROKE_COLOR = rgb(_gridColor.r, _gridColor.g, _gridColor.b);
+            DEFAULT_STROKE_COLOR = rgb(entry.r, entry.g, entry.b);
+            _redrawSwatches();
         };
     })(PALETTE[ci], ci);
 }
@@ -1254,6 +1286,7 @@ drawFrame.onClick = onAnyChange;
 toGuides.onClick = onAnyChange;
 
 updateUnitLabels();
+updateGutterSync();  // 让间距输入框的 enabled 状态与复选框默认值一致
 var _busy = false;
 var _ts = 0;
 dlg.show();

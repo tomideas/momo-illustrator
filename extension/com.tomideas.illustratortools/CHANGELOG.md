@@ -1,3 +1,46 @@
+## [2.108] — 2026-06-23
+
+### 修復 / Fixes
+- **颜色重启后变白 / Color turns white after restart**：用 hex 输入颜色时，CMYK 字段没有同步更新（旧代码注释明确写 "no auto CMYK conversion"）。颜色库以 CMYK 为准 —— `refreshHexFromAI` 每次载入都用 CMYK 重算并覆盖 hex；hex 蓝色 + CMYK 0,0,0,0 → 重启后被覆盖成白色，且套用到对象也是白色。现在 hex 输入有效时用 `hexToCmyk` 同步 CMYK 字段，保持一致。
+- **Color turns white after restart**: hex input now syncs the CMYK fields via `hexToCmyk`. The library is CMYK-authoritative (`refreshHexFromAI` rederives hex from CMYK on load); a hex-blue with CMYK 0,0,0,0 was being clobbered to white. Keeping them consistent fixes it.
+
+## [2.107] — 2026-06-23
+
+### 修復 / Fixes
+- **颜色库写文件失败根因 / Color library file-write root cause**：`~/Library/Application Support/Adobe/MomoTools/` 目录建不出来 —— `cep.fs.makedir` 在部分环境不可靠，导致目录缺失、`writeFile` 全部跳过（这正是「保存不了」的真正原因，2.105 的警告把它暴露了出来）。
+  - `initPath` 改用 ExtendScript `Folder().create()` 可靠建目录（与导入/导出相同机制）。
+  - `saveLibrary` 新增 ExtendScript 写文件后备 `writeFileViaAI()`：cep.fs 仍失败时自动改用 ExtendScript 写入。
+  - 确认 `FS_UTF8 = 4` 是正确的 CEP UTF-8 常量，编码无误。
+- **Color library file-write root cause**: `cep.fs.makedir` failed to create the MomoTools dir → all writes skipped. Now create the dir via ExtendScript `Folder().create()` at init, with an ExtendScript write fallback when cep.fs fails.
+
+## [2.106] — 2026-06-23
+
+### 改善 / Improvements
+- **颜色库编辑入口更直观 / Clearer color edit affordance**：色块 hover 右上角由「× 删除」改为「✎ 编辑」（点击进编辑器），避免误删；删除操作移入编辑器。
+- **编辑器加删除键 / Delete button in editor**：编辑已有颜色时，编辑器按钮区左侧显示红色「删除」键；新增颜色时隐藏。
+- **Clearer edit affordance**: swatch hover top-right is now an edit (✎) icon instead of delete (×); delete moved into the editor as a red button shown only when editing an existing color.
+
+## [2.105] — 2026-06-23
+
+### 修復 / Fixes
+- **颜色库保存丢失 / Color library save loss**：
+  - **防抖落盘**：所有编辑走 200ms 防抖 `setTimeout`，面板在窗口内关闭则丢失。新增 `flushSave()` 并绑定 `beforeunload`/`pagehide`，关闭/退出时立即同步保存。
+  - **静默失败提示**：原本仅「文件 + localStorage 都失败」才提示。现在文件写入失败（即使 localStorage 成功）也 toast 警告「已暂存本地，但写入文件失败」，避免重启后无声丢失。
+  - **移除危险的 migration 清除**：`init()` 原会在 `migrated_v16` 标记缺失时清空 localStorage 颜色库；CEF 缓存被清时该标记同样消失，导致重启后再次清空用户数据。已移除。
+- **Color library save loss**: added `flushSave()` on `beforeunload`/`pagehide` (debounce window data loss); warn on file-write failure even when localStorage succeeds; removed the fragile one-time localStorage clear that wiped data after CEF cache resets.
+
+## [2.104] — 2026-06-23
+
+### 改善 / Improvements
+- **网格系统间距默认关闭 / Grid spacing off by default**：瑞士网格「行数」间距、等分网格间距默认改为不勾选（列数间距仍默认开）。init 时调用 `updateGutterSync()` 让输入框 enabled 状态与默认一致。
+- **Grid spacing off by default**: Swiss-grid row gutter and equal-grid gutter now unchecked by default; column gutter stays on.
+
+## [2.103] — 2026-06-23
+
+### 改善 / Improvements
+- **网格系统 v1.3.1 颜色改圆形色块 / Grid System circular color swatches**：「网格线颜色」从文字单选钮改为自绘圆形色块（ScriptUI `iconbutton` + `onDraw` 画 `ellipsePath`），选中显示蓝色高亮环，未选显示浅边框。默认选中第一色（浅蓝）并即时套用，使可视选中与实际网格颜色一致。
+- **Grid System circular swatches**: color picker now draws filled circles with a blue selection ring instead of text radio buttons; default color applied on open.
+
 ## [2.102] — 2026-06-23
 
 ### 修復 / Fixes

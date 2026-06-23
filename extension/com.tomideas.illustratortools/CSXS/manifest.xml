@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ExtensionManifest Version="6.0" ExtensionBundleId="com.tomideas.illustratortools" ExtensionBundleVersion="2.102" ExtensionBundleName="Momo Tools">
+<ExtensionManifest Version="6.0" ExtensionBundleId="com.tomideas.illustratortools" ExtensionBundleVersion="2.108" ExtensionBundleName="Momo Tools">
   <ExtensionList>
     <Extension Id="com.tomideas.illustratortools" Version="1.5" />
     <Extension Id="com.tomideas.illustratortools.note" Version="1.7" />
