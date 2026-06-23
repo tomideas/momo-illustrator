@@ -177,7 +177,7 @@ function evalAI(script, cb) {
 - 执行 ExtendScript 文件
 - 显示版本号
 
-**版本号**: v2.99
+**版本号**: v2.101
 
 ### color_library.js - 核心业务逻辑
 
@@ -464,12 +464,81 @@ menu.classList.toggle("cl-menu-open");  // display: block/none
 ## 快速开始
 
 ### 安装
-1. 将 `com.tomideas.illustratortools` 放到:
-   ```
-   /Users/[username]/Library/Application Support/Adobe/CEP/extensions/
-   ```
-2. 重启 Adobe Illustrator
-3. 在 **窗口 > Momo Tools** 打开面板
+
+#### 1. 获取扩展文件夹
+
+**推荐：从 Releases 下载安装包**
+
+1. 打开 [Releases](https://github.com/tomideas/momo-illustrator/releases)  
+2. 下载最新版 **`momo-tools-x.xx-cep.zip`**（例如 `momo-tools-2.101-cep.zip`）  
+3. 解压后得到 **`com.tomideas.illustratortools`** 文件夹（文件夹名须保持此名称）
+
+**或从源码安装**
+
+克隆仓库后，复制 **`extension/com.tomideas.illustratortools`** 文件夹：
+
+- 仓库：https://github.com/tomideas/momo-illustrator
+
+#### 2. 复制到 CEP 扩展目录
+
+| 系统 | 目标路径 |
+|------|----------|
+| **macOS** | `~/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools/` |
+| **Windows** | `%APPDATA%\Adobe\CEP\extensions\com.tomideas.illustratortools\` |
+
+完整路径示例：
+
+```text
+macOS:
+  /Users/你的用户名/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools/
+
+Windows:
+  C:\Users\你的用户名\AppData\Roaming\Adobe\CEP\extensions\com.tomideas.illustratortools\
+```
+
+若 `CEP/extensions` 文件夹不存在，请先手动创建 `extensions` 再粘贴。
+
+**macOS 快捷打开目录**（终端）：
+
+```bash
+open ~/Library/Application\ Support/Adobe/CEP/extensions/
+```
+
+**Windows 快捷打开目录**：资源管理器地址栏输入 `%APPDATA%\Adobe\CEP\extensions` 后回车。
+
+#### 3. 启用未签名扩展（首次安装必做）
+
+Momo Tools 为开发版 CEP 扩展，需开启 **PlayerDebugMode**，否则菜单里可能看不到面板。
+
+**macOS**（终端执行，Illustrator 需完全退出后执行）：
+
+```bash
+defaults write com.adobe.CSXS.11 PlayerDebugMode 1
+defaults write com.adobe.CSXS.12 PlayerDebugMode 1
+```
+
+**Windows**（以管理员或当前用户运行「命令提示符」）：
+
+```cmd
+reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_STRING /d 1 /f
+reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f
+```
+
+> Illustrator 2024 及更新版本通常对应 **CSXS.12**；较旧版本用 **CSXS.11**。两条都设可兼容不同版本。
+
+#### 4. 启动面板
+
+1. **完全退出** Adobe Illustrator 后重新打开（不要只关面板）  
+2. 菜单打开扩展：  
+   - **macOS**：`窗口` → `扩展功能` → `Momo Tools`（部分版本为 `窗口` → `扩展`）  
+   - **Windows**：`Window` → `Extensions` → `Momo Tools`  
+3. 笔记面板：`Momo Notes`（同上菜单，或主面板「笔记」按钮）
+
+面板底部显示版本号（当前 **v2.101**）。更详细的图文说明见：[使用指南](https://tomideas.github.io/momo-illustrator/#install)
+
+#### 5. 卸载
+
+删除对应 CEP 目录下的 `com.tomideas.illustratortools` 文件夹，重启 Illustrator 即可。
 
 ### 使用
 1. 点击 "+ 添加颜色" 添加颜色
@@ -486,8 +555,8 @@ menu.classList.toggle("cl-menu-open");  // display: block/none
 ## 许可与信息
 
 - **开发者**: Momo (tomideas)
-- **版本**: 2.99
-- **最后更新**: 2026-06-20
+- **版本**: 2.101
+- **最后更新**: 2026-06-23
 - **兼容性**: Illustrator 17.0 - 99.9
 
 ---
