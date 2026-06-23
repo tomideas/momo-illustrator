@@ -31,12 +31,43 @@
 
 ### 2. 复制到 CEP 扩展目录
 
-| 系统 | 路径 |
+| 系统 | 最终路径（文件夹名须为 `com.tomideas.illustratortools`） |
 |------|------|
 | **macOS** | `~/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools/` |
 | **Windows** | `%APPDATA%\Adobe\CEP\extensions\com.tomideas.illustratortools\` |
 
-**macOS** 快捷打开：`open ~/Library/Application\ Support/Adobe/CEP/extensions/`  
+**若目录不存在，需自行逐级创建**（首次安装 CEP 扩展时很常见；Adobe 不会自动建好 `CEP/extensions`）：
+
+| 系统 | 需要存在的父级目录 |
+|------|-------------------|
+| **macOS** | `~/Library/Application Support/Adobe/CEP/extensions/` |
+| **Windows** | `%APPDATA%\Adobe\CEP\extensions\` |
+
+**macOS** — 终端一键创建并打开：
+
+```bash
+mkdir -p ~/Library/Application\ Support/Adobe/CEP/extensions
+open ~/Library/Application\ Support/Adobe/CEP/extensions
+```
+
+然后将解压得到的 **`com.tomideas.illustratortools`** 整个文件夹拖入 `extensions` 内（不要只复制里面的文件）。
+
+**Windows** — 在资源管理器地址栏依次操作：
+
+1. 输入 `%APPDATA%` 回车，进入 `Roaming` 文件夹  
+2. 若没有 `Adobe` 文件夹则新建  
+3. 在 `Adobe` 下新建 `CEP`，再在 `CEP` 下新建 `extensions`  
+4. 将 **`com.tomideas.illustratortools`** 文件夹放入 `extensions`
+
+或在「命令提示符」执行：
+
+```cmd
+mkdir "%APPDATA%\Adobe\CEP\extensions"
+explorer "%APPDATA%\Adobe\CEP\extensions"
+```
+
+**快捷打开**（目录已存在时）：  
+**macOS**：`open ~/Library/Application\ Support/Adobe/CEP/extensions/`  
 **Windows**：资源管理器输入 `%APPDATA%\Adobe\CEP\extensions`
 
 ### 3. 启用未签名扩展（首次必做）

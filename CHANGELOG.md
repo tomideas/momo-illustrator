@@ -1,3 +1,10 @@
+# Changelog - Momo Tools
+
+## [Unreleased]
+
+### 文档
+- **README / 使用指南**：安装说明补充「首次需自建 `Adobe/CEP/extensions` 目录」及 macOS / Windows 创建命令
+
 ## [2.101] — 2026-06-21
 
 ### 文档
