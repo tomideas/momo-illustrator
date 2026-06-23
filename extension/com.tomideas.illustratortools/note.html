@@ -442,9 +442,17 @@
         var a=parseInt(window.localStorage.getItem(LS_ACTIVE),10);if(!isNaN(a)&&a>=0&&a<tabs.length)activeIdx=a;
         var sz=parseInt(window.localStorage.getItem(LS_SIZE),10);if(sz>=MIN&&sz<=MAX)fontSize=sz;
       }catch(e){}
-      loadContent(activeIdx);content.style.fontSize=fontSize+"px";updateFontLabel();renderTabs();
+      // init 整體兜底：任一步驟拋錯也保證 tab 列重繪，避免 workspace 還原時序競爭造成半白面板
+      function initUI(){
+        try{loadContent(activeIdx);}catch(e){}
+        try{content.style.fontSize=fontSize+"px";updateFontLabel();}catch(e){}
+        try{renderTabs();}catch(e){try{tabBar.innerHTML="";}catch(e2){}}
+      }
+      initUI();
       setTimeout(function(){reloadCurrent(false);},100);
       setTimeout(function(){reloadCurrent(false);},500);
+      // AutoVisible 還原白屏自癒：若 tab 列仍為空（CEF 還原時序競爭），延遲重繪一次
+      setTimeout(function(){try{if(!tabBar.firstChild)initUI();}catch(e){}},800);
   })();
   </script>
 </body>

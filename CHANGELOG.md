@@ -1,9 +1,13 @@
 # Changelog - Momo Tools
 
-## [Unreleased]
+## [2.102] — 2026-06-23
 
 ### 文档
-- **README / 使用指南**：安装说明补充「首次需自建 `Adobe/CEP/extensions` 目录」及 macOS / Windows 创建命令
+- **README / 使用指南**：安装说明补充「首次需自建 `Adobe/CEP/extensions` 目录」
+- **使用指南**：改版为浅色主题 + 左侧导航（参考 Momo AI Docs 布局）
+
+### 修復 / Fixes
+- **Momo Notes 白屏**：Notes 面板开启逻辑与 init 自癒（详见 extension CHANGELOG）
 
 ## [2.101] — 2026-06-21
 

@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.101";
+    var PANEL_VERSION = "2.102";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}
@@ -122,12 +122,18 @@
     });
 
     document.getElementById("btn-note").addEventListener("click", function () {
+        // 第一次調用喚起面板；第二次延遲 300ms 作為 fallback（首次點擊只初始化不顯示時補一刀）。
+        // 改為非同步：避免同步連調在第一次 CEF 渲染進程還沒就緒時被第二次打斷 → 白屏。
         try {
-            cs.requestOpenExtension("com.tomideas.illustratortools.note", "");
             cs.requestOpenExtension("com.tomideas.illustratortools.note", "");
         } catch (e) {
             if (typeof console !== "undefined") console.log("open note panel error:", e);
         }
+        setTimeout(function () {
+            try {
+                cs.requestOpenExtension("com.tomideas.illustratortools.note", "");
+            } catch (e) {}
+        }, 300);
     });
 
     var footer = document.getElementById("footer-version");

@@ -1,3 +1,12 @@
+## [2.102] — 2026-06-23
+
+### 修復 / Fixes
+- **Momo Notes 白屏 / Notes white screen**：
+  - `panel.js` 開啟 Notes 的兩次 `requestOpenExtension` 由同步連調改為「第一次立即 + 第二次延遲 300ms」，避免第二次在第一次 CEF 渲染進程就緒前打斷它導致白屏。
+  - `note.html` init 改為整體 try/catch 兜底（`initUI()`），任一步驟拋錯仍保證 tab 列重繪；新增 800ms 自癒：若 tab 列為空（AutoVisible workspace 還原時序競爭）則重繪一次。
+  - Notes Extension 版本 1.6 → 1.7，使 CEP 失效舊 CEF 快取。
+- **Notes white screen**: de-synced the double `requestOpenExtension` (immediate + 300ms fallback); wrapped note.html init in try/catch with an 800ms self-heal re-render for the AutoVisible restore race; bumped Note extension to invalidate CEF cache.
+
 ## [2.101] — 2026-06-21
 
 ### 改善 / Improvements
