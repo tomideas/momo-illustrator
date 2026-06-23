@@ -3,6 +3,7 @@
 | 路径 | 角色 / 说明 |
 |------|------------|
 | `extension/` | 产品 — Adobe Illustrator CEP 扩展完整副本（与 live 同步） |
+| `scripts/` | 发版脚本 `release-extension.sh`（打包 CEP zip → GitHub Releases） |
 | `site/` | 使用者说明书 — 发布为 GitHub Pages（`tomideas.github.io/momo-illustrator`） |
 | `CHANGELOG.md` | 版本历史 — 逐版变更记录 |
 | `README.md` | 项目介绍 — 概述、安装、功能列表 |
