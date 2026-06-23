@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="group">
+    <div class="group-label">画板</div>
+
+    <button id="btn-duplicate">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.3">
+        <rect x="4" y="4" width="8" height="8" rx="0.5"/>
+        <path d="M2 10V2h8" stroke-linejoin="round"/>
+      </svg>
+      复制
+    </button>
+
+    <button id="btn-relayout">
+      <svg viewBox="0 0 14 14" fill="currentColor">
+        <rect x="1" y="1" width="5" height="5" rx="0.5" opacity="0.9"/>
+        <rect x="8" y="1" width="5" height="5" rx="0.5" opacity="0.9"/>
+        <rect x="1" y="8" width="5" height="5" rx="0.5" opacity="0.9"/>
+        <rect x="8" y="8" width="5" height="5" rx="0.5" opacity="0.9"/>
+      </svg>
+      重新排列
+    </button>
+
+    <button id="btn-renamer">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1.5" y="1.5" width="9" height="11" rx="0.5"/>
+        <path d="M3.5 5h5M3.5 7.5h4" stroke-width="0.9"/>
+        <path d="M11.5 3l1.5-1.5M11.5 3l-1 4.5-2 2-1.5-1.5 2-2z" stroke-width="1.1"/>
+      </svg>
+      更名
+    </button>
+  </div>
+
+  <div class="group">
+    <div class="group-label">颜色</div>
+
+    <button id="btn-color-box">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="2" width="5" height="5" rx="0.5" fill="currentColor" opacity="0.85"/>
+        <rect x="7.5" y="2" width="5" height="5" rx="0.5" fill="currentColor" opacity="0.55"/>
+        <rect x="1" y="8" width="5" height="5" rx="0.5" fill="currentColor" opacity="0.35"/>
+        <rect x="7.5" y="8" width="5" height="5" rx="0.5" stroke-dasharray="1.5 1" opacity="0.5"/>
+      </svg>
+      颜色标签
+    </button>
+
+    <button id="btn-text-color">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="6" cy="6" r="4" opacity="0.85"/>
+        <circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none"/>
+        <path d="M9 9l3.5 3.5" stroke-width="1.5"/>
+      </svg>
+      颜色检查
+    </button>
+
+    <!-- 颜色库 -->
+    <div class="cl-group-row">
+      <select id="cl-group-select" class="cl-group-select"></select>
+      <input id="cl-group-rename-input" type="text" class="cl-group-rename-input" style="display:none" />
+      <button id="cl-btn-more" class="cl-more-btn" title="更多操作">
+        <svg viewBox="0 0 16 4" fill="currentColor">
+          <circle cx="2"  cy="2" r="1.4"/>
+          <circle cx="8"  cy="2" r="1.4"/>
+          <circle cx="14" cy="2" r="1.4"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="cl-swatches" class="cl-swatches"></div>
+
+    <div id="cl-editor" class="cl-editor">
+      <div class="cl-ed-name-row">
+        <label>名称</label>
+        <input id="cl-ed-name" type="text" class="cl-ed-text-input" />
+      </div>
+      <div class="cl-ed-hex-row">
+        <label>#</label>
+        <input id="cl-ed-hex" type="text" class="cl-ed-text-input" placeholder="FF3366" maxlength="6" />
+        <div id="cl-ed-preview" class="cl-ed-preview"></div>
+        <div id="cl-ed-rgb-stacked" class="cl-ed-rgb-stacked">
+          <span id="cl-ed-rgb-r">R0</span>
+          <span id="cl-ed-rgb-g">G0</span>
+          <span id="cl-ed-rgb-b">B0</span>
+        </div>
+      </div>
+      <div class="cl-ed-cmyk-row">
+        <span class="cl-ed-cmyk-label">C</span><input id="cl-ed-c" type="text" class="cl-ed-cmyk-input" maxlength="3" />
+        <span class="cl-ed-cmyk-label">M</span><input id="cl-ed-m" type="text" class="cl-ed-cmyk-input" maxlength="3" />
+        <span class="cl-ed-cmyk-label">Y</span><input id="cl-ed-y" type="text" class="cl-ed-cmyk-input" maxlength="3" />
+        <span class="cl-ed-cmyk-label">K</span><input id="cl-ed-k" type="text" class="cl-ed-cmyk-input" maxlength="3" />
+      </div>
+      <div class="cl-ed-btns">
+        <button id="cl-ed-cancel" class="cl-ed-btn">取消</button>
+        <button id="cl-ed-ok"     class="cl-ed-btn cl-ed-btn-ok">确认</button>
+      </div>
+    </div>
+
+    <div class="cl-action-row">
+      <button id="cl-btn-capture" class="cl-action-btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.5 1.5l2 2L5 11H3v-2L10.5 1.5z"/>
+          <path d="M8 5l2 2" stroke-width="1"/>
+        </svg>
+        提取
+      </button>
+      <button id="cl-btn-add-color" class="cl-action-btn">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M7 2v10M2 7h10" stroke-linecap="round"/>
+        </svg>
+        增加
+      </button>
+    </div>
+  </div>
+
+  <div class="group">
+    <div class="group-label">文字</div>
+
+    <button id="btn-text-checker">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M7 1.5L3 11h1.5l1-2.5h3l1 2.5H11L7 1.5zm0 3L8.2 7.5H5.8L7 4.5z" fill="currentColor" stroke="none" opacity="0.9"/>
+        <path d="M2 10l2.5 2.5L11.5 5.5" stroke-width="1.5"/>
+      </svg>
+      样式检查
+    </button>
+
+    <button id="btn-overset">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="1" width="12" height="8" rx="0.5"/>
+        <path d="M3 4h8M3 6.5h6" opacity="0.6"/>
+        <path d="M10.5 10.5v2.5M9 11.5l1.5 1.5 1.5-1.5" stroke="#e06060" stroke-width="1.4"/>
+        <path d="M1 10.5h5.5" stroke="#e06060" stroke-width="1" stroke-dasharray="1.5 1"/>
+      </svg>
+      溢出检查
+    </button>
+
+    <button id="btn-trailing-text">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="1" width="12" height="8" rx="0.5"/>
+        <path d="M3 4h7M3 6.5h5" opacity="0.6"/>
+        <path d="M10 10.5l2.5 2.5M10 13l2.5-2.5" stroke="#f0a030" stroke-width="1.4"/>
+        <path d="M1 11.5h7" stroke="#f0a030" stroke-width="1" stroke-dasharray="1.5 1"/>
+      </svg>
+      尾端空白
+    </button>
+  </div>
+
+  <div class="group">
+    <div class="group-label">工具</div>
+
+    <button id="btn-grid">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1.5" y="1.5" width="11" height="11" rx="0.5"/>
+        <path d="M5.2 1.5v11M8.8 1.5v11M1.5 5.2h11M1.5 8.8h11"/>
+      </svg>
+      网格系统
+    </button>
+
+    <button id="btn-page-numbers">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="2" width="6" height="8" rx="0.5" opacity="0.9"/>
+        <rect x="3" y="4" width="6" height="8" rx="0.5"/>
+        <path d="M5 7.5h2M5 9.5h1.5" stroke-width="0.9"/>
+      </svg>
+      页码
+    </button>
+
+    <button id="btn-note">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1.5" y="1" width="8" height="11" rx="0.5"/>
+        <path d="M3.5 4.5h4M3.5 7h3.5M3.5 9.5h4" stroke-width="0.9" opacity="0.7"/>
+        <path d="M10.5 3l2.5-0.5M10.5 3l-0.5 2.5-1.5 1.5-1.5-1.5 1.5-1.5z" fill="currentColor" stroke="none" opacity="0.85"/>
+      </svg>
+      笔记
+    </button>
+  </div>
+
+  <div id="dev-tools-group" class="group" style="border-color:#554433;display:none;">
+    <button id="btn-debug" style="color:#e06060;border-color:#663333;font-size:10px">
+      ▶       溢出诊断
+    </button>
+    <button id="btn-trailing-debug" style="color:#e06060;border-color:#663333;font-size:10px;margin-top:4px">
+      ▶       尾端诊断
+    </button>
+    <button id="btn-pos-diag" style="color:#e06060;border-color:#663333;font-size:10px;margin-top:4px">
+      📍     位置诊断
+    </button>
+    <button id="btn-inv-diag" style="color:#e06060;border-color:#663333;font-size:10px;margin-top:4px">
+      📦     库存诊断
+    </button>
+    <button id="btn-reset" style="color:#e06060;border-color:#663333;font-size:10px;margin-top:4px">
+      ✕       重置设置
+    </button>
+  </div>
+
+  <div class="footer" id="footer-version"></div>
+
+  <!-- Color library dropdown menu — fixed position so body overflow doesn't clip it -->
+  <div id="cl-more-menu" class="cl-more-menu">
+    <div class="cl-menu-item" id="cl-mi-add-group">＋ 新建颜色组</div>
+    <div class="cl-menu-item" id="cl-mi-rename-group">✎ 重命名颜色组</div>
+    <div class="cl-menu-item" id="cl-mi-sort-groups">⇅ 按名称排序</div>
+    <div class="cl-menu-item cl-menu-danger" id="cl-mi-del-group">✕ 删除颜色组</div>
+    <div class="cl-menu-sep"></div>
+    <div class="cl-menu-item" id="cl-mi-import-all">↓ 导入 JSON（全部）</div>
+    <div class="cl-menu-item" id="cl-mi-export-all">↑ 导出 JSON（全部）</div>
+    <div class="cl-menu-item" id="cl-mi-import-group">↓ 按组导入</div>
+    <div class="cl-menu-item" id="cl-mi-export-group">↑ 按组导出</div>
+  </div>
+
+  <script src="js/panel.js"></script>
+  <script src="js/color_library.js"></script>
+</body>
+</html>

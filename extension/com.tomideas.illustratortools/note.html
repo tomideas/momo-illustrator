@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg, #525252);
+      color: var(--fg, #e8e8e8);
+      font-family: -apple-system, "Adobe Clean", Arial, sans-serif;
+      font-size: 11px;
+      user-select: none;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track, #444); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb, #777); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #999; }
+
+    #tab-bar {
+      display: flex; align-items: center;
+      background: var(--bg, #525252);
+      border-bottom: 1px solid var(--border, rgba(160,160,160,0.15));
+      padding: 1px 4px 0; gap: 2px;
+      flex-shrink: 0; overflow-x: auto; min-height: 26px;
+    }
+    #tab-bar::-webkit-scrollbar { height: 0; }
+
+    .tab {
+      display: flex; align-items: center; padding: 3px 8px;
+      font-size: 10px;
+      color: var(--fg-dim, #999);
+      background: var(--bg);
+      border: 1px solid var(--border, rgba(106,106,106,0.3));
+      border-bottom: 1px solid var(--border, rgba(160,160,160,0.15));
+      border-radius: 3px 3px 0 0;
+      cursor: pointer; white-space: nowrap; flex-shrink: 0; gap: 5px; user-select: none;
+    }
+    .tab.active {
+      background: var(--bg, #5a5a5a);
+      color: var(--fg, #e8e8e8);
+      border-bottom-color: var(--bg, #5a5a5a);
+    }
+    .tab:hover:not(.active) { background: var(--bg-hover, #505050); color: var(--fg, #ccc); }
+    .tab-name { white-space: nowrap; }
+    .tab.dragging { opacity: 0.35; }
+    .tab.drag-over { border-left: 2px solid var(--bg-active, #1473e6); }
+    .tab-close { font-size: 11px; color: var(--fg-dim, #777); line-height: 1; cursor: pointer; flex-shrink: 0; }
+    .tab-close:hover { color: #e06060; }
+
+    .tab-add {
+      width: 22px; height: 22px; min-width: 22px;
+      padding: 0; margin: 0 1px; font-size: 14px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      background: transparent; border: none;
+      color: var(--fg-dim, #888); border-radius: 3px; cursor: pointer;
+    }
+    .tab-add:hover { background: var(--bg-hover, #5a5a5a); color: var(--fg, #fff); }
+
+    #content {
+      flex: 1; overflow-y: auto; padding: 10px 12px;
+      font-size: 13px;
+      color: var(--fg, #e8e8e8);
+      line-height: 1.6; outline: none;
+      user-select: text; word-wrap: break-word; white-space: pre-wrap;
+      background: var(--bg, #525252);
+    }
+    #content:empty::before {
+      content: '在此贴上文字...';
+      color: var(--fg-dim, #888); font-style: italic; pointer-events: none;
+    }
+
+    /* 表格樣式直接套到 #content（編輯模式內顯示） */
+    #content table {
+      border-collapse: collapse; margin: 6px 0; font-size: 12px;
+    }
+    #content th, #content td {
+      border: 1px solid var(--border-strong, rgba(140,140,140,0.3));
+      padding: 4px 8px; text-align: left; vertical-align: top;
+      min-width: 30px;
+    }
+    #content th {
+      background: var(--bg-secondary, #4a4a4a);
+      font-weight: 600;
+    }
+    #content tbody tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+
+    #bottom-bar {
+      display: flex; align-items: center; gap: 5px; padding: 4px 8px;
+      background: var(--bg, #525252);
+      border-top: 1px solid var(--border, rgba(160,160,160,0.15));
+      flex-shrink: 0;
+    }
+    .zoom-btn {
+      width: 22px; height: 22px; min-width: 22px;
+      padding: 0; margin: 0; font-size: 14px; line-height: 1; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--bg-hover, #5a5a5a);
+      border: 1px solid var(--border-strong, rgba(140,140,140,0.25));
+      color: var(--fg, #ddd); border-radius: 3px; cursor: pointer;
+    }
+    .zoom-btn:hover { background: var(--bg-hover); color: var(--fg-bright, #fff); }
+    .font-label { font-size: 10px; color: var(--fg-dim, #bbb); min-width: 26px; text-align: center; font-family: monospace; }
+    .sep { width: 1px; height: 14px; background: var(--border-strong, rgba(140,140,140,0.35)); flex-shrink: 0; }
+    .spacer { flex: 1; }
+    .tb-btn {
+      padding: 2px 8px; font-size: 10px;
+      display: flex; align-items: center; gap: 3px;
+      background: transparent; border: 1px solid var(--border-strong, rgba(140,140,140,0.25));
+      color: var(--fg-dim, #bbb); border-radius: 2px; cursor: pointer;
+    }
+    .tb-btn:hover { background: rgba(255,255,255,0.08); color: var(--fg-bright, #fff); }
+  </style>
+</head>
+<body>
+
+  <div id="tab-bar"></div>
+  <div id="content" contenteditable="true"></div>
+  <div id="bottom-bar">
+    <button id="zoom-out" class="zoom-btn" title="缩小字体">−</button>
+    <span id="font-label" class="font-label">13px</span>
+    <button id="zoom-in" class="zoom-btn" title="放大字体">+</button>
+    <span class="sep"></span>
+    <button id="clear-btn" class="tb-btn" title="清除目前分页内容">✕ 清除</button>
+    <span class="spacer"></span>
+  </div>
+
+  <script>
+    (function () {
+      // ── Theme ──
+      function rgbToHex(c) {if(!c)return"#535353";var col=c.color||c;return"#"+((1<<24)|(Math.round(col.red||0)<<16)|(Math.round(col.green||0)<<8)|Math.round(col.blue||0)).toString(16).slice(1);}
+      function isDark(hex){var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;return(0.2126*r+0.7152*g+0.0722*b)<0.5;}
+      function shiftColor(hex,amt){var n=parseInt(hex.slice(1),16);var c=function(v){return Math.min(255,Math.max(0,v));};var r=c(((n>>16)&0xFF)+amt),g=c(((n>>8)&0xFF)+amt),b=c((n&0xFF)+amt);return"#"+((1<<24)|(r<<16)|(g<<8)|b).toString(16).slice(1);}
+      function applyTheme(){
+        var root=document.documentElement,bg="#535353",accent="#1473e6";
+        try{var skin=JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo;if(skin){bg=rgbToHex(skin.panelBackgroundColor)||bg;accent=rgbToHex(skin.systemHighlightColor)||accent;}}catch(e){}
+        var dark=isDark(bg),d=dark?-9:-8,h=dark?5:-7;
+        root.style.setProperty("--bg",bg);
+        root.style.setProperty("--bg-secondary",shiftColor(bg,d));
+        root.style.setProperty("--bg-hover",shiftColor(bg,h));
+        root.style.setProperty("--bg-active",accent);
+        root.style.setProperty("--fg",dark?"#e0e0e0":"#222222");
+        root.style.setProperty("--fg-dim",dark?"#999999":"#777777");
+        root.style.setProperty("--fg-bright",dark?"#ffffff":"#000000");
+        root.style.setProperty("--border",dark?"rgba(160,160,160,0.15)":"rgba(0,0,0,0.12)");
+        root.style.setProperty("--border-strong",dark?"rgba(140,140,140,0.25)":"rgba(0,0,0,0.2)");
+        root.style.setProperty("--scrollbar-track",dark?"#444444":"#dddddd");
+        root.style.setProperty("--scrollbar-thumb",dark?"#777777":"#bbbbbb");
+      }
+      applyTheme();
+      try{window.__adobe_cep__.addEventListener("com.adobe.csxs.events.ThemeColorChanged",applyTheme);}catch(e){}
+
+      // ── Note tabs ──
+      var MAX_TABS=10,LS_TABS="MomoTools_NoteTabs",LS_PREFIX="MomoTools_NoteTab_",LS_ACTIVE="MomoTools_NoteActive",LS_SIZE="MomoTools_NoteFontSize";
+      var content=document.getElementById("content"),tabBar=document.getElementById("tab-bar"),fontLabel=document.getElementById("font-label");
+      var fontSize=13,MIN=9,MAX=32,STEP=1;
+      var tabs=["笔记 1"],activeIdx=0,dragIdx=-1;
+
+      function updateFontLabel(){fontLabel.textContent=fontSize+"px";}
+      function getText(){
+        var t = (typeof content.innerText === "string") ? content.innerText : content.textContent;
+        return String(t || "").replace(/\r\n?/g, "\n");
+      }
+      // 儲存用 innerHTML 才能保留貼上時渲染的 markdown 表格
+      function saveContent(idx){try{window.localStorage.setItem(LS_PREFIX+idx,content.innerHTML);}catch(e){}}
+      function loadContent(idx){
+        try{
+          var v=window.localStorage.getItem(LS_PREFIX+idx)||"";
+          v=v.replace(/\r\n?/g,"\n");
+          // 舊資料相容：若不像 HTML（沒有 <），當純文字載入
+          if(v && v.indexOf("<")===-1){content.textContent=v;}
+          else{content.innerHTML=v;}
+        }catch(e){}
+      }
+      function saveAllState(){try{window.localStorage.setItem(LS_TABS,JSON.stringify(tabs));window.localStorage.setItem(LS_ACTIVE,activeIdx);window.localStorage.setItem(LS_SIZE,fontSize);}catch(e){}}
+      var saveTimer=null;
+      function ds(){if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(function(){saveContent(activeIdx);saveAllState();},200);}
+      content.addEventListener("input",ds);
+
+      function escapeHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+      // 把 markdown 表格區塊轉成 HTML <table>；其餘文字維持原樣（用 \n 保留換行）
+      function renderMarkdownTables(text){
+        var esc=escapeHtml(text);
+        esc=esc.replace(/(^\|.*\|[ \t]*\n(?:\|.*\|[ \t]*\n?)+)/gm,function(block){
+          var lines=block.replace(/\n+$/,"").split("\n");
+          if(lines.length<2) return block;
+          if(!/^[\s|]*-{2,}[\s|:-]*$/.test(lines[1])) return block;
+          function parseRow(l){return l.replace(/^\s*\|/,"").replace(/\|\s*$/,"").split("|").map(function(c){return c.trim();});}
+          var headers=parseRow(lines[0]);
+          var rows=lines.slice(2).map(parseRow);
+          var h="<table><thead><tr>";
+          for(var i=0;i<headers.length;i++) h+="<th>"+headers[i]+"</th>";
+          h+="</tr></thead>";
+          if(rows.length){
+            h+="<tbody>";
+            for(var r=0;r<rows.length;r++){
+              h+="<tr>";
+              for(var c=0;c<rows[r].length;c++) h+="<td>"+rows[r][c]+"</td>";
+              h+="</tr>";
+            }
+            h+="</tbody>";
+          }
+          return h+"</table>";
+        });
+        // 非表格段落把 \n 轉 <br>
+        return esc.replace(/\n/g,"<br>");
+      }
+
+      content.addEventListener("paste",function(e){
+        e.preventDefault();
+        var t=(e.clipboardData||window.clipboardData).getData("text/plain");
+        t=t.replace(/\r\n?/g,"\n");
+        // 偵測 markdown 表格樣式（含 |...| 行 + ---分隔線）
+        if(/(?:^|\n)\|.*\|[ \t]*\n[\s|]*-{2,}/.test(t)){
+          var html=renderMarkdownTables(t);
+          document.execCommand("insertHTML",false,html);
+        }else{
+          document.execCommand("insertText",false,t);
+        }
+      });
+
+      // 複製永遠強制 text/plain → 貼到 Illustrator 不會帶 HTML 表格
+      content.addEventListener("copy",function(e){
+        try{
+          var s=window.getSelection().toString();
+          e.clipboardData.setData("text/plain",s);
+          e.preventDefault();
+        }catch(err){}
+      });
+
+      function makeRenameHandler(idx, tabEl, nameEl){
+        return function(e){
+          e.stopPropagation();
+          var input=document.createElement("input");
+          input.type="text";
+          input.value=tabs[idx];
+          input.className="tab-name";
+          input.style.cssText="background:transparent;border:none;color:inherit;font-size:10px;width:80px;outline:none;padding:0;margin:0;";
+          tabEl.replaceChild(input,nameEl);
+          input.focus();input.select();
+          function finish(){
+            var v=input.value.trim();
+            if(v)tabs[idx]=v;
+            renderTabs();saveAllState();
+          }
+          input.onblur=finish;
+          input.onkeydown=function(ev){if(ev.key==="Enter"){ev.preventDefault();finish();}};
+        };
+      }
+      function makeCloseHandler(idx){return function(e){e.stopPropagation();closeTab(idx);};}
+      function makeDragStart(idx){
+        return function(e){
+          dragIdx=idx;
+          e.dataTransfer.effectAllowed="move";
+          e.dataTransfer.setData("text/plain",String(idx));
+          this.classList.add("dragging");
+        };
+      }
+      function makeDragOver(idx){
+        return function(e){
+          if(dragIdx===idx)return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect="move";
+          this.classList.add("drag-over");
+        };
+      }
+      function makeDragLeave(){
+        return function(){this.classList.remove("drag-over");};
+      }
+      function makeDrop(idx){
+        return function(e){
+          e.stopPropagation();
+          e.preventDefault();
+          this.classList.remove("drag-over");
+          if(dragIdx>=0&&dragIdx!==idx)reorderTabs(dragIdx,idx);
+          return false;
+        };
+      }
+      function makeDragEnd(){
+        return function(){this.classList.remove("dragging");};
+      }
+      function reorderTabs(from,to){
+        saveContent(activeIdx);
+        var contents=[];
+        for(var ci=0;ci<tabs.length;ci++){try{contents[ci]=window.localStorage.getItem(LS_PREFIX+ci)||"";}catch(e){contents[ci]="";}}
+        var moved=tabs.splice(from,1)[0];
+        tabs.splice(to,0,moved);
+        var movedC=contents.splice(from,1)[0];
+        contents.splice(to,0,movedC);
+        if(activeIdx===from)activeIdx=to;
+        else if(from<to&&activeIdx>from&&activeIdx<=to)activeIdx--;
+        else if(from>to&&activeIdx>=to&&activeIdx<from)activeIdx++;
+        for(var cj=0;cj<contents.length;cj++){try{window.localStorage.setItem(LS_PREFIX+cj,contents[cj]);}catch(e){}}
+        try{window.localStorage.removeItem(LS_PREFIX+contents.length);}catch(e){}
+        renderTabs();
+        saveAllState();
+      }
+      function renderTabs(){
+        try{
+          tabBar.innerHTML="";
+          if(!tabs||!tabs.length){tabs=["笔记 1"];activeIdx=0;}
+          for(var i=0;i<tabs.length;i++){
+            var d=document.createElement("div");d.className="tab"+(i===activeIdx?" active":"");d.setAttribute("data-idx",i);d.draggable=true;
+            var s=document.createElement("span");s.className="tab-name";s.textContent=tabs[i];d.appendChild(s);
+            s.ondblclick=makeRenameHandler(i,d,s);
+            d.addEventListener("dragstart",makeDragStart(i));d.addEventListener("dragover",makeDragOver(i));d.addEventListener("dragleave",makeDragLeave());d.addEventListener("drop",makeDrop(i));d.addEventListener("dragend",makeDragEnd());
+            if(tabs.length>1){var x=document.createElement("span");x.className="tab-close";x.textContent="×";x.onclick=makeCloseHandler(i);d.appendChild(x);}
+            d.onclick=function(){switchTab(parseInt(this.getAttribute("data-idx"),10));};
+            tabBar.appendChild(d);
+          }
+          if(tabs.length<MAX_TABS){var b=document.createElement("button");b.className="tab-add";b.textContent="+";b.title="新增分页（最多 "+MAX_TABS+" 个）";b.onclick=addTab;tabBar.appendChild(b);}
+          saveAllState();
+        }catch(err){
+          tabBar.innerHTML="<span style='color:#e06060;padding:4px;font-size:10px;'>Tab错误: "+err.message+"</span>";
+        }
+      }
+      function addTab(){if(tabs.length>=MAX_TABS)return;tabs.push("笔记 "+(tabs.length+1));switchTab(tabs.length-1);renderTabs();}
+      function closeTab(idx){if(isNaN(idx)||idx<0||idx>=tabs.length||tabs.length<=1)return;try{window.localStorage.removeItem(LS_PREFIX+idx);}catch(e){}tabs.splice(idx,1);for(var i=idx;i<tabs.length;i++){try{var v=window.localStorage.getItem(LS_PREFIX+(i+1));if(v!==null)window.localStorage.setItem(LS_PREFIX+i,v);else window.localStorage.removeItem(LS_PREFIX+i);window.localStorage.removeItem(LS_PREFIX+(i+1));}catch(e){}}if(activeIdx>=idx)activeIdx=Math.max(0,activeIdx-1);if(activeIdx>=tabs.length)activeIdx=tabs.length-1;loadContent(activeIdx);renderTabs();content.focus();}
+      function switchTab(idx){if(idx===activeIdx)return;saveContent(activeIdx);activeIdx=idx;loadContent(activeIdx);content.style.fontSize=fontSize+"px";renderTabs();content.focus();}
+
+      document.getElementById("zoom-in").addEventListener("click",function(){if(fontSize<MAX){fontSize+=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
+      document.getElementById("zoom-out").addEventListener("click",function(){if(fontSize>MIN){fontSize-=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
+      document.getElementById("clear-btn").addEventListener("click",function(){content.textContent="";content.focus();ds();});
+
+
+      try{
+        var st=window.localStorage.getItem(LS_TABS);if(st){var p=JSON.parse(st);if(Array.isArray(p)&&p.length>0){tabs=p.slice(0,MAX_TABS).map(function(v,i){return typeof v==="number"?"笔记 "+v:String(v);});}}
+        var a=parseInt(window.localStorage.getItem(LS_ACTIVE),10);if(!isNaN(a)&&a>=0&&a<tabs.length)activeIdx=a;
+        var sz=parseInt(window.localStorage.getItem(LS_SIZE),10);if(sz>=MIN&&sz<=MAX)fontSize=sz;
+      }catch(e){}
+      loadContent(activeIdx);content.style.fontSize=fontSize+"px";updateFontLabel();renderTabs();
+    })();
+  </script>
+</body>
+</html>

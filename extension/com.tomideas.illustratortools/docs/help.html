@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momo Tools v2.88 — 使用说明</title>
+<style>
+  :root {
+    --bg: #323232; --bg2: #3a3a3a; --bg-card: #3e3e3e;
+    --fg: #e0e0e0; --fg-dim: #999; --fg-bright: #fff;
+    --accent: #1473e6; --border: rgba(160,160,160,0.15);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px; line-height: 1.6; padding: 24px 32px;
+    max-width: 900px; margin: 0 auto;
+  }
+  h1 { font-size: 22px; margin-bottom: 4px; color: var(--fg-bright); }
+  h2 { font-size: 16px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--fg-bright); }
+  h3 { font-size: 14px; margin: 16px 0 6px; color: var(--accent); }
+  p { margin: 6px 0; color: var(--fg-dim); }
+  .sub { font-size: 12px; color: var(--fg-dim); margin-bottom: 16px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px 18px; margin: 10px 0;
+  }
+  .card h3 { margin-top: 0; }
+  code {
+    background: rgba(255,255,255,0.08); padding: 1px 5px;
+    border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--fg-dim); font-weight: 500; font-size: 11px; }
+  .badge { display: inline-block; padding: 1px 7px; border-radius: 3px; font-size: 11px; background: var(--accent); color: #fff; margin-left: 6px; }
+  .tip { background: rgba(20,115,230,0.1); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 12px; }
+  .warn { background: rgba(230,96,96,0.1); border-left: 3px solid #e06060; padding: 8px 12px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>Momo Tools <span class="badge">v2.88</span></h1>
+<p class="sub">Adobe Illustrator CEP 扩展面板 · 画板 / 颜色 / 文字 / 工具 · 最后更新 2026-06-19</p>
+
+<p class="tip">安装：将 <code>com.tomideas.illustratortools</code> 放到 <code>~/Library/Application Support/Adobe/CEP/extensions/</code>，重启 Illustrator 后在 <b>窗口 &gt; 扩展功能</b> 打开。</p>
+
+<!-- ══════════════ 画板 ══════════════ -->
+<h2>画板</h2>
+
+<div class="card"><h3>复制画板 <span class="badge">v1.1.2</span></h3>
+  <p>复制选中的画板及其所有内容，放在现有画板正下方。</p>
+  <table>
+    <tr><td>选择画板</td><td>Shift 多选或输入范围（如 1-5, 8, 11-13）</td></tr>
+    <tr><td>名称编辑</td><td>勾选「重命名复制的画板」后，查找→替换文本。例：查找 FR_ 替换为 CN_</td></tr>
+    <tr><td>位置与间距</td><td>左右间距 / 上下间距 / 整体位移。默认自动检测</td></tr>
+  </table>
+</div>
+
+<div class="card"><h3>重新排列 <span class="badge">v1.5.8</span></h3>
+  <p>将画板按网格重新排列，可自定义每行数量和间距。</p>
+  <table>
+    <tr><td>每行个数</td><td>逗号分隔（3,3,2 = 第 1 行 3 个、第 2 行 3 个、第 3 行 2 个）</td></tr>
+    <tr><td>间距</td><td>左右间距 / 上下间距（pt）</td></tr>
+    <tr><td>放置位置</td><td>选区左上 / 某画板正下方（可偏移）</td></tr>
+  </table>
+</div>
+
+<div class="card"><h3>画板更名 <span class="badge">v1.2.1</span></h3>
+  <p>批量或单独重命名画板。4 种命名规则：</p>
+  <table>
+    <tr><td>编号</td><td><code>FR_{n}</code> → FR_01, FR_02… 占位符：<code>{n}</code>=序号 <code>{i}</code>=画板号 <code>{name}</code>=原名</td></tr>
+    <tr><td>替换</td><td>查找原名字部分 → 替换为新文本。支持正则匹配</td></tr>
+    <tr><td>逐行</td><td>逐行输入新名称，空行保留原名</td></tr>
+    <tr><td>后缀</td><td>在原名末尾追加固定文字。例：后缀 _v2 → FR_01_v2</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════ 颜色 ══════════════ -->
+<h2>颜色</h2>
+
+<div class="card"><h3>颜色标签生成</h3>
+  <p>选取对象后自动生成 CMYK 色块标签。可设置色块尺寸、字体、排列方向、位置等。</p>
+</div>
+
+<div class="card"><h3>颜色检查</h3>
+  <p>扫描文件中的填色和描边颜色，统计并标注不符合规范的颜色（如 RGB 混入 CMYK 文件）。支持文字和形状两种对象类型。</p>
+</div>
+
+<div class="card"><h3>颜色库</h3>
+  <p>管理多组 CMYK 颜色，支持：</p>
+  <table>
+    <tr><td>提取</td><td>从 Illustrator 选中对象提取颜色</td></tr>
+    <tr><td>增加</td><td>手动输入 CMYK 值新增</td></tr>
+    <tr><td>点击色块</td><td>应用到选中对象的填充</td></tr>
+    <tr><td>••• 菜单</td><td>新建/重命名/删除颜色组、排序、导入/导出 JSON</td></tr>
+  </table>
+</div>
+
+<!-- ══════════════ 文字 ══════════════ -->
+<h2>文字</h2>
+
+<div class="card"><h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
+  <p>扫描文字框，找出字体、字号、行距不一致处，用橙色框标出。支持同一字号/字体/颜色分组，可选文本框内部混合检查。画板选择列表+范围输入双选模式，标注编号+需注意同图层。</p>
+</div>
+
+<div class="card"><h3>文字溢出检查 <span class="badge">v5.9.3</span></h3>
+  <p>检测文字是否超出文本框（红色 + 标识），用红框标注。</p>
+  <p>三条规则：</p>
+  <table>
+    <tr><td>M4a</td><td>内容字数超出行字数（垂直溢出）</td></tr>
+    <tr><td>M8</td><td>转点文字后内容缩短（水平溢出）</td></tr>
+    <tr><td>M12</td><td>段落高度超出文本框（尾端空段溢出）</td></tr>
+  </table>
+</div>
+
+<div class="card"><h3>尾端空白 / 空段检查 <span class="badge">v1.0.1</span></h3>
+  <p>检查文本框末尾多余空格、Tab、空段落，用橙色框标出。</p>
+</div>
+
+<!-- ══════════════ 工具 ══════════════ -->
+<h2>工具</h2>
+
+<div class="card"><h3>网格系统 <span class="badge">v1.0.0</span></h3>
+  <p>在画板上绘制网格参考线。3 种类型：</p>
+  <table>
+    <tr><td>瑞士网格</td><td>列数/行数 + 间距。适合排版设计</td></tr>
+    <tr><td>等分网格</td><td>N 等分 + 间距 + 可选对角线。适合海报/封面</td></tr>
+    <tr><td>黄金比例</td><td>斐波那契数列分割 + 双轴模式。适合摄影构图</td></tr>
+  </table>
+  <p>支持 px/mm/pt 单位转换、内边距 4 边同步、实时预览图层 <code>_网格预览</code>、一键转为 Illustrator 参考线。</p>
+  <p class="tip">来源：© 2026 canfei. 火山字型 (hstype.com)</p>
+</div>
+
+<div class="card"><h3>批量页码</h3>
+  <p>为多个画板自动添加页码文字。可设置位置、起始页数、自定义格式。</p>
+</div>
+
+<div class="card"><h3>笔记 (Momo Notes)</h3>
+  <p>多分页笔记面板，支持 Markdown 表格、拖曳排序、内联重命名。最多 10 个分页。</p>
+  <p>从主面板「笔记」按钮打开。需要在 Illustrator 重启后手动打开。</p>
+</div>
+
+<!-- ══════════════ 开发诊断 ══════════════ -->
+<h2>开发诊断工具</h2>
+<div class="warn">面板底部版本号 v2.88，连点 <b>3 次</b> 显示以下隐藏工具。</div>
+
+<div class="card"><h3>溢出诊断</h3>
+  <p>交互式逐框诊断：自动选取每个文本框并缩放，显示脚本判断结果，询问是否有红色 +，最后输出 FP/FN 对比报告。</p>
+</div>
+
+<div class="card"><h3>尾端空白诊断</h3>
+  <p>交互式逐框诊断：显示尾端字符可视化（↵=Enter, ·=空格），询问是否应标记，输出对比报告。</p>
+</div>
+
+<div class="card"><h3>重置所有设置</h3>
+  <p>清除所有颜色库、笔记和工具偏好设置，恢复出厂状态。</p>
+</div>
+
+</body>
+</html>

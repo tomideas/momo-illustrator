@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionManifest Version="6.0" ExtensionBundleId="com.tomideas.illustratortools" ExtensionBundleVersion="2.101" ExtensionBundleName="Momo Tools">
+  <ExtensionList>
+    <Extension Id="com.tomideas.illustratortools" Version="1.5" />
+    <Extension Id="com.tomideas.illustratortools.note" Version="1.6" />
+  </ExtensionList>
+  <ExecutionEnvironment>
+    <HostList>
+      <Host Name="ILST" Version="[17.0,99.9]" />
+    </HostList>
+    <LocaleList>
+      <Locale Code="All" />
+    </LocaleList>
+    <RequiredRuntimeList>
+      <RequiredRuntime Name="CSXS" Version="6.0" />
+    </RequiredRuntimeList>
+  </ExecutionEnvironment>
+  <DispatchInfoList>
+    <Extension Id="com.tomideas.illustratortools">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./index.html</MainPath>
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Momo Tools</Menu>
+          <Geometry>
+            <Size>
+              <Width>200</Width>
+              <Height>320</Height>
+            </Size>
+            <MinSize>
+              <Width>120</Width>
+              <Height>120</Height>
+            </MinSize>
+            <MaxSize>
+              <Width>600</Width>
+              <Height>900</Height>
+            </MaxSize>
+          </Geometry>
+          <Icons>
+            <Icon Type="Normal">./images/IconLight.png</Icon>
+            <Icon Type="RollOver">./images/IconLight.png</Icon>
+            <Icon Type="DarkNormal">./images/IconDark.png</Icon>
+            <Icon Type="DarkRollOver">./images/IconDark.png</Icon>
+          </Icons>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+    <Extension Id="com.tomideas.illustratortools.note">
+      <DispatchInfo>
+        <Resources>
+          <MainPath>./note.html</MainPath>
+        </Resources>
+        <Lifecycle>
+          <AutoVisible>true</AutoVisible>
+        </Lifecycle>
+        <UI>
+          <Type>Panel</Type>
+          <Menu>Momo Notes</Menu>
+          <Geometry>
+            <Size>
+              <Width>560</Width>
+              <Height>640</Height>
+            </Size>
+            <MinSize>
+              <Width>300</Width>
+              <Height>200</Height>
+            </MinSize>
+            <MaxSize>
+              <Width>1200</Width>
+              <Height>3000</Height>
+            </MaxSize>
+          </Geometry>
+          <Icons>
+            <Icon Type="Normal">./images/IconLight.png</Icon>
+            <Icon Type="RollOver">./images/IconLight.png</Icon>
+            <Icon Type="DarkNormal">./images/IconDark.png</Icon>
+            <Icon Type="DarkRollOver">./images/IconDark.png</Icon>
+          </Icons>
+        </UI>
+      </DispatchInfo>
+    </Extension>
+  </DispatchInfoList>
+</ExtensionManifest>

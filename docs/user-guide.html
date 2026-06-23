@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Momo Tools v2.99 — 使用指南 · User Guide</title>
+<style>
+  :root {
+    --bg: #323232; --bg2: #3a3a3a; --bg-card: #3e3e3e;
+    --fg: #e0e0e0; --fg-dim: #999; --fg-bright: #fff;
+    --accent: #96a5be; --border: rgba(160,160,160,0.15);
+    --warn: #e06060; --ok: #60b060;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px; line-height: 1.65; padding: 24px 32px;
+    max-width: 920px; margin: 0 auto;
+  }
+  h1 { font-size: 22px; margin-bottom: 2px; color: var(--fg-bright); }
+  h1 .ver { font-size: 14px; color: var(--fg-dim); font-weight: 400; margin-left: 8px; }
+  h2 { font-size: 17px; margin: 32px 0 14px; padding-bottom: 6px; border-bottom: 1px solid var(--border); color: var(--fg-bright); }
+  h3 { font-size: 14px; margin: 18px 0 8px; color: var(--accent); }
+  h4 { font-size: 13px; margin: 12px 0 4px; color: var(--fg-dim); font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin: 6px 0; color: var(--fg-dim); }
+  .sub { font-size: 12px; color: var(--fg-dim); margin-bottom: 20px; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 20px; margin: 12px 0;
+  }
+  .card h3 { margin-top: 0; }
+  .card p:last-child { margin-bottom: 0; }
+  code {
+    background: rgba(255,255,255,0.07); padding: 1px 6px;
+    border-radius: 3px; font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+  }
+  pre {
+    background: rgba(0,0,0,0.25); padding: 10px 14px; border-radius: 6px;
+    font-family: "SF Mono", Menlo, monospace; font-size: 12px;
+    overflow-x: auto; margin: 8px 0;
+  }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 12px; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); }
+  th { color: var(--fg-dim); font-weight: 500; font-size: 11px; }
+  td:first-child { white-space: nowrap; color: var(--fg-bright); font-size: 12px; }
+  .badge {
+    display: inline-block; padding: 1px 7px; border-radius: 3px;
+    font-size: 11px; background: var(--accent); color: #fff; margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tip {
+    background: rgba(150,165,190,0.08); border-left: 3px solid var(--accent);
+    padding: 8px 14px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 12px;
+  }
+  .warn {
+    background: rgba(224,96,96,0.08); border-left: 3px solid var(--warn);
+    padding: 8px 14px; margin: 8px 0; border-radius: 0 4px 4px 0; font-size: 12px;
+  }
+  .steps { counter-reset: step; list-style: none; padding: 0; margin: 8px 0; }
+  .steps li { counter-increment: step; padding: 4px 0 4px 28px; position: relative; font-size: 13px; }
+  .steps li::before {
+    content: counter(step);
+    position: absolute; left: 0; top: 4px;
+    width: 20px; height: 20px; line-height: 20px;
+    background: var(--accent); color: #fff; border-radius: 50%;
+    font-size: 11px; text-align: center; font-weight: 600;
+  }
+  .flow {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+    margin: 8px 0; font-size: 12px;
+  }
+  .flow .arrow { color: var(--accent); font-weight: 600; }
+  .flow span {
+    background: var(--bg-card); border: 1px solid var(--border);
+    padding: 3px 10px; border-radius: 4px;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+  .toc { columns: 2; column-gap: 32px; margin: 10px 0; font-size: 12px; }
+  .toc a { display: block; padding: 2px 0; }
+  .rule-tag {
+    display: inline-block; padding: 0px 5px; border-radius: 2px;
+    font-size: 10px; font-weight: 600; margin-right: 4px;
+    background: rgba(150,165,190,0.2); color: var(--accent);
+  }
+</style>
+</head>
+<body>
+
+<h1>Momo Tools <span class="ver">使用指南 · User Guide v2.99</span></h1>
+<p class="sub">Adobe Illustrator 外挂面板 — 帮你搞定画板、颜色、文字、排版 · 2026-06-21</p>
+
+<div class="card">
+  <p style="font-size:13px;color:var(--fg-bright);">Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<b>批量复制画板（带着内容一起）、一键检查全文件的文字溢出和颜色错误、管理品牌色库、生成排版网格、自动加页码</b>。</p>
+  <p style="font-size:12px;">没有弹窗、不用记快捷键、打开面板就能用。以下按「你会遇到什么场景」和「每个按钮是干什么的」来介绍。</p>
+</div>
+
+<!-- ====== TOC ====== -->
+<div class="card">
+  <h3>目录</h3>
+  <div class="toc">
+    <a href="#install">安装与启动</a>
+    <a href="#quick">快速上手：4 个高频场景</a>
+    <a href="#artboard">画板工具</a>
+    <a href="#color">颜色工具</a>
+    <a href="#text">文字工具</a>
+    <a href="#tools">工具集</a>
+    <a href="#notes">笔记面板</a>
+    <a href="#tips">使用技巧</a>
+    <a href="#trouble">常见问题</a>
+  </div>
+</div>
+
+<!-- ====== 安装 ====== -->
+<h2 id="install">安装与启动</h2>
+
+<div class="card">
+  <h3>安装步骤</h3>
+  <ol class="steps">
+    <li>将 <code>com.tomideas.illustratortools</code> 文件夹复制到 <code>~/Library/Application Support/Adobe/CEP/extensions/</code></li>
+    <li>重启 Adobe Illustrator</li>
+    <li>菜单栏：<b>窗口 → 扩展功能 → Momo Tools</b></li>
+  </ol>
+  <p class="tip">Windows 路径：<code>%APPDATA%\Adobe\CEP\extensions\</code></p>
+</div>
+
+<div class="card">
+  <h3>面板布局</h3>
+  <p>面板分为 4 个功能组，从上到下排列。按下按钮即执行对应功能，完成后屏幕下方会出现短暂提示（1.8 秒自动消失），不会弹窗打扰你。</p>
+  <table>
+    <tr><td style="width:60px">画板</td><td>复制画板 / 重新排列 / 画板更名</td></tr>
+    <tr><td>颜色</td><td>颜色标签生成 / 颜色检查 / 颜色库</td></tr>
+    <tr><td>文字</td><td>文字样式检查 / 文字溢出检查 / 尾端空白检查</td></tr>
+    <tr><td>工具</td><td>网格系统 / 批量页码 / Momo 笔记</td></tr>
+  </table>
+  <p class="tip">面板自动跟随 Illustrator 主题（深色 / 浅色），无需手动切换。</p>
+</div>
+
+<!-- ====== 快速上手 ====== -->
+<h2 id="quick">快速上手：4 个高频场景</h2>
+
+<div class="card">
+  <h3>场景一：多语言版本画板制作</h3>
+  <p>需求：已有 10 个中文画板（CN_01～CN_10），需要生成英文版 10 个 + 日文版 10 个，共 30 个画板，并加页码。</p>
+  <div class="flow">
+    <span>1. 复制画板</span><span class="arrow">→</span>
+    <span>2. 画板更名</span><span class="arrow">→</span>
+    <span>3. 重新排列</span><span class="arrow">→</span>
+    <span>4. 批量页码</span>
+  </div>
+  <p>全程 4 次点击，约 30 秒。比手动逐个复制、双击改名、拖拽排版快 10 倍以上。</p>
+</div>
+
+<div class="card">
+  <h3>场景二：交付前品控检查</h3>
+  <p>需求：收到外部设计师文件，需在出片前确认无文字溢出、无尾端空白、无 RGB 混入 CMYK。</p>
+  <div class="flow">
+    <span>1. 文字溢出检查</span><span class="arrow">→</span>
+    <span>2. 尾端空白检查</span><span class="arrow">→</span>
+    <span>3. 文字样式检查</span><span class="arrow">→</span>
+    <span>4. 颜色检查</span>
+  </div>
+  <p>4 次点击自动扫描整份文件，有问题的地方用彩色框标出来，你只需看标记处即可。</p>
+</div>
+
+<div class="card">
+  <h3>场景三：品牌颜色库建立与应用</h3>
+  <p>需求：管理 7 条产品线的标准色，设计师从库中一鍵取色填充。</p>
+  <div class="flow">
+    <span>1. 新建分组</span><span class="arrow">→</span>
+    <span>2. 从文档提取颜色</span><span class="arrow">→</span>
+    <span>3. 点击色块应用</span>
+  </div>
+  <p>颜色库保存在电脑上，跨文件、重启 AI 后仍然可用。支持导出备份。</p>
+</div>
+
+<div class="card">
+  <h3>场景四：网格辅助排版</h3>
+  <p>需求：在海报/画册排版时需要网格线辅助对齐。</p>
+  <div class="flow">
+    <span>1. 打开网格系统</span><span class="arrow">→</span>
+    <span>2. 选择网格类型+参数</span><span class="arrow">→</span>
+    <span>3. 预览</span><span class="arrow">→</span>
+    <span>4. 应用 / 转为参考线</span>
+  </div>
+  <p>支持 3 种网格（瑞士 / 等分 / 黄金比例）。预览不满意点取消即可，网格线自动清除。</p>
+</div>
+
+<!-- ====== 画板工具 ====== -->
+<h2 id="artboard">画板工具</h2>
+
+<div class="card">
+  <h3>复制画板 <span class="badge">v1.1.2</span></h3>
+  <p>复制选中的画板及其所有内容。这是 Momo Tools 与 AI 原生「复制画板」的关键区别——后者不携带内容。</p>
+
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>在 AI 中选中画板（Shift 多选或用画板面板）</li>
+    <li>点击「复制画板」按钮</li>
+    <li>设置参数后点「确定」</li>
+  </ol>
+
+  <h4>参数说明</h4>
+  <table>
+    <tr><td>重命名复制的画板</td><td>勾选后启用查找/替换命名。例：查 <code>FR_</code> 替 <code>EN_</code> → FR_01 变成 EN_01</td></tr>
+    <tr><td>左右/上下间距</td><td>复制出的画板与原始画板的净距（pt）。默认自动检测</td></tr>
+    <tr><td>整体位移 X/Y</td><td>对整个复制结果做额外偏移。负值向左/上移动</td></tr>
+  </table>
+
+  <p class="tip">无选中画板时按钮自动置灰，无需记忆。</p>
+</div>
+
+<div class="card">
+  <h3>重新排列 <span class="badge">v1.5.8</span></h3>
+  <p>将全部画板按网格重新排列。不会修改画板内部内容位置。</p>
+
+  <table>
+    <tr><td>每行个数</td><td>逗号分隔，如 <code>3,3,2</code> = 第一行 3 个、第二行 3 个、第三行 2 个。也可填单个数字表示每行固定数量</td></tr>
+    <tr><td>左右/上下间距</td><td>画板之间的净距，单位跟随当前文档</td></tr>
+    <tr><td>放置位置</td><td>选区左上 / 某画板正下方（可设偏移量）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h3>画板更名 <span class="badge">v1.2.1</span></h3>
+  <p>4 种命名模式，互斥单选。适合批量改名或单个改名场景。</p>
+
+  <table>
+    <tr><td><b>模板</b></td><td>用 <code>{n}</code> 表示序号、<code>{name}</code> 表示原名。例：<code>页_{n}</code> → 页_01, 页_02… 可设起始值和步长</td></tr>
+    <tr><td><b>替换</b></td><td>查找原名中的文字 → 替换为新文字。支持正则表达式</td></tr>
+    <tr><td><b>逐行</b></td><td>在文本框中逐行输入新名称，一行对应一个画板。空行保留原名</td></tr>
+    <tr><td><b>后缀</b></td><td>在原名末尾统一追加固定文字。例：后缀 <code>_v2</code> → FR_01_v2</td></tr>
+  </table>
+
+  <p class="tip">列表支持多选（Ctrl / Shift），可仅对选中画板改名。列表上方的输入框支持范围语法，如 <code>1-5, 8</code>。</p>
+</div>
+
+<!-- ====== 颜色工具 ====== -->
+<h2 id="color">颜色工具</h2>
+
+<div class="card">
+  <h3>颜色标签生成</h3>
+  <p>从选中对象提取填色值，在画板上方自动生成带色值的 CMYK 标签色块。常用于：产品包装的颜色标注、给印刷厂的色值指示图。</p>
+  <p>可设置：色块尺寸、字体大小、排列方向（横/竖）、位置偏移。</p>
+</div>
+
+<div class="card">
+  <h3>颜色检查 <span class="badge">v1.6.0</span></h3>
+  <p>扫描当前文档中所有文字填色和形状填色/描边色，标记色彩空间不符项。</p>
+
+  <h4>检查逻辑</h4>
+  <table>
+    <tr><td>在 CMYK 文档中</td><td>找出所有 RGB 色值的文字/形状 → 红框标记</td></tr>
+    <tr><td>在 RGB 文档中</td><td>找出所有 CMYK 色值的文字/形状 → 红框标记</td></tr>
+  </table>
+
+  <h4>检查范围</h4>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;">
+      <li>文字、形状的填色和描边都会检查</li>
+      <li>群组里的物件也会被检查到</li>
+      <li>渐变和图案填充不会检查（它们不是单一颜色）</li>
+  </ul>
+
+  <p class="warn">检查结果仅做标记，不会自动修改颜色。请手动修正，或用颜色库一键换成标准色。</p>
+</div>
+
+<div class="card">
+  <h3>颜色库 <span class="badge">核心功能</span></h3>
+  <p>Momo Tools 的特色功能——帮你管理品牌常用的标准色。</p>
+
+  <h4>怎么用</h4>
+  <table>
+    <tr><td>新建分组</td><td>点分组名旁的 + 按钮，输入名称（比如「常用色」「包装色」），回车确认</td></tr>
+    <tr><td>新增颜色</td><td>在分组里双击空白处，输入 CMYK 或 HEX 色值，确定</td></tr>
+    <tr><td>编辑颜色</td><td>双击色块，修改 CMYK 或 HEX，另一边会自动算出来</td></tr>
+    <tr><td>删除颜色</td><td>右键色块 → 删除</td></tr>
+  </table>
+
+  <h4>给画板填色</h4>
+  <table>
+    <tr><td>点色块</td><td>把颜色填到当前选中的物件上（群组里的也会填）</td></tr>
+    <tr><td>从文档提取</td><td>选中 AI 里的物件 → 提取它的颜色到当前分组</td></tr>
+  </table>
+
+  <h4>分组管理</h4>
+  <table>
+    <tr><td>拖拽排序</td><td>拖拽色块调整顺序</td></tr>
+    <tr><td>分组排序</td><td>点分组名右边的「•••」→ 按名称升序或降序排列</td></tr>
+    <tr><td>直接改名</td><td>点分组名就能改，不用弹窗</td></tr>
+  </table>
+
+  <h4>备份与恢复</h4>
+  <table>
+    <tr><td>导出全部</td><td>「•••」→ 导出库 → 保存为文件。包含所有分组和颜色</td></tr>
+    <tr><td>导出当前分组</td><td>「•••」→ 导出当前分组 → 只导出当前这一个分组</td></tr>
+    <tr><td>导入覆盖</td><td>「•••」→ 导入库 → 选之前导出的文件 → 替换当前库</td></tr>
+    <tr><td>导入追加</td><td>「•••」→ 导入到当前分组 → 把颜色追加到当前分组，不影响其他分组</td></tr>
+  </table>
+
+  <p class="tip">颜色库存两份：一份在电脑文件系统里，一份在面板内部存储里。即使文件写入失败，数据也不会丢。建议定期导出备份。</p>
+
+  <h4>关于 CMYK 和 HEX 色值</h4>
+  <p>颜色库用 Illustrator 内建的色彩引擎来换算 CMYK 和 HEX，不是简单公式，精度可靠。你编辑 CMYK，HEX 会自动更新；编辑 HEX，CMYK 也会自动更新。互不影响。</p>
+</div>
+
+<!-- ====== 文字工具 ====== -->
+<h2 id="text">文字工具</h2>
+
+<p class="tip">三个文字工具建议按顺序使用：<b>溢出检查 → 尾端空白检查 → 样式检查</b>。这是印前检查的标准流程。</p>
+
+<div class="card">
+  <h3>文字溢出检查 <span class="badge">v5.9.3</span></h3>
+  <p>检测区域文字（Area Text）是否有内容超出文本框——即 AI 右下角的红色「＋」号。这是印前最常见的排版事故。</p>
+
+  <h4>三条检测规则（按序执行，命中即停）</h4>
+  <table>
+    <tr><td><span class="rule-tag">M4a</span> 字符溢出</td><td>文本内容的字符数超过了总行数所能容纳的量（垂直溢出）。适用于多行区域文字。</td></tr>
+    <tr><td><span class="rule-tag">M8</span> 水平溢出</td><td>将文本框转为点文字后内容变短了（水平溢出）。适用于单行/窄框文字。</td></tr>
+    <tr><td><span class="rule-tag">M12</span> 段高溢出</td><td>段落的总高度（段落数 × 行距）超出了文本框高度（尾端空段溢出）。</td></tr>
+  </table>
+
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>在 AI 中选择需要检查的画板范围（可在面板中勾选或输入 <code>1-5, 8</code>）</li>
+    <li>点击「文字溢出检查」</li>
+    <li>有溢出的文本框会被<b>红框</b>标记</li>
+  </ol>
+
+  <p class="warn">仅检查区域文字（Area Text）和路径文字。点文字（Point Text）不会溢出，因此不检查。</p>
+</div>
+
+<div class="card">
+  <h3>尾端空白检查 <span class="badge">v1.0.1</span></h3>
+  <p>检测区域文字末尾的多余空格、制表符（Tab）、空段落。这些内容肉眼不可见，但在排版中会导致对齐异常或导出问题。</p>
+
+  <h4>检查内容</h4>
+  <table>
+    <tr><td>末尾空格</td><td>段落末尾的空格字符</td></tr>
+    <tr><td>末尾 Tab</td><td>段落末尾的制表符（<code>\t</code>）</td></tr>
+    <tr><td>空段落</td><td>由连续回车产生的空白段落</td></tr>
+  </table>
+
+  <p>问题已被标出来（橙框），你一眼就能看到。AI 在段落末尾会自动加一个看不见的段落标记，Momo Tools 不会把这个误判成「空段落」。</p>
+</div>
+
+<div class="card">
+  <h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
+  <p>扫描文字框的字体、字号、行距一致性，标注异常。适合在排版完成后做风格一致性把关。</p>
+
+  <h4>两种模式</h4>
+  <table>
+    <tr><td><b>检查模式</b></td><td>找出字体/字号/行距与「主流值」不一致的文本框 → <b>橙框</b>标记</td></tr>
+    <tr><td><b>库存模式</b></td><td>列出每个画板使用的所有字体/字号/行距组合（不标记），便于了解整份文件的文字使用情况</td></tr>
+  </table>
+
+  <h4>参数</h4>
+  <table>
+    <tr><td>检查画板</td><td>列表多选（Shift/Ctrl）或输入范围（<code>1-5, 8</code>）</td></tr>
+    <tr><td>字号容差</td><td>容忍 ±x pt 的字号偏差（如设为 0.5pt，则 11.8pt 和 12pt 视为一致）</td></tr>
+    <tr><td>检查维度</td><td>字体 / 字号 / 行距，可独立开关</td></tr>
+  </table>
+</div>
+
+<!-- ====== 工具集 ====== -->
+<h2 id="tools">工具集</h2>
+
+<div class="card">
+  <h3>网格系统 <span class="badge">v1.2.0</span></h3>
+  <p>一键在画板上绘制设计网格参考线。原创作者：火山字型 canfei (hstype.com)。</p>
+
+  <h4>网格类型</h4>
+  <table>
+    <tr><td><b>瑞士网格</b></td><td>经典平面设计网格。参数：列数、行数、间距。适合：书籍、画册、品牌物料排版</td></tr>
+    <tr><td><b>等分网格</b></td><td>N 等分画板，支持间距和可选对角线。参数：分割数。适合：海报、封面、等分布局</td></tr>
+    <tr><td><b>黄金比例</b></td><td>基于斐波那契数列的黄金分割。参数：斐波那契项数、双轴/单轴、可选对角线。适合：摄影构图、视觉焦点安排</td></tr>
+  </table>
+
+  <h4>共用参数</h4>
+  <table>
+    <tr><td>作用范围</td><td>当前画板 / 选中的图形 / 全部画板</td></tr>
+    <tr><td>单位</td><td>px / mm / pt，自动按文档单位转换</td></tr>
+    <tr><td>内边距</td><td>上/下/左/右 4 边独立，可一键全部同步</td></tr>
+    <tr><td>网格线颜色</td><td>6 种浅色可选（浅蓝/浅绿/浅红/浅黄/浅灰/浅橙）</td></tr>
+    <tr><td>保留上次网格</td><td>勾选后，再次生成网格不会清除上次的线，而是叠加在上面。方便同时使用多种网格（如瑞士网格+黄金比例）</td></tr>
+    <tr><td>间距开关</td><td>列数、行数、等分网格各有一个独立的「间距」复选框。取消勾选则对应间距强制为 0（无间距排列）。三个复选框独立，样式一致</td></tr>
+  </table>
+
+  <h4>操作流程</h4>
+  <ol class="steps">
+    <li>点击「网格系统」按钮打开对话框</li>
+    <li>选择网格类型和参数</li>
+    <li>点「预览」查看效果（生成到 <code>_网格预览</code> 图层）</li>
+    <li>满意后点「应用」，或点「转为参考线」一键转为 AI 原生参考线</li>
+    <li>不满意点「取消」——预览会自动清除</li>
+  </ol>
+
+  <p class="tip">预览不会覆盖你已有的设计内容。如果已有同名图层，会先清空再重建。</p>
+</div>
+
+<div class="card">
+  <h3>批量页码</h3>
+  <p>自动在多个画板上添加页码。适合多页画册、提案文件、产品型录。</p>
+
+  <table>
+    <tr><td>页码位置</td><td>9 个方位，对应数字键盘 1-9（底部左/中/右、中部左/中/右、顶部左/中/右）</td></tr>
+    <tr><td>起始页码</td><td>从第几页开始编号（默认 1）</td></tr>
+    <tr><td>格式</td><td>自定义前缀/后缀，如 <code>第{n}页</code>、<code>Page {n}</code></td></tr>
+  </table>
+</div>
+
+<!-- ====== 笔记 ====== -->
+<h2 id="notes">笔记面板 (Momo Notes) <span class="badge">v1.6</span></h2>
+
+<p>独立面板，用于在 AI 内记录项目备注——不切换应用、不离开工作区。</p>
+
+<div class="card">
+  <h4>功能一览</h4>
+  <table>
+    <tr><td>多标签</td><td>最多 10 个标签页，按项目或主题分离笔记</td></tr>
+    <tr><td>拖拽排序</td><td>拖拽标签页重新排列</td></tr>
+    <tr><td>行内重命名</td><td>点击标签名即可编辑，无弹窗</td></tr>
+    <tr><td>Markdown 表格</td><td>在编辑器中输入表格文本（如 <code>| A | B |</code>），面板自动检测并渲染为可视化表格</td></tr>
+    <tr><td>字号控制</td><td>可在 9px - 32px 之间调整字体大小</td></tr>
+  </table>
+
+  <p class="tip">笔记数据保存在浏览器存储中，重启 AI 后还在。想备份的话直接复制文本即可。</p>
+</div>
+
+<!-- ====== 技巧 ====== -->
+<h2 id="tips">使用技巧</h2>
+
+<div class="card">
+  <h3>印前标准检查流程</h3>
+  <p>每次交付文件前，建议按以下顺序执行 4 项检查（约 1 分钟完成）：</p>
+  <ol class="steps">
+    <li><b>文字溢出检查</b> — 红框处理。这是印前最常见也最严重的问题</li>
+    <li><b>尾端空白检查</b> — 橙框处理</li>
+    <li><b>文字样式检查</b> — 确认字体/字号/行距一致性</li>
+    <li><b>颜色检查</b> — 确认无色彩空间混用（RGB 混入 CMYK）</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h3>颜色库使用建议</h3>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;margin:6px 0;">
+    <li>按产品线建立分组（而非按颜色类型分类）——因为你的日常流程是「做 Meeting Pro 的物料，我需要它的标准色」，而非「我要找个蓝色」</li>
+    <li>定期导出 JSON 备份（「•••」→ 导出库）</li>
+    <li>跨设备使用：导出 → 复制 JSON → 导入</li>
+    <li>编辑 CMYK 后确认 HEX 是否正确更新（反之亦然），两者经 ICC 转换后互算</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>画板技巧</h3>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;margin:6px 0;">
+    <li>先 <b>复制画板</b> 生成变体 → 再 <b>画板更名</b> 统一命名 → 最后 <b>重新排列</b> 整理布局</li>
+    <li>范围输入支持混合语法：<code>1-5, 8, 10-12</code></li>
+    <li>复制画板后检查查找/替换是否影响非目标文字（如画板名中的公共部分）</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>颜色标記色彩规则</h3>
+  <table>
+    <tr><td>红框</td><td>严重问题 — 文字溢出（印前阻塞）</td></tr>
+    <tr><td>橙框</td><td>品控问题 — 尾端空白、文字样式不一致</td></tr>
+    <tr><td>蓝框/橙框</td><td>颜色检查标记 — 色彩空间不符</td></tr>
+  </table>
+</div>
+
+<!-- ====== 常见问题 ====== -->
+<h2 id="trouble">常见问题</h2>
+
+<div class="card">
+  <h3>面板打不开 / 白屏</h3>
+  <p>试试这些方法：</p>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;">
+    <li><b>重新打开面板</b>：菜单栏 → 窗口 → 扩展功能 → Momo Tools</li>
+    <li><b>重启 Illustrator</b></li>
+    <li><b>检查是否装对位置</b>：确认 <code>com.tomideas.illustratortools</code> 文件夹在正确的扩展目录下（见上方安装步骤）</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>颜色库数据丢了？</h3>
+  <p>颜色库有两份存档：</p>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;">
+    <li>一份在电脑文件里（<code>~/Library/Application Support/Adobe/MomoTools/</code>）</li>
+    <li>一份在面板内部存储里（文件读不到时会自动用这份）</li>
+    <li>建议定期导出备份（「•••」→ 导出库）</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>文字溢出检查结果不准确</h3>
+  <p>三种情况：</p>
+  <ul style="font-size:12px;color:var(--fg-dim);padding-left:18px;">
+    <li><b>漏掉了没标出来</b>：极少数情况三规则没覆盖到（如极窄竖排文字）。可以反馈给开发者</li>
+    <li><b>标错了（没溢出却标了）</b>：同样可以反馈案例</li>
+    <li><b>不会检查的对象</b>：点文字（直接用文字工具点一下打出来的字）不会溢出，不用检查。路径上的文字检测有局限</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h3>面板颜色不跟随 AI 切换</h3>
+  <p>面板启动时会读取 AI 的主题设置。如果切了主题面板没变：关掉面板重新打开，或重启 AI。</p>
+</div>
+
+<div class="card">
+  <h3>怎么更新版本</h3>
+  <p>把新的 <code>com.tomideas.illustratortools</code> 文件夹覆盖旧的就行。颜色库和笔记数据在另外的目录，更新不会影响它们。</p>
+  <p class="tip">当前版本：v2.99 · 发布日期：2026-06-20</p>
+</div>
+
+<hr>
+<p style="text-align:center;font-size:11px;color:var(--fg-dim);">Momo Tools v2.99 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)</p>
+
+</body>
+</html>

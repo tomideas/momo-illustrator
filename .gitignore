@@ -1,0 +1,22 @@
+# macOS
+.DS_Store
+._*
+.AppleDouble
+.LSOverride
+
+# IDE / AI
+.vscode/
+.idea/
+.claude/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node (if used in future)
+node_modules/
+package-lock.json
+
+# 本地颜色库样例（含品牌色，勿提交）
+Kandao.json
