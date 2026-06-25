@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **使用指南（site）**：安装步骤截图移除 doc-img 圆角边框，避免 iShot 透明圆角叠出白色色块
 - **使用指南（site）**：精简快速上手导语，移除重复的「安装并重启」说明
 - **使用指南（site）**：安装步骤截图更新——GitHub Releases 下载 .zxp、ZXP/UXP Installer 下载页改为你提供的 iShot 原图
 - **使用指南（site）**：主面板一览图改为你提供的 iShot 原图直传（1628×1524，未压缩）
