@@ -133,6 +133,3 @@ a:hover{text-decoration:underline}
 .doc-figure figcaption{margin-top:8px;font-size:13px;color:var(--c-text-2);text-align:center}
 
 .main-content .card h4{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--c-text)}
-.quick-scenario h3{margin-top:0}
-.scenario-link{margin-bottom:0;font-size:14px;color:var(--c-text-2)}
-.scenario-link a{font-weight:500}
