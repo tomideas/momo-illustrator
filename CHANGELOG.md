@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **使用指南（site）**：移除 ZXP 安装步骤中重复的重启 Illustrator 提示
 - **使用指南（site）**：方法二 macOS / Windows 安装步骤改为可折叠 toggle；侧栏锚点跳转时自动展开
 - **使用指南（site）**：面板布局并入「快速上手」；优化场景说明与功能跳转链接
 
