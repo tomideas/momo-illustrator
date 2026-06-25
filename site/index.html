@@ -344,8 +344,8 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </div>
 
 <div class="card">
-  <h3>颜色库 <span class="badge">核心功能</span></h3>
-  <p>Momo Tools 的特色功能——帮你管理品牌常用的标准色。</p>
+  <h3>颜色库</h3>
+  <p>在面板内管理品牌标准色，跨文件、重启 Illustrator 后仍可用。点击色块即可填到当前选中物件（群组内物件也会填）。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-library.mp4" autoplay muted loop playsinline controls preload="auto">
@@ -354,42 +354,30 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <figcaption>颜色库演示</figcaption>
   </figure>
 
-  <h4>基本操作</h4>
-  <table>
-    <tr><td>新建分组</td><td>点分组名旁的 + 按钮，输入名称（如「常用色」「包装色」），回车确认</td></tr>
-    <tr><td>新增颜色</td><td>在分组里双击空白处，输入 CMYK 或 HEX，点「确认」</td></tr>
-    <tr><td>应用颜色</td><td>点击色块 → 填到当前选中的物件（群组内物件也会填）</td></tr>
-    <tr><td>编辑颜色</td><td>鼠标悬停色块 → 点右上角 <b>✎</b> 进入编辑器；或双击色块名称区</td></tr>
-    <tr><td>删除颜色</td><td>在编辑器内点左侧红色「删除」按钮（仅编辑已有颜色时显示）</td></tr>
-    <tr><td>从文档提取</td><td>选中 AI 里的物件 → 面板「提取颜色」到当前分组</td></tr>
-  </table>
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>点分组旁的 <b>+</b> 新建分组（如「包装色」「Meeting Pro」）</li>
+    <li>录入颜色：双击空白处手动输入，或选中文档物件后点「提取」</li>
+    <li>在 AI 中选中要填色的物件，点击色块应用</li>
+  </ol>
 
-  <h4>分组与排序</h4>
+  <h4>面板功能</h4>
   <table>
+    <tr><td>编辑 / 删除</td><td>悬停色块 → <b>✎</b> 进入编辑器；删除在编辑器内红色按钮</td></tr>
     <tr><td>拖拽排序</td><td>拖拽色块调整顺序</td></tr>
-    <tr><td>分组排序</td><td>点分组名右边的「•••」→ 按名称升序或降序</td></tr>
-    <tr><td>直接改名</td><td>点击分组名即可编辑</td></tr>
+    <tr><td>分组管理</td><td>点击分组名可改名；「•••」可按名称升序 / 降序排列分组</td></tr>
+    <tr><td>CMYK / HEX</td><td>以 <b>CMYK 为准</b>，两边互算同步。只改 HEX 未同步 CMYK 可能导致重启后颜色变白</td></tr>
   </table>
 
-  <h4>备份与恢复</h4>
+  <h4>备份与导入</h4>
   <table>
-    <tr><td>导出全部</td><td>「•••」→ 导出库 → 保存 JSON（含所有分组）</td></tr>
-    <tr><td>导出当前分组</td><td>「•••」→ 导出当前分组</td></tr>
-    <tr><td>导入覆盖</td><td>「•••」→ 导入库 → 替换整个颜色库</td></tr>
-    <tr><td>导入追加</td><td>「•••」→ 导入到当前分组 → 仅追加到当前分组</td></tr>
+    <tr><td>导出库</td><td>「•••」→ 导出全部 JSON，含所有分组</td></tr>
+    <tr><td>导出当前分组</td><td>「•••」→ 仅导出当前分组，便于分享给团队</td></tr>
+    <tr><td>导入库</td><td>「•••」→ 覆盖整个颜色库</td></tr>
+    <tr><td>导入到当前分组</td><td>「•••」→ 仅追加到当前分组</td></tr>
   </table>
 
-  <h4>数据保存位置</h4>
-  <table>
-    <tr><td>主存档</td><td><b>macOS</b>：<code>~/Library/Application Support/MomoTools/color_library.json</code><br><b>Windows</b>：<code>%APPDATA%\MomoTools\color_library.json</code></td></tr>
-    <tr><td>备用</td><td>面板 <code>localStorage</code>（文件写入失败时自动使用）</td></tr>
-    <tr><td>自动保存</td><td>编辑后约 200ms 防抖写入；关闭面板或退出 AI 时立即落盘</td></tr>
-  </table>
-
-  <p class="callout tip">颜色库以 <b>CMYK 为准</b>：载入时会用 CMYK 重算 HEX。输入 HEX 时另一边 CMYK 会同步更新，避免重启后颜色变白。</p>
-
-  <h4>CMYK 与 HEX 换算</h4>
-  <p>使用 Illustrator 内建色彩引擎互算（非简单公式）。编辑 CMYK 时 HEX 自动更新；输入完整 6 位 HEX 时 CMYK 也会同步。</p>
+  <p class="callout tip">数据保存在 <code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）；文件写入失败时会暂存面板 localStorage。建议定期导出 JSON 备份。</p>
 </div>
 
 <!-- ====== 文字工具 ====== -->
