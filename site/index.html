@@ -281,6 +281,14 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <figcaption>重新排列演示</figcaption>
   </figure>
 
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>在对话框列表中勾选要排列的画板（或输入范围如 <code>1-10</code>）</li>
+    <li>设置每行个数与左右 / 上下间距</li>
+    <li>选择放置位置后点「确定」</li>
+  </ol>
+
+  <h4>参数说明</h4>
   <table>
     <tr><td>每行个数</td><td>逗号分隔，如 <code>3,3,2</code> = 第一行 3 个、第二行 3 个、第三行 2 个。也可填单个数字表示每行固定数量</td></tr>
     <tr><td>左右/上下间距</td><td>画板之间的净距，单位跟随当前文档</td></tr>
@@ -299,6 +307,14 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <figcaption>画板更名演示</figcaption>
   </figure>
 
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>点击「画板更名」按钮</li>
+    <li>在列表中多选画板，或输入范围（如 <code>1-5, 8</code>）</li>
+    <li>选择命名模式（模板 / 替换 / 逐行 / 后缀），填写参数后点「确定」</li>
+  </ol>
+
+  <h4>参数说明</h4>
   <table>
     <tr><td><b>模板</b></td><td>用 <code>{n}</code> 表示序号、<code>{name}</code> 表示原名。例：<code>页_{n}</code> → 页_01, 页_02… 可设起始值和步长</td></tr>
     <tr><td><b>替换</b></td><td>查找原名中的文字 → 替换为新文字。支持正则表达式</td></tr>
@@ -420,13 +436,21 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
   <p>扫描文字框的字体、字号、行距一致性，标注异常。适合在排版完成后做风格一致性把关。</p>
 
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>点击「样式检查」按钮</li>
+    <li>选择<b>检查模式</b>或<b>库存模式</b>，勾选要检查的维度（字体 / 字号 / 行距）</li>
+    <li>选定画板范围，设置字号容差后运行</li>
+    <li>检查模式：异常文本框以<b>橙框</b>标出；可勾选「生成说明」在画板外输出图例</li>
+  </ol>
+
   <h4>两种模式</h4>
   <table>
     <tr><td><b>检查模式</b></td><td>找出字体/字号/行距与「主流值」不一致的文本框 → <b>橙框</b>标记</td></tr>
     <tr><td><b>库存模式</b></td><td>列出每个画板使用的所有字体/字号/行距组合（不标记），便于了解整份文件的文字使用情况</td></tr>
   </table>
 
-  <h4>参数</h4>
+  <h4>参数说明</h4>
   <table>
     <tr><td>检查画板</td><td>列表多选（Shift/Ctrl）或输入范围（<code>1-5, 8</code>）</td></tr>
     <tr><td>字号容差</td><td>容忍 ±x pt 的字号偏差（如设为 0.5pt，则 11.8pt 和 12pt 视为一致）</td></tr>
@@ -438,19 +462,19 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h3>文字溢出检查 <span class="badge">v5.9.3</span></h3>
   <p>检测区域文字（Area Text）是否有内容超出文本框——即 AI 右下角的红色「＋」号。这是印前最常见的排版事故。</p>
 
-  <h4>三条检测规则（按序执行，命中即停）</h4>
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>在对话框中选择要检查的画板（勾选列表或输入 <code>1-5, 8</code>）</li>
+    <li>点击「溢出检查」运行</li>
+    <li>有溢出的文本框会被<b>红框</b>标记，按标记位置逐一修正</li>
+  </ol>
+
+  <h4>检测规则</h4>
   <table>
     <tr><td><span class="rule-tag">M4a</span> 字符溢出</td><td>文本内容的字符数超过了总行数所能容纳的量（垂直溢出）。适用于多行区域文字。</td></tr>
     <tr><td><span class="rule-tag">M8</span> 水平溢出</td><td>将文本框转为点文字后内容变短了（水平溢出）。适用于单行/窄框文字。</td></tr>
     <tr><td><span class="rule-tag">M12</span> 段高溢出</td><td>段落的总高度（段落数 × 行距）超出了文本框高度（尾端空段溢出）。</td></tr>
   </table>
-
-  <h4>操作步骤</h4>
-  <ol class="steps">
-    <li>在 AI 中选择需要检查的画板范围（可在面板中勾选或输入 <code>1-5, 8</code>）</li>
-    <li>点击「文字溢出检查」</li>
-    <li>有溢出的文本框会被<b>红框</b>标记</li>
-  </ol>
 
   <p class="callout warning">仅检查区域文字（Area Text）。点文字不会溢出，不检查。尾端仅 Enter/空格导致的红色「+」目前<b>不支持</b>可靠检测。</p>
 </div>
@@ -458,6 +482,13 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 <div class="card">
   <h3>尾端空白检查 <span class="badge">v1.0.1</span></h3>
   <p>检测区域文字末尾的多余空格、制表符（Tab）、空段落。这些内容肉眼不可见，但在排版中会导致对齐异常或导出问题。</p>
+
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>选择要检查的画板范围</li>
+    <li>点击「尾端空白」运行</li>
+    <li>有问题处以<b>橙框</b>标出，按标记位置清理</li>
+  </ol>
 
   <h4>检查内容</h4>
   <table>
@@ -475,6 +506,15 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 <div class="card">
   <h3>网格系统 <span class="badge">v1.3.1</span></h3>
   <p>一键在画板上绘制设计网格参考线。原创作者：火山字型 canfei (hstype.com)。</p>
+
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>点击「网格系统」按钮打开对话框</li>
+    <li>选择网格类型和参数</li>
+    <li>点「预览」查看效果（生成到 <code>_网格预览</code> 图层）</li>
+    <li>满意后点「应用」，或点「转为参考线」转为 AI 原生参考线</li>
+    <li>不满意点「取消」——预览会自动清除</li>
+  </ol>
 
   <h4>网格类型</h4>
   <table>
@@ -494,15 +534,6 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <tr><td>间距开关</td><td>列数、行数、等分网格各有一个独立的「间距」复选框。取消勾选则对应间距强制为 0（无间距排列）。三个复选框独立，样式一致</td></tr>
   </table>
 
-  <h4>操作流程</h4>
-  <ol class="steps">
-    <li>点击「网格系统」按钮打开对话框</li>
-    <li>选择网格类型和参数</li>
-    <li>点「预览」查看效果（生成到 <code>_网格预览</code> 图层）</li>
-    <li>满意后点「应用」，或点「转为参考线」一键转为 AI 原生参考线</li>
-    <li>不满意点「取消」——预览会自动清除</li>
-  </ol>
-
   <p class="callout tip">预览不会覆盖你已有的设计内容。如果已有同名图层，会先清空再重建。</p>
 </div>
 
@@ -510,6 +541,14 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h3>批量页码</h3>
   <p>自动在多个画板上添加页码。适合多页画册、提案文件、产品型录。</p>
 
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>点击「页码」按钮</li>
+    <li>选择要编号的画板</li>
+    <li>设置位置（9 宫格）、起始页码与格式后确认</li>
+  </ol>
+
+  <h4>参数说明</h4>
   <table>
     <tr><td>页码位置</td><td>9 个方位，对应数字键盘 1-9（底部左/中/右、中部左/中/右、顶部左/中/右）</td></tr>
     <tr><td>起始页码</td><td>从第几页开始编号（默认 1）</td></tr>
@@ -530,6 +569,13 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </figure>
 
 <div class="card">
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>主面板点「笔记」，或菜单 <code>窗口 → 扩展功能 → Momo Notes</code></li>
+    <li>点 <b>+</b> 新建标签页，点击标签名可重命名</li>
+    <li>在编辑区输入备注；底部可调整字号、清除或重载</li>
+  </ol>
+
   <h4>功能一览</h4>
   <table>
     <tr><td>多标签</td><td>最多 10 个标签页，按项目或主题分离笔记</td></tr>
