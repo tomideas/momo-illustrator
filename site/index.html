@@ -314,8 +314,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 
 <div class="card">
   <h3>颜色标签生成</h3>
-  <p>从选中对象提取填色值，在画板上方自动生成带色值的 CMYK 标签色块。常用于：产品包装的颜色标注、给印刷厂的色值指示图。</p>
-  <p>可设置：色块尺寸、字体大小、排列方向（横/竖）、位置偏移。</p>
+  <p>从选中物件提取填色，自动生成带色值说明的色块标签。支持多选、同色去重，常用于包装稿颜色标注或给印刷厂的色值指示图。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-label.mp4" autoplay muted loop playsinline controls preload="auto">
@@ -323,6 +322,25 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     </video>
     <figcaption>颜色标签生成演示</figcaption>
   </figure>
+
+  <h4>操作步骤</h4>
+  <ol class="steps">
+    <li>在 AI 中选中一个或多个物件（群组会递归提取内部填色）</li>
+    <li>点击「颜色标签」按钮</li>
+    <li>确认检测到的颜色列表，设置尺寸与位置后点「生成」</li>
+  </ol>
+
+  <h4>参数说明</h4>
+  <table>
+    <tr><td>色块尺寸</td><td>宽 / 高（pt），默认 20×20</td></tr>
+    <tr><td>字体大小</td><td>色值文字字号（pt）</td></tr>
+    <tr><td>文字颜色</td><td>黑色 K100 / 白色 K0</td></tr>
+    <tr><td>排列方向</td><td>横排 → 或纵排 ↓（文字在色块上方或右侧）</td></tr>
+    <tr><td>色块位置</td><td>画板右 / 下 / 左 / 外侧，或各物件右侧</td></tr>
+    <tr><td>间距</td><td>色块之间及距画板的净距（pt）</td></tr>
+  </table>
+
+  <p class="callout tip">标签写入图层「颜色标签」；CMYK 文件显示 CMYK 值，RGB / 专色 / 灰色也会按类型标注。再次生成会接续排在同侧已有标签之后。</p>
 </div>
 
 <div class="card">
