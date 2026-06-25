@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **使用指南（site）**：移除安装页独立的「下载安装包」区块；下载链接并入各方法步骤
 - **使用指南（site）**：ZXP 安装「菜单打开 Momo Tools」步骤下新增演示视频
 - **使用指南（site）**：移除 ZXP 安装步骤中重复的重启 Illustrator 提示
 - **使用指南（site）**：方法二 macOS / Windows 安装步骤改为可折叠 toggle；侧栏锚点跳转时自动展开
