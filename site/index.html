@@ -390,7 +390,25 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 <!-- ====== 文字工具 ====== -->
 <h2 id="text">文字工具</h2>
 
-<p class="callout tip">三个文字工具建议按顺序使用：<b>溢出检查 → 尾端空白检查 → 样式检查</b>。这是印前检查的标准流程。</p>
+<p class="callout tip">三个文字工具建议按顺序使用：<b>样式检查 → 溢出检查 → 尾端空白检查</b>。</p>
+
+<div class="card">
+  <h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
+  <p>扫描文字框的字体、字号、行距一致性，标注异常。适合在排版完成后做风格一致性把关。</p>
+
+  <h4>两种模式</h4>
+  <table>
+    <tr><td><b>检查模式</b></td><td>找出字体/字号/行距与「主流值」不一致的文本框 → <b>橙框</b>标记</td></tr>
+    <tr><td><b>库存模式</b></td><td>列出每个画板使用的所有字体/字号/行距组合（不标记），便于了解整份文件的文字使用情况</td></tr>
+  </table>
+
+  <h4>参数</h4>
+  <table>
+    <tr><td>检查画板</td><td>列表多选（Shift/Ctrl）或输入范围（<code>1-5, 8</code>）</td></tr>
+    <tr><td>字号容差</td><td>容忍 ±x pt 的字号偏差（如设为 0.5pt，则 11.8pt 和 12pt 视为一致）</td></tr>
+    <tr><td>检查维度</td><td>字体 / 字号 / 行距，可独立开关</td></tr>
+  </table>
+</div>
 
 <div class="card">
   <h3>文字溢出检查 <span class="badge">v5.9.3</span></h3>
@@ -425,24 +443,6 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   </table>
 
   <p>问题已被标出来（橙框），你一眼就能看到。AI 在段落末尾会自动加一个看不见的段落标记，Momo Tools 不会把这个误判成「空段落」。</p>
-</div>
-
-<div class="card">
-  <h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
-  <p>扫描文字框的字体、字号、行距一致性，标注异常。适合在排版完成后做风格一致性把关。</p>
-
-  <h4>两种模式</h4>
-  <table>
-    <tr><td><b>检查模式</b></td><td>找出字体/字号/行距与「主流值」不一致的文本框 → <b>橙框</b>标记</td></tr>
-    <tr><td><b>库存模式</b></td><td>列出每个画板使用的所有字体/字号/行距组合（不标记），便于了解整份文件的文字使用情况</td></tr>
-  </table>
-
-  <h4>参数</h4>
-  <table>
-    <tr><td>检查画板</td><td>列表多选（Shift/Ctrl）或输入范围（<code>1-5, 8</code>）</td></tr>
-    <tr><td>字号容差</td><td>容忍 ±x pt 的字号偏差（如设为 0.5pt，则 11.8pt 和 12pt 视为一致）</td></tr>
-    <tr><td>检查维度</td><td>字体 / 字号 / 行距，可独立开关</td></tr>
-  </table>
 </div>
 
 <!-- ====== 工具集 ====== -->
