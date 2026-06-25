@@ -1,143 +1,138 @@
-# Momo Tools — Adobe Illustrator 扩展
+# 🎨 Momo Tools — Adobe Illustrator Extension
 
-面向使用者的安装与说明仓库。
+[简体中文](README.zh-CN.md) | English
+
+🎨 **Hey — meet Momo Tools**, a friendly Illustrator side panel built by a designer who'd rather click one button than fight native menus all day ✨. **Duplicate artboards with content** 📐, **relayout & batch-rename** boards, **audit colors** 🎨, **manage brand swatches** (CMYK / JSON), **check text styles / overflow / trailing spaces** ✍️, **drop in grids & page numbers** 📏, and jot notes in **Momo Notes** 📝 — all from one cozy panel that follows Illustrator's light / dark theme 🌗. No shortcuts to memorize; click and go.
+
+![Momo Tools panel preview](site/momo-tools-preview.png)
 
 | | |
 |---|---|
-| **安装包** | [Releases](https://github.com/tomideas/momo-illustrator/releases) 下载 `momo-tools-*-cep.zip` |
-| **使用指南** | https://tomideas.github.io/momo-illustrator/ |
-| **版本** | v2.125 · Illustrator 17.0 – 99.9 |
+| **Download** | [Releases](https://github.com/tomideas/momo-illustrator/releases) — `momo-tools-*.zxp` or `momo-tools-*-cep.zip` |
+| **User guide** | [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/) |
+| **Version** | v2.125 · Illustrator 17.0 – 99.9 |
 
----
+## ✨ Features
 
-## 功能概览
+- 📐 **Artboards** — duplicate with content (unlike AI native copy), relayout grid, batch rename
+- 🏷️ **Color labels** — extract fills from selection, auto-generate swatch callouts
+- 🔍 **Color check** — count colors, colored index labels, flag rare colors, legend on artboard
+- 🎨 **Color library** — brand palettes, CMYK-first, JSON import/export, survives restarts
+- ✍️ **Text style check** — group by size / font / color, flag rare styles & mixed runs
+- 📦 **Overflow check** — catch overset area text before print
+- 🧹 **Trailing whitespace** — find & clean hidden spaces at line ends
+- 📏 **Grid system** — Swiss / equal grids (© canfei / 火山字型)
+- 🔢 **Page numbers** — batch numbering across artboards
+- 📝 **Momo Notes** — multi-tab scratchpad sidebar (Markdown tables, Cmd+Z undo)
 
-| 分组 | 功能 |
-|------|------|
-| 画板 | 复制 / 重新排列 / 更名 |
-| 颜色 | 颜色标签、颜色检查、颜色库（CMYK / JSON 导入导出） |
-| 文字 | 样式检查、溢出检查、尾端空白检查 |
-| 工具 | 网格系统、批量页码、Momo 笔记 |
+## 📦 Installation
 
-详细操作见 [在线使用指南](https://tomideas.github.io/momo-illustrator/)。
+Pick **one** method below. After install, **fully quit and restart** Illustrator.
 
----
+### Method A — ZXP (recommended)
 
-## 安装
+1. 📥 Download the latest `momo-tools-x.xx.zxp` from [Releases](https://github.com/tomideas/momo-illustrator/releases)
+2. 📥 Install [ZXP/UXP Installer](https://aescripts.com/learn/post/zxp-installer) (macOS or Windows)
+3. 📂 Drag the `.zxp` into the installer window
+4. 🔄 Restart Illustrator
+5. 🎨 **macOS**: `Window` → `Extensions` → `Momo Tools` · **Windows**: `Window` → `Extensions` → `Momo Tools`
 
-### 1. 下载
+> Step-by-step screenshots & video: [User guide → Install](https://tomideas.github.io/momo-illustrator/#install)
 
-打开 [Releases](https://github.com/tomideas/momo-illustrator/releases)，下载最新 **`momo-tools-x.xx.zxp`**（ZXP 安装）或 **`momo-tools-x.xx-cep.zip`**（手动安装），二选一即可。
+### Method B — Manual (CEP folder)
 
-### 2. 复制到 CEP 扩展目录
+1. 📥 Download `momo-tools-x.xx-cep.zip` from [Releases](https://github.com/tomideas/momo-illustrator/releases) and unzip `com.tomideas.illustratortools`
+2. 📁 Copy the folder into the CEP extensions directory (name must stay `com.tomideas.illustratortools`):
 
-| 系统 | 最终路径（文件夹名须为 `com.tomideas.illustratortools`） |
-|------|------|
+| OS | Path |
+|----|------|
 | **macOS** | `~/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools/` |
 | **Windows** | `%APPDATA%\Adobe\CEP\extensions\com.tomideas.illustratortools\` |
 
-**若目录不存在，需自行逐级创建**（首次安装 CEP 扩展时很常见；Adobe 不会自动建好 `CEP/extensions`）：
-
-| 系统 | 需要存在的父级目录 |
-|------|-------------------|
-| **macOS** | `~/Library/Application Support/Adobe/CEP/extensions/` |
-| **Windows** | `%APPDATA%\Adobe\CEP\extensions\` |
-
-**macOS** — 终端一键创建并打开：
+**Create the folder if missing** (common on first CEP install):
 
 ```bash
+# macOS
 mkdir -p ~/Library/Application\ Support/Adobe/CEP/extensions
 open ~/Library/Application\ Support/Adobe/CEP/extensions
 ```
 
-然后将解压得到的 **`com.tomideas.illustratortools`** 整个文件夹拖入 `extensions` 内（不要只复制里面的文件）。
-
-**Windows** — 在资源管理器地址栏依次操作：
-
-1. 输入 `%APPDATA%` 回车，进入 `Roaming` 文件夹  
-2. 若没有 `Adobe` 文件夹则新建  
-3. 在 `Adobe` 下新建 `CEP`，再在 `CEP` 下新建 `extensions`  
-4. 将 **`com.tomideas.illustratortools`** 文件夹放入 `extensions`
-
-或在「命令提示符」执行：
-
 ```cmd
+REM Windows
 mkdir "%APPDATA%\Adobe\CEP\extensions"
 explorer "%APPDATA%\Adobe\CEP\extensions"
 ```
 
-**快捷打开**（目录已存在时）：  
-**macOS**：`open ~/Library/Application\ Support/Adobe/CEP/extensions/`  
-**Windows**：资源管理器输入 `%APPDATA%\Adobe\CEP\extensions`
-
-### 3. 启用未签名扩展（首次必做）
-
-**macOS**（Illustrator 完全退出后执行）：
+3. 🔓 **Enable unsigned extensions** (first time only — quit Illustrator first):
 
 ```bash
+# macOS
 defaults write com.adobe.CSXS.11 PlayerDebugMode 1
 defaults write com.adobe.CSXS.12 PlayerDebugMode 1
 ```
 
-**Windows**（命令提示符）：
-
 ```cmd
+REM Windows
 reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_STRING /d 1 /f
 reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f
 ```
 
-### 4. 打开面板
+4. 🔄 Restart Illustrator → open **Momo Tools** from the Extensions menu
 
-1. 完全退出并重启 Illustrator  
-2. **macOS**：`窗口` → `扩展功能` → `Momo Tools`  
-3. **Windows**：`Window` → `Extensions` → `Momo Tools`
+### Uninstall
 
-### 卸载
+Delete `com.tomideas.illustratortools` from the CEP extensions folder and restart Illustrator. Color library & notes data are stored separately and won't be removed.
 
-删除 CEP 目录下的 `com.tomideas.illustratortools` 文件夹，重启 Illustrator。
+## 📖 Documentation
 
----
+Full user guide (HTML, GitHub Pages):
 
-## 仓库内容说明
+👉 [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/)
 
-本 GitHub 仓库**仅发布使用者需要的内容**：
+Source files live in [`site/`](site/). Changelog: [`CHANGELOG.md`](CHANGELOG.md).
+
+## 🗂️ Project Structure
 
 ```
 momo-illustrator/
-├── README.md              ← 本文件（安装）
-├── CHANGELOG.md           ← 版本记录
-├── site/                  ← 使用指南（GitHub Pages）
-├── extension/             ← 扩展源码（用于打 Release zip）
-└── scripts/               ← 维护者打安装包脚本
+├── README.md              # 📄 This file (English)
+├── README.zh-CN.md        # 📄 简体中文
+├── CHANGELOG.md           # 📋 Version history
+├── site/                  # 📖 User guide (GitHub Pages)
+│   ├── index.html
+│   └── assets/            # Images & demo videos
+├── extension/             # 🧩 CEP extension source
+│   └── com.tomideas.illustratortools/
+│       ├── CSXS/manifest.xml
+│       ├── js/              # Panel logic
+│       └── jsx/scripts/     # Illustrator scripts
+└── scripts/               # 🔧 Release packaging
 ```
 
-以下内容**仅保留在本地工作区**，不会上传：`@Reference/`、内部开发笔记、`instructions.md`、诊断探针脚本等。
+Local-only dev files (`@Reference/`, internal notes, probe scripts) are **not** published to this repo.
+
+## 💾 Color library data
+
+Saved on your machine:
+
+- **macOS**: `~/Library/Application Support/MomoTools/color_library.json`
+- **Windows**: `%APPDATA%\MomoTools\`
+- Fallback: panel `localStorage`
+
+Use the panel **•••** menu to import / export JSON backups.
+
+## ❓ FAQ
+
+**Can't find Momo Tools in the menu?**  
+→ Enable PlayerDebugMode, confirm folder name `com.tomideas.illustratortools`, fully restart AI.
+
+**Colors turn white after restart?**  
+→ Keep CMYK and HEX in sync when editing swatches; export JSON backups regularly.
+
+**More help**  
+→ [User guide](https://tomideas.github.io/momo-illustrator/) · [FAQ](https://tomideas.github.io/momo-illustrator/#trouble)
 
 ---
 
-## 颜色库数据
-
-颜色库保存在本机：
-
-`~/Library/Application Support/MomoTools/color_library.json`（macOS）  
-或 CEP 面板 `localStorage` 备用。
-
-可通过面板「•••」菜单导入 / 导出 JSON 备份。
-
----
-
-## 常见问题
-
-**菜单里找不到 Momo Tools**  
-→ 确认已开启 PlayerDebugMode，且文件夹名称为 `com.tomideas.illustratortools`。
-
-**颜色重启后消失**  
-→ 检查对上述目录是否有写权限；面板会自动回退到 localStorage。
-
-**更多说明**  
-→ [使用指南](https://tomideas.github.io/momo-illustrator/)
-
----
-
-- **开发者**: Momo (tomideas)  
-- **许可**: 见仓库发布说明
+- **Developer**: Momo (tomideas)
+- **License**: See release notes

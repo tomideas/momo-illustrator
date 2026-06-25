@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### 文档
+- **README**：双语结构（`README.md` English · `README.zh-CN.md` 简体中文），架构对齐 momo-assist；新增面板预览图
+
 ## [2.125] — 2026-06-26
 
 ### 文档
