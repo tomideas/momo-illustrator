@@ -127,10 +127,11 @@ a:hover{text-decoration:underline}
 .doc-toggle.win{border-color:rgba(0,120,215,.25)}
 .doc-toggle.win[open] summary{border-bottom:2px solid rgba(0,120,215,.3)}
 .doc-figure{margin:16px 0 20px}
-.doc-img,.doc-video{display:block;width:66.666%;max-width:66.666%;margin-left:auto;margin-right:auto;border:1px solid var(--c-border);border-radius:8px;box-shadow:0 2px 12px rgba(55,53,47,.08)}
+.doc-img,.doc-video{display:block;width:66.666%;max-width:66.666%;margin-left:auto;margin-right:auto}
+.doc-img{border:1px solid var(--c-border);border-radius:8px;box-shadow:0 2px 12px rgba(55,53,47,.08)}
 .doc-img-native{border:none;border-radius:0;box-shadow:none}
-.doc-img{height:auto}
-.doc-video{background:#000}
+.doc-img,.doc-video{height:auto}
+.doc-video{border:none;border-radius:0;box-shadow:none;background:transparent}
 .doc-figure figcaption{margin-top:8px;font-size:13px;color:var(--c-text-2);text-align:center}
 
 .main-content .card h4{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--c-text)}
