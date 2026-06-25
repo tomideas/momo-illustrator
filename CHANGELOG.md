@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **使用指南（site）**：还原快速上手主面板图（仅 README 使用新截图，未改 site 不应动的图）
 - **README / 使用指南**：主面板图 URL 加版本参数，绕过 GitHub / Pages 图片缓存
 - **README / 使用指南**：主面板一览图更新为 iShot 2026-06-26 01.55 原图直传（3226×1900）
 - **README / 使用指南**：主面板图改回 iShot 原图直传（2884×1620 RGBA），撤销一切裁切与 flood-fill
