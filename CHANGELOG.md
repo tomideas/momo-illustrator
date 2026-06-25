@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### 文档
-- **使用指南（site）**：Releases 下载 zxp 截图置于 ZXP 步骤 1 下方
+- **使用指南（site）**：ZXP Installer 下载页截图；精简 Installer 步骤文案
 
 ## [2.108] — 2026-06-23
 
