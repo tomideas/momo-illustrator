@@ -35,7 +35,7 @@
   <a href="#install-mac">　　　· macOS</a>
   <a href="#install-win">　　　· Windows</a>
   <a href="#quick">快速上手</a>
-  <a href="#quick-panel">　└ 面板布局</a>
+  <a href="#quick-panel">　└ 主面板一览</a>
   <div class="group-title">功能</div>
   <a href="#artboard">画板工具</a>
   <a href="#color">颜色工具</a>
@@ -54,16 +54,8 @@
 
 <div class="callout info">
   <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出和颜色错误、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
-  <p>没有弹窗、不用记快捷键、打开面板就能用。以下逐个介绍每个按钮的用途与操作。</p>
+  <p>没有弹窗、不用记快捷键。安装完成后见下方<b>快速上手</b>，再按功能分组了解每个按钮。</p>
 </div>
-
-<table>
-  <tr><th>分组</th><th>功能</th></tr>
-  <tr><td>画板</td><td>复制 / 重新排列 / 更名</td></tr>
-  <tr><td>颜色</td><td>颜色标签、颜色检查、颜色库（CMYK / JSON 导入导出）</td></tr>
-  <tr><td>文字</td><td>样式检查、溢出检查、尾端空白检查</td></tr>
-  <tr><td>工具</td><td>网格系统、批量页码、Momo 笔记</td></tr>
-</table>
 
 <!-- ====== 安装 ====== -->
 <h2 id="install">安装与启动</h2>
@@ -233,23 +225,22 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 
 <!-- ====== 快速上手 ====== -->
 <h2 id="quick">快速上手</h2>
-<p class="page-desc">安装并打开面板后，先看懂界面，下方按功能分组介绍每个按钮。点按钮即执行，结果以屏幕下方短暂提示反馈（约 1.8 秒），无弹窗打扰。</p>
+<p class="page-desc">安装并重启 Illustrator 后，从菜单打开 <b>Momo Tools</b> 即可开始。日常主要用右侧主面板；需要记笔记时点「笔记」或单独打开 <b>Momo Notes</b>。</p>
 
 <div class="card" id="quick-panel">
-  <h3>面板布局</h3>
-  <p>Momo Tools 主面板自上而下分为 <b>4 组</b>，每组对应一类工作流。底部显示版本号；主题自动跟随 Illustrator（深 / 浅），无需手动切换。</p>
   <figure class="doc-figure">
     <img class="doc-img" src="assets/images/panel-layout.png" alt="Momo Tools 主面板与 Momo Notes 笔记面板">
-    <figcaption>Momo Tools 主面板（右）与 Momo Notes 笔记面板（左）</figcaption>
+    <figcaption>左：Momo Notes · 右：Momo Tools 主面板（底部显示版本号）</figcaption>
   </figure>
+  <p>主面板自上而下四组按钮，<b>点即执行</b>，结果在 Illustrator 窗口底部短暂提示。主题跟随 AI 深浅色，无需设置。</p>
   <table>
-    <tr><th>分组</th><th>按钮</th><th>说明</th></tr>
-    <tr><td><b>画板</b></td><td>复制画板 · 重新排列 · 画板更名</td><td>批量处理画板结构与命名 → <a href="#artboard">画板工具</a></td></tr>
-    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库</td><td>标注色值、查色彩空间、管理品牌色 → <a href="#color">颜色工具</a></td></tr>
-    <tr><td><b>文字</b></td><td>样式检查 · 溢出检查 · 尾端空白</td><td>印前品控三连 → <a href="#text">文字工具</a></td></tr>
-    <tr><td><b>工具</b></td><td>网格系统 · 批量页码 · Momo 笔记</td><td>排版辅助与备注 → <a href="#tools">工具集</a>、<a href="#notes">笔记</a></td></tr>
+    <tr><th>分组</th><th>按钮</th><th>详情</th></tr>
+    <tr><td><b>画板</b></td><td>复制 · 重新排列 · 更名</td><td><a href="#artboard">画板工具</a></td></tr>
+    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库</td><td><a href="#color">颜色工具</a></td></tr>
+    <tr><td><b>文字</b></td><td>样式检查 · 溢出检查 · 尾端空白</td><td><a href="#text">文字工具</a></td></tr>
+    <tr><td><b>工具</b></td><td>网格系统 · 批量页码 · 笔记</td><td><a href="#tools">工具集</a> · <a href="#notes">笔记面板</a></td></tr>
   </table>
-  <p class="callout tip">无选中画板时，部分画板类按钮会自动置灰，避免误操作。</p>
+  <p class="callout tip">未选中画板时，画板类按钮会自动置灰。</p>
 </div>
 
 <!-- ====== 画板工具 ====== -->
