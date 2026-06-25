@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md) | English
 
-![Momo Tools main panel overview — Momo Tools & Momo Notes](site/momo-tools-preview.png)
+![Momo Tools main panel overview — Momo Tools & Momo Notes](site/momo-tools-preview.png?v=20260626-0155)
 
 🎨 **Hey — meet Momo Tools**, a friendly Illustrator side panel built by a designer who'd rather click one button than fight native menus all day ✨. **Duplicate artboards with content** 📐, **relayout & batch-rename** boards, **audit colors** 🎨, **manage brand swatches** (CMYK / JSON), **check text styles / overflow / trailing spaces** ✍️, **drop in grids & page numbers** 📏, and jot notes in **Momo Notes** 📝 — all from one cozy panel that follows Illustrator's light / dark theme 🌗. No shortcuts to memorize; click and go.
 
