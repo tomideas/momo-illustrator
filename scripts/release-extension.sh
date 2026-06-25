@@ -28,27 +28,37 @@ fi
 
 TAG="v${VERSION}"
 ZIP_NAME="momo-tools-${VERSION}-cep.zip"
+ZXP_NAME="momo-tools-${VERSION}.zxp"
 ZIP="/tmp/${ZIP_NAME}"
+ZXP="/tmp/${ZXP_NAME}"
 
 echo "Version: $VERSION"
 echo "Package: $ZIP"
+echo "         $ZXP"
 
-rm -f "$ZIP"
-(
-  cd "$REPO_ROOT/extension"
-  zip -r "$ZIP" com.tomideas.illustratortools \
-    -x "*.DS_Store" \
-    -x "*/.DS_Store" \
-    -x "*/._*" \
-    -x "com.tomideas.illustratortools/.debug" \
-    -x "com.tomideas.illustratortools/.debug/*" \
-    -x "com.tomideas.illustratortools/PROJECT_INFO.md" \
-    -x "com.tomideas.illustratortools/jsx/scripts/research_*.jsx" \
-    -x "com.tomideas.illustratortools/jsx/scripts/debug_*.jsx" \
-    -x "com.tomideas.illustratortools/jsx/scripts/diagnose_*.jsx"
-)
+pack_extension() {
+  local out="$1"
+  rm -f "$out"
+  (
+    cd "$REPO_ROOT/extension"
+    zip -r "$out" com.tomideas.illustratortools \
+      -x "*.DS_Store" \
+      -x "*/.DS_Store" \
+      -x "*/._*" \
+      -x "com.tomideas.illustratortools/.debug" \
+      -x "com.tomideas.illustratortools/.debug/*" \
+      -x "com.tomideas.illustratortools/PROJECT_INFO.md" \
+      -x "com.tomideas.illustratortools/jsx/scripts/research_*.jsx" \
+      -x "com.tomideas.illustratortools/jsx/scripts/debug_*.jsx" \
+      -x "com.tomideas.illustratortools/jsx/scripts/diagnose_*.jsx"
+  )
+}
+
+pack_extension "$ZIP"
+pack_extension "$ZXP"
 
 echo "Created: $ZIP ($(du -h "$ZIP" | awk '{print $1}')"
+echo "Created: $ZXP ($(du -h "$ZXP" | awk '{print $1}')"
 
 if $ZIP_ONLY; then
   exit 0
@@ -60,7 +70,10 @@ if ! command -v gh >/dev/null 2>&1; then
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-  export GH_TOKEN="$(printf 'protocol=https\nhost=github.com\n\n' | git credential fill | sed -n 's/^password=//p')"
+  export GH_TOKEN="$(security find-internet-password -s github.com -a designkidd -w 2>/dev/null || true)"
+  if [[ -z "${GH_TOKEN:-}" ]]; then
+    export GH_TOKEN="$(printf 'protocol=https\nhost=github.com\n\n' | git credential fill 2>/dev/null | sed -n 's/^password=//p')"
+  fi
 fi
 
 NOTES="$(mktemp)"
@@ -82,8 +95,8 @@ if [[ ! -s "$NOTES" ]]; then
 Momo Tools CEP extension for Adobe Illustrator.
 
 ### 安装
-1. 下载 \`${ZIP_NAME}\` 并解压，得到 \`com.tomideas.illustratortools\` 文件夹
-2. 复制到 CEP 扩展目录（见 README）
+1. **ZXP（推荐）**：下载 \`${ZXP_NAME}\`，用 ZXP/UXP Installer 拖入安装
+2. **ZIP**：下载 \`${ZIP_NAME}\`，解压后将 \`com.tomideas.illustratortools\` 放入 CEP/extensions/
 3. 开启 PlayerDebugMode 后重启 Illustrator
 EOF
 fi
@@ -91,15 +104,16 @@ fi
 cat >> "$NOTES" <<EOF
 
 ### 附件
-- \`${ZIP_NAME}\` — 解压后将 \`com.tomideas.illustratortools\` 放入 CEP/extensions/
+- \`${ZXP_NAME}\` — ZXP Installer 拖入安装（方法一）
+- \`${ZIP_NAME}\` — 解压后手动放入 CEP/extensions/（方法二）
 EOF
 
 if gh release view "$TAG" --repo "$GH_REPO" >/dev/null 2>&1; then
-  echo "Release $TAG exists; uploading asset ..."
-  gh release upload "$TAG" "$ZIP" --repo "$GH_REPO" --clobber
+  echo "Release $TAG exists; uploading assets ..."
+  gh release upload "$TAG" "$ZIP" "$ZXP" --repo "$GH_REPO" --clobber
 else
   echo "Creating release $TAG ..."
-  gh release create "$TAG" "$ZIP" \
+  gh release create "$TAG" "$ZIP" "$ZXP" \
     --repo "$GH_REPO" \
     --title "Momo Tools ${TAG}" \
     --notes-file "$NOTES"

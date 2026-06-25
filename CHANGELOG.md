@@ -1,5 +1,11 @@
 # Changelog - Momo Tools
 
+## [Unreleased]
+
+### 文档
+- **使用指南（site）**：安装分方法一 ZXP / 方法二手动；macOS 与 Windows 分系统说明
+- **Releases**：新增 `momo-tools-*.zxp` 安装包（与 cep.zip 同步发布）
+
 ## [2.108] — 2026-06-23
 
 ### 修復 / Fixes

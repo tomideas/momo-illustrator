@@ -107,5 +107,14 @@ a:hover{text-decoration:underline}
   .main-content h2{font-size:20px}
   .main-content h3{font-size:17px}
 }
-.backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.15);z-index:40}
-.backdrop.show{display:block}
+.install-method{margin-top:24px}
+.install-method>h3{font-size:20px;margin-bottom:12px}
+.platform-section{margin-top:36px}
+.doc-figure{margin:16px 0 20px}
+.doc-img{display:block;max-width:100%;height:auto;border:1px solid var(--c-border);border-radius:8px;box-shadow:0 2px 12px rgba(55,53,47,.08)}
+.doc-figure figcaption{margin-top:8px;font-size:13px;color:var(--c-text-2);text-align:center}
+
+.platform-section>h3{font-size:22px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--c-border)}
+.platform-section.mac>h3{border-bottom-color:rgba(0,122,255,.3)}
+.platform-section.win>h3{border-bottom-color:rgba(0,120,215,.3)}
+.main-content .card h4{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--c-text)}

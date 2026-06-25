@@ -27,7 +27,7 @@
 
 ### 1. 下载
 
-打开 [Releases](https://github.com/tomideas/momo-illustrator/releases)，下载最新 **`momo-tools-x.xx-cep.zip`**，解压得到 **`com.tomideas.illustratortools`** 文件夹。
+打开 [Releases](https://github.com/tomideas/momo-illustrator/releases)，下载最新 **`momo-tools-x.xx.zxp`**（ZXP 安装）或 **`momo-tools-x.xx-cep.zip`**（手动安装），二选一即可。
 
 ### 2. 复制到 CEP 扩展目录
 
