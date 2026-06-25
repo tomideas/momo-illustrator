@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### 文档
-- **使用指南（site）**：ZXP Installer 主界面截图（macOS）
+- **使用指南（site）**：ZXP 安装过程演示视频；Installer 主界面截图（macOS）
 
 ## [2.108] — 2026-06-23
 

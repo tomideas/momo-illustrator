@@ -112,6 +112,7 @@ a:hover{text-decoration:underline}
 .platform-section{margin-top:36px}
 .doc-figure{margin:16px 0 20px}
 .doc-img{display:block;max-width:100%;height:auto;border:1px solid var(--c-border);border-radius:8px;box-shadow:0 2px 12px rgba(55,53,47,.08)}
+.doc-video{display:block;width:100%;max-width:100%;border:1px solid var(--c-border);border-radius:8px;box-shadow:0 2px 12px rgba(55,53,47,.08);background:#000}
 .doc-figure figcaption{margin-top:8px;font-size:13px;color:var(--c-text-2);text-align:center}
 
 .platform-section>h3{font-size:22px;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--c-border)}
