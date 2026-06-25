@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momo Tools v2.108 — 使用指南</title>
+<title>Momo Tools v2.125 — 使用指南</title>
 <link rel="stylesheet" href="docs.css">
 <script src="docs.js" defer></script>
 </head>
@@ -50,7 +50,7 @@
 <main class="main-content">
 
 <h1 id="intro">Momo Tools 使用指南</h1>
-<p class="page-desc">Adobe Illustrator 外挂面板 v2.108 — 画板、颜色、文字、排版工具集 · 2026-06-23</p>
+<p class="page-desc">Adobe Illustrator 外挂面板 v2.125 — 画板、颜色、文字、排版工具集 · 2026-06-26</p>
 
 <div class="callout info">
   <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出、清点文档用色、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
@@ -292,6 +292,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <tr><td>每行个数</td><td>逗号分隔，如 <code>3,3,2</code> = 第一行 3 个、第二行 3 个、第三行 2 个。也可填单个数字表示每行固定数量</td></tr>
     <tr><td>左右/上下间距</td><td>画板之间的净距，单位跟随当前文档</td></tr>
     <tr><td>放置位置</td><td>选区左上 / 某画板正下方（可设偏移量）</td></tr>
+    <tr><td>画板列表</td><td>显示全部画板，也可用范围输入（如 <code>1-594</code>）选取</td></tr>
   </table>
 </div>
 
@@ -403,7 +404,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h4>操作步骤</h4>
   <ol class="steps">
     <li>点分组旁的 <b>+</b> 新建分组（如「包装色」「Meeting Pro」）</li>
-    <li>录入颜色：双击空白处手动输入，或选中文档物件后点「提取」</li>
+    <li>录入颜色：双击空白处手动输入，或选中物件（含群组、复合路径）后点「提取」——用<b>选择工具（V）</b>直接选中即可</li>
     <li>在 AI 中选中要填色的物件，点击色块应用</li>
   </ol>
 
@@ -432,8 +433,8 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 <p class="callout tip">三个文字工具建议按顺序使用：<b>样式检查 → 溢出检查 → 尾端空白检查</b>。</p>
 
 <div class="card">
-  <h3>文字样式检查 <span class="badge">v8.2.0</span></h3>
-  <p>扫描文字框的字体、字号、行距一致性，标注异常。适合在排版完成后做风格一致性把关。</p>
+  <h3>文字样式检查</h3>
+  <p>按<b>字号 / 字体 / 颜色</b>将文字分组并编号，可选红框标出出现次数过少的样式组，或检测框内混合样式。勾选「生成说明」会在首画板上方输出样式汇总图例；完整清单以画板标注与图例为准，不再弹出详细报告窗口。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/text-style-check.mp4" autoplay muted loop playsinline controls preload="auto">
@@ -445,22 +446,20 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h4>操作步骤</h4>
   <ol class="steps">
     <li>点击「样式检查」按钮</li>
-    <li>选择<b>检查模式</b>或<b>库存模式</b>，勾选要检查的维度（字体 / 字号 / 行距）</li>
-    <li>选定画板范围，设置字号容差后运行</li>
-    <li>检查模式：异常文本框以<b>橙框</b>标出；可勾选「生成说明」在画板外输出图例</li>
+    <li>选定画板范围（列表多选，或输入 <code>all</code>、<code>1-10</code> 等）；画板很多时可用「延续」分段检查、接续编号</li>
+    <li>勾选分组维度与输出选项后点「检查」</li>
   </ol>
-
-  <h4>两种模式</h4>
-  <table>
-    <tr><td><b>检查模式</b></td><td>找出字体/字号/行距与「主流值」不一致的文本框 → <b>橙框</b>标记</td></tr>
-    <tr><td><b>库存模式</b></td><td>列出每个画板使用的所有字体/字号/行距组合（不标记），便于了解整份文件的文字使用情况</td></tr>
-  </table>
 
   <h4>参数说明</h4>
   <table>
-    <tr><td>检查画板</td><td>列表多选（Shift/Ctrl）或输入范围（<code>1-5, 8</code>）</td></tr>
-    <tr><td>字号容差</td><td>容忍 ±x pt 的字号偏差（如设为 0.5pt，则 11.8pt 和 12pt 视为一致）</td></tr>
-    <tr><td>检查维度</td><td>字体 / 字号 / 行距，可独立开关</td></tr>
+    <tr><td>画板范围</td><td>列表多选，或输入 <code>all</code>、<code>1-10</code>、<code>1,3,5</code></td></tr>
+    <tr><td>全新 / 延续</td><td>大文件分段检查时用「延续」接续上次编号</td></tr>
+    <tr><td>分组维度</td><td>字号、字体、颜色，至少勾选一种（决定哪些属性相同才算「同一组」）</td></tr>
+    <tr><td>框内混合检查</td><td>同一文本框内一行出现多种样式时标<b>红框</b></td></tr>
+    <tr><td>只检查可见对象</td><td>跳过隐藏图层</td></tr>
+    <tr><td>包含画板外文字</td><td>纳入画板范围外的游离文字</td></tr>
+    <tr><td>红框标出 ≤ N 次的样式</td><td>默认 N=1，标出少见样式组；关闭则只标编号</td></tr>
+    <tr><td>生成说明</td><td>首画板上方输出图例，与画板编号对应</td></tr>
   </table>
 </div>
 
@@ -563,7 +562,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </div>
 
 <!-- ====== 笔记 ====== -->
-<h2 id="notes">笔记面板 (Momo Notes) <span class="badge">v1.7</span></h2>
+<h2 id="notes">笔记面板 (Momo Notes)</h2>
 
 <p>独立 CEP 面板，在 Illustrator 内记录项目备注——不切换应用、不离开工作区。</p>
 
@@ -587,7 +586,8 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <tr><td>多标签</td><td>最多 10 个标签页，按项目或主题分离笔记</td></tr>
     <tr><td>拖拽排序</td><td>拖拽标签页重新排列</td></tr>
     <tr><td>行内重命名</td><td>点击标签名即可编辑，无弹窗</td></tr>
-    <tr><td>Markdown 表格</td><td>在编辑器中输入表格文本（如 <code>| A | B |</code>），面板自动检测并渲染为可视化表格</td></tr>
+    <tr><td>Markdown 表格</td><td>在编辑器中输入表格文本（如 <code>| A | B |</code>），面板自动检测并渲染为可视化表格；单元格内 <code>**粗体**</code> 可正确显示</td></tr>
+    <tr><td>撤销 / 重做</td><td>支持 <code>Cmd+Z</code> / <code>Cmd+Shift+Z</code>（Windows：<code>Ctrl+Z</code> / <code>Ctrl+Y</code>），在笔记内编辑时不会被 AI 抢走快捷键</td></tr>
     <tr><td>字号控制</td><td>可在 9px - 32px 之间调整字体大小</td></tr>
   </table>
 
@@ -603,7 +603,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <ol class="steps">
     <li><b>文字溢出检查</b> — 红框处理。这是印前最常见也最严重的问题</li>
     <li><b>尾端空白检查</b> — 橙框处理</li>
-    <li><b>文字样式检查</b> — 确认字体/字号/行距一致性</li>
+    <li><b>文字样式检查</b> — 清点样式组，标出少见样式与框内混合样式</li>
     <li><b>颜色检查</b> — 清点用色，标出出现次数过少的稀有色</li>
   </ol>
 </div>
@@ -631,7 +631,8 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
   <h3>标注框颜色规则</h3>
   <table>
     <tr><td>红框</td><td>文字溢出（印前阻塞）</td></tr>
-    <tr><td>橙框</td><td>尾端空白、文字样式不一致</td></tr>
+    <tr><td>橙框</td><td>尾端空白</td></tr>
+    <tr><td>红框（样式检查）</td><td>出现次数 ≤ 阈值的样式组、框内混合样式</td></tr>
     <tr><td>红框 / 橙框（颜色检查）</td><td>填色稀有色 / 描边稀有色（出现次数 ≤ 阈值）</td></tr>
     <tr><td>彩色数字</td><td>颜色检查编号，颜色与首画板图例一一对应</td></tr>
   </table>
@@ -709,14 +710,14 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <li>完全退出并重启 Illustrator</li>
   </ol>
   <p>颜色库（<code>MomoTools/</code>）与笔记数据与扩展文件夹分开存放，覆盖更新不会删除它们。</p>
-  <p class="callout tip">当前文档对应版本：<b>v2.108</b> · 发布日期：2026-06-23 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
+  <p class="callout tip">当前文档对应版本：<b>v2.125</b> · 发布日期：2026-06-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
 </div>
 
 </main>
 </div>
 
 <footer class="site-footer">
-  Momo Tools v2.108 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
+  Momo Tools v2.125 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
 </footer>
 
 </body>
