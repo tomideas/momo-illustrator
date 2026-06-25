@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **使用指南（site）**：安装步骤截图更新——GitHub Releases 下载 .zxp、ZXP/UXP Installer 下载页改为你提供的 iShot 原图
 - **使用指南（site）**：主面板一览图改为你提供的 iShot 原图直传（1628×1524，未压缩）
 - **使用指南（site）**：GitHub Releases 链接改为新窗口打开
 - **使用指南（site）**：面板布局图改为用户原图直传，不做裁切/修图；移除该图 CSS 圆角边框
