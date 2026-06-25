@@ -2,9 +2,9 @@
 
 简体中文 | [English](README.md)
 
-🎨 **认识 Momo Tools** — 一款由设计师打造的 Illustrator 外挂面板，把那些 AI 原生做不到、或做起来很慢的事，收进一个顺手的小面板里 ✨。**带着内容复制画板** 📐、**重新排列与批量更名**、**清点文档用色** 🎨、**管理品牌色库**（CMYK / JSON）、**检查文字样式 / 溢出 / 尾端空白** ✍️、**生成排版网格与页码** 📏，还有 **Momo Notes** 笔记 📝 — 主题自动跟随 Illustrator 深浅色 🌗，点按钮即执行，不用记快捷键。
+![Momo Tools 主面板一览 — Momo Tools 与 Momo Notes](site/momo-tools-preview.png)
 
-![Momo Tools 主面板预览](site/momo-tools-preview.png)
+🎨 **认识 Momo Tools** — 一款由设计师打造的 Illustrator 外挂面板，把那些 AI 原生做不到、或做起来很慢的事，收进一个顺手的小面板里 ✨。**带着内容复制画板** 📐、**重新排列与批量更名**、**清点文档用色** 🎨、**管理品牌色库**（CMYK / JSON）、**检查文字样式 / 溢出 / 尾端空白** ✍️、**生成排版网格与页码** 📏，还有 **Momo Notes** 笔记 📝 — 主题自动跟随 Illustrator 深浅色 🌗，点按钮即执行，不用记快捷键。
 
 | | |
 |---|---|

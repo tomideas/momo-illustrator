@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### 文档
+- **README**：开篇置顶主面板一览图，换用用户新截图
 - **README**：双语结构（`README.md` English · `README.zh-CN.md` 简体中文），架构对齐 momo-assist；新增面板预览图
 
 ## [2.125] — 2026-06-26
