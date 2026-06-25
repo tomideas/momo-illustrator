@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ### 文档
-- **使用指南（site）**：ZXP 图示紧跟第 3 步；ZXP 流程不再重复 PlayerDebugMode
+- **使用指南（site）**：Releases 下载 zxp 截图置于 ZXP 步骤 1 下方
 
 ## [2.108] — 2026-06-23
 
