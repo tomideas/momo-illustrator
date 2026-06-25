@@ -35,6 +35,8 @@
   <a href="#install-mac">　　　· macOS</a>
   <a href="#install-win">　　　· Windows</a>
   <a href="#quick">快速上手</a>
+  <a href="#quick-panel">　└ 面板布局</a>
+  <a href="#quick-scenarios">　└ 常用场景</a>
   <div class="group-title">功能</div>
   <a href="#artboard">画板工具</a>
   <a href="#color">颜色工具</a>
@@ -228,66 +230,75 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </div>
 </div>
 
-<div class="card">
-  <h3>面板布局</h3>
-  <p>面板分为 4 个功能组，从上到下排列。按下按钮即执行对应功能，完成后屏幕下方会出现短暂提示（1.8 秒自动消失），不会弹窗打扰你。</p>
-  <table>
-    <tr><td>画板</td><td>复制画板 / 重新排列 / 画板更名</td></tr>
-    <tr><td>颜色</td><td>颜色标签生成 / 颜色检查 / 颜色库</td></tr>
-    <tr><td>文字</td><td>文字样式检查 / 文字溢出检查 / 尾端空白检查</td></tr>
-    <tr><td>工具</td><td>网格系统 / 批量页码 / Momo 笔记</td></tr>
-  </table>
-  <p class="callout tip">面板自动跟随 Illustrator 主题（深色 / 浅色），无需手动切换。</p>
-</div>
-
 <!-- ====== 快速上手 ====== -->
-<h2 id="quick">快速上手：4 个高频场景</h2>
+<h2 id="quick">快速上手</h2>
+<p class="page-desc">安装并打开面板后，先看懂界面，再按场景操作。点按钮即执行，结果以屏幕下方短暂提示反馈（约 1.8 秒），无弹窗打扰。</p>
 
-<div class="card">
-  <h3>场景一：多语言版本画板制作</h3>
-  <p>需求：已有 10 个中文画板（CN_01～CN_10），需要生成英文版 10 个 + 日文版 10 个，共 30 个画板，并加页码。</p>
-  <div class="flow">
-    <span>1. 复制画板</span><span class="arrow">→</span>
-    <span>2. 画板更名</span><span class="arrow">→</span>
-    <span>3. 重新排列</span><span class="arrow">→</span>
-    <span>4. 批量页码</span>
-  </div>
-  <p>全程 4 次点击，约 30 秒。比手动逐个复制、双击改名、拖拽排版快 10 倍以上。</p>
+<div class="card" id="quick-panel">
+  <h3>面板布局</h3>
+  <p>Momo Tools 主面板自上而下分为 <b>4 组</b>，每组对应一类工作流。底部显示版本号；主题自动跟随 Illustrator（深 / 浅），无需手动切换。</p>
+  <table>
+    <tr><th>分组</th><th>按钮</th><th>说明</th></tr>
+    <tr><td><b>画板</b></td><td>复制画板 · 重新排列 · 画板更名</td><td>批量处理画板结构与命名 → <a href="#artboard">画板工具</a></td></tr>
+    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库</td><td>标注色值、查色彩空间、管理品牌色 → <a href="#color">颜色工具</a></td></tr>
+    <tr><td><b>文字</b></td><td>样式检查 · 溢出检查 · 尾端空白</td><td>印前品控三连 → <a href="#text">文字工具</a></td></tr>
+    <tr><td><b>工具</b></td><td>网格系统 · 批量页码 · Momo 笔记</td><td>排版辅助与备注 → <a href="#tools">工具集</a>、<a href="#notes">笔记</a></td></tr>
+  </table>
+  <p class="callout tip">无选中画板时，部分画板类按钮会自动置灰，避免误操作。</p>
 </div>
 
-<div class="card">
-  <h3>场景二：交付前品控检查</h3>
-  <p>需求：收到外部设计师文件，需在出片前确认无文字溢出、无尾端空白、无 RGB 混入 CMYK。</p>
+<h3 id="quick-scenarios">四个常用场景</h3>
+<p>不确定从哪开始？对照下面四条，找到最接近你当前任务的一条，按顺序点面板按钮即可。</p>
+
+<div class="card quick-scenario">
+  <h3>场景一：多语言画板批量制作</h3>
+  <p><b>适用</b>：已有中文版画板，要快速复制出 EN / JP 等变体并整理排版。</p>
   <div class="flow">
-    <span>1. 文字溢出检查</span><span class="arrow">→</span>
-    <span>2. 尾端空白检查</span><span class="arrow">→</span>
-    <span>3. 文字样式检查</span><span class="arrow">→</span>
-    <span>4. 颜色检查</span>
+    <span>复制画板</span><span class="arrow">→</span>
+    <span>画板更名</span><span class="arrow">→</span>
+    <span>重新排列</span><span class="arrow">→</span>
+    <span>批量页码</span>
   </div>
-  <p>4 次点击自动扫描整份文件，有问题的地方用彩色框标出来，你只需看标记处即可。</p>
+  <p>示例：10 个 <code>CN_01</code>～<code>CN_10</code> → 复制并替换前缀为 <code>EN_</code>、<code>JP_</code>，再排成 3 行并加页码。全程约 4 次点击。</p>
+  <p class="scenario-link">详见 <a href="#artboard">画板工具</a>、<a href="#tools">批量页码</a></p>
 </div>
 
-<div class="card">
-  <h3>场景三：品牌颜色库建立与应用</h3>
-  <p>需求：管理 7 条产品线的标准色，设计师从库中一鍵取色填充。</p>
+<div class="card quick-scenario">
+  <h3>场景二：交付前印前检查</h3>
+  <p><b>适用</b>：出片 / 交给客户前，扫一遍全文件的常见事故。</p>
   <div class="flow">
-    <span>1. 新建分组</span><span class="arrow">→</span>
-    <span>2. 从文档提取颜色</span><span class="arrow">→</span>
-    <span>3. 点击色块应用</span>
+    <span>文字溢出</span><span class="arrow">→</span>
+    <span>尾端空白</span><span class="arrow">→</span>
+    <span>样式检查</span><span class="arrow">→</span>
+    <span>颜色检查</span>
   </div>
-  <p>颜色库保存在电脑上，跨文件、重启 AI 后仍然可用。支持导出备份。</p>
+  <p>有问题处自动标框（红 / 橙等），你只需检查标记位置。建议固定此顺序，约 1 分钟完成。</p>
+  <p class="scenario-link">详见 <a href="#text">文字工具</a>、<a href="#color">颜色检查</a>、<a href="#tips">印前流程</a></p>
 </div>
 
-<div class="card">
+<div class="card quick-scenario">
+  <h3>场景三：品牌色库取用</h3>
+  <p><b>适用</b>：按产品线管理标准色，作图时一键填色。</p>
+  <div class="flow">
+    <span>新建分组</span><span class="arrow">→</span>
+    <span>提取 / 录入颜色</span><span class="arrow">→</span>
+    <span>点击色块应用</span>
+  </div>
+  <p>颜色库保存在本机，跨文件、重启 AI 后仍在。记得定期「•••」导出 JSON 备份。</p>
+  <p class="scenario-link">详见 <a href="#color">颜色库</a></p>
+</div>
+
+<div class="card quick-scenario">
   <h3>场景四：网格辅助排版</h3>
-  <p>需求：在海报/画册排版时需要网格线辅助对齐。</p>
+  <p><b>适用</b>：海报、画册需要参考线对齐，或快速生成瑞士 / 等分 / 黄金比例网格。</p>
   <div class="flow">
-    <span>1. 打开网格系统</span><span class="arrow">→</span>
-    <span>2. 选择网格类型+参数</span><span class="arrow">→</span>
-    <span>3. 预览</span><span class="arrow">→</span>
-    <span>4. 应用 / 转为参考线</span>
+    <span>网格系统</span><span class="arrow">→</span>
+    <span>设参数</span><span class="arrow">→</span>
+    <span>预览</span><span class="arrow">→</span>
+    <span>应用 / 转参考线</span>
   </div>
-  <p>支持 3 种网格（瑞士 / 等分 / 黄金比例）。预览不满意点取消即可，网格线自动清除。</p>
+  <p>预览不满意点「取消」即清除；满意可一键转为 Illustrator 原生参考线。</p>
+  <p class="scenario-link">详见 <a href="#tools">网格系统</a></p>
 </div>
 
 <!-- ====== 画板工具 ====== -->

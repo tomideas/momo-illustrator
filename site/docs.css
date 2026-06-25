@@ -123,3 +123,6 @@ a:hover{text-decoration:underline}
 .platform-section.mac>h3{border-bottom-color:rgba(0,122,255,.3)}
 .platform-section.win>h3{border-bottom-color:rgba(0,120,215,.3)}
 .main-content .card h4{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--c-text)}
+.quick-scenario h3{margin-top:0}
+.scenario-link{margin-bottom:0;font-size:14px;color:var(--c-text-2)}
+.scenario-link a{font-weight:500}
