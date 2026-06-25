@@ -53,7 +53,7 @@
 <p class="page-desc">Adobe Illustrator 外挂面板 v2.108 — 画板、颜色、文字、排版工具集 · 2026-06-23</p>
 
 <div class="callout info">
-  <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出和颜色错误、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
+  <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出、清点文档用色、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
   <p>没有弹窗、不用记快捷键。安装完成后见下方<b>快速上手</b>，再按功能分组了解每个按钮。</p>
 </div>
 
@@ -326,8 +326,8 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </div>
 
 <div class="card">
-  <h3>颜色检查 <span class="badge">v1.6.0</span></h3>
-  <p>扫描当前文档中所有文字填色和形状填色/描边色，标记色彩空间不符项。</p>
+  <h3>颜色检查</h3>
+  <p>扫描指定画板内文字、形状填色与描边色，汇总文档实际用了哪些颜色。每个颜色分配一个<b>彩色编号</b>标在对象旁，并在首画板上方生成<b>颜色编号说明</b>图例，便于清点与交接。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-check.mp4" autoplay muted loop playsinline controls preload="auto">
@@ -336,20 +336,34 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <figcaption>颜色检查演示</figcaption>
   </figure>
 
-  <h4>检查逻辑</h4>
-  <table>
-    <tr><td>在 CMYK 文档中</td><td>找出所有 RGB 色值的文字/形状 → 红框标记</td></tr>
-    <tr><td>在 RGB 文档中</td><td>找出所有 CMYK 色值的文字/形状 → 红框标记</td></tr>
-  </table>
-
-  <h4>检查范围</h4>
+  <h4>能帮你发现什么</h4>
   <ul>
-      <li>文字、形状的填色和描边都会检查</li>
-      <li>群组里的物件也会被检查到</li>
-      <li>渐变和图案填充不会检查（它们不是单一颜色）</li>
+    <li>文件里一共用了多少种颜色、各出现多少次</li>
+    <li><b>需注意</b>的稀有色：出现次数 ≤ 设定阈值的颜色（默认 ≤ 1 次），用红框标出——常见于误用的专色、漏改色</li>
+    <li>描边色单独统计，红框为<b>橙色</b>，与填色区分</li>
   </ul>
 
-  <p class="callout warning">检查结果仅做标记，不会自动修改颜色。请手动修正，或用颜色库一键换成标准色。</p>
+  <h4>对话框选项</h4>
+  <table>
+    <tr><th colspan="2">1. 检查范围</th></tr>
+    <tr><td>画板范围</td><td><code>all</code> 全部；<code>1-10</code>；<code>1,3,5</code> 指定画板</td></tr>
+    <tr><td>文字 / 形状 / 描边</td><td>至少勾选一种；描边与填色分开计入</td></tr>
+    <tr><th colspan="2">2. 输出方式</th></tr>
+    <tr><td>只检查可见对象</td><td>跳过隐藏图层中的对象</td></tr>
+    <tr><td>红框标出出现次数 ≤ N 次</td><td>默认 N=1，可改。关闭则只标编号、不画红框</td></tr>
+    <tr><td>运行前删除旧标注图层</td><td>清除上次的「颜色编号」「单次颜色标注」「颜色说明」</td></tr>
+    <tr><td>生成说明</td><td>在首画板上方（画板外白底）输出图例：色块 + 编号 + 颜色名 × 次数；编号颜色与画板上标注一一对应</td></tr>
+  </table>
+
+  <h4>标注图层</h4>
+  <table>
+    <tr><td><b>颜色编号</b></td><td>每个对象旁的彩色数字（12 色轮换，密集稿也能区分相邻编号）</td></tr>
+    <tr><td><b>单次颜色标注</b></td><td>稀有色对象的红框（描边为橙框）</td></tr>
+    <tr><td><b>颜色说明</b></td><td>首画板上方的汇总图例</td></tr>
+  </table>
+
+  <p class="callout tip">编号按出现次数从多到少排序。图例与画板上的「绿色 3」等编号颜色一致，可对照查看。</p>
+  <p class="callout warning">仅做清点与标记，不会自动改色。渐变、图案填色不纳入统计。请手动修正，或用颜色库一键替换标准色。</p>
 </div>
 
 <div class="card">
@@ -535,7 +549,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <li><b>文字溢出检查</b> — 红框处理。这是印前最常见也最严重的问题</li>
     <li><b>尾端空白检查</b> — 橙框处理</li>
     <li><b>文字样式检查</b> — 确认字体/字号/行距一致性</li>
-    <li><b>颜色检查</b> — 确认无色彩空间混用（RGB 混入 CMYK）</li>
+    <li><b>颜色检查</b> — 清点用色，标出出现次数过少的稀有色</li>
   </ol>
 </div>
 
@@ -559,11 +573,12 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
 </div>
 
 <div class="card">
-  <h3>颜色标記色彩规则</h3>
+  <h3>标注框颜色规则</h3>
   <table>
-    <tr><td>红框</td><td>严重问题 — 文字溢出（印前阻塞）</td></tr>
-    <tr><td>橙框</td><td>品控问题 — 尾端空白、文字样式不一致</td></tr>
-    <tr><td>蓝框/橙框</td><td>颜色检查标记 — 色彩空间不符</td></tr>
+    <tr><td>红框</td><td>文字溢出（印前阻塞）</td></tr>
+    <tr><td>橙框</td><td>尾端空白、文字样式不一致</td></tr>
+    <tr><td>红框 / 橙框（颜色检查）</td><td>填色稀有色 / 描边稀有色（出现次数 ≤ 阈值）</td></tr>
+    <tr><td>彩色数字</td><td>颜色检查编号，颜色与首画板图例一一对应</td></tr>
   </table>
 </div>
 
