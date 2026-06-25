@@ -5,7 +5,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 // 文字样式检查工具 v8 紧凑版（混合样式轻/中/重扫描、单框/全局上限）
 
 (function () {
-    var SCRIPT_VERSION = "8.2.0";
+    var SCRIPT_VERSION = "8.3.1";
 
     if (app.documents.length === 0) {
         alert("请先打开一个 Illustrator 文件。");
@@ -40,16 +40,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
     function round2(n) {
         return Math.round(n * 100) / 100;
-    }
-
-    function pad2(n) {
-        return n < 10 ? "0" + n : String(n);
-    }
-
-    function nowText() {
-        var d = new Date();
-        return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) + " " +
-               pad2(d.getHours()) + ":" + pad2(d.getMinutes()) + ":" + pad2(d.getSeconds());
     }
 
     function makeRGB(r, g, b) {
@@ -1221,28 +1211,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         return "未知";
     }
 
-    function artboardsText(obj) {
-        var arr = [];
-
-        for (var key in obj) {
-            if (obj.hasOwnProperty(key)) {
-                arr.push(parseInt(key, 10));
-            }
-        }
-
-        arr.sort(function (a, b) {
-            return a - b;
-        });
-
-        if (arr.length === 0) return "画板外";
-
-        if (arr.length > 12) {
-            return arr.slice(0, 12).join(", ") + " ...";
-        }
-
-        return arr.join(", ");
-    }
-
     function addLegend(layer, groups, mixedList, options) {
         try {
             if (doc.artboards.length === 0) return;
@@ -1395,103 +1363,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         } catch (e) {}
     }
 
-    function buildResultText(groups, checkedFrames, checkedChars, attentionCount, mixedList, options) {
-        var text = "";
-
-        text += "检查完成    文件：" + doc.name + "\n";
-        text += "时间：" + nowText() + "    画板：" + options.rangeText + "\n";
-        text += "文本框 " + checkedFrames + "  组 " + groups.length + "  需注意 " + attentionCount + "  混合 " + mixedList.length + "\n";
-        text += "----------------------------------------\n";
-
-        for (var i = 0; i < groups.length; i++) {
-            var g = groups[i];
-
-            text += "[" + g.id + "] × " + g.count;
-
-            if (g.needAttention) {
-                text += "  ⚠ " + g.attentionReason;
-            }
-
-            text += "\n  " + g.display + "\n";
-            text += "  画板：" + artboardsText(g.artboards) + "\n\n";
-        }
-
-        if (mixedList.length > 0) {
-            text += "----------------------------------------\n";
-            text += "混合样式文本框 " + mixedList.length + " 个：\n";
-
-            for (var m = 0; m < mixedList.length; m++) {
-                var mx = mixedList[m];
-                var abText = mx.artboardNumber === 0 ? "画板外" : "画板 " + mx.artboardNumber;
-
-                text += "[" + (m + 1) + "] " + abText + "    " + mx.textShort + "\n";
-
-                if (mx.scanNote && trimText(mx.scanNote) !== "") {
-                    text += "    " + mx.scanNote + "\n";
-                }
-            }
-
-            text += "\n";
-        }
-
-        if (attentionCount > 0) {
-            text += "----------------------------------------\n";
-            text += "需注意文字：\n";
-            var shown = 0;
-
-            for (var a = 0; a < groups.length; a++) {
-                var groupItem = groups[a];
-
-                if (!groupItem.needAttention) continue;
-
-                for (var b = 0; b < groupItem.items.length && shown < 8; b++) {
-                    var item = groupItem.items[b];
-                    var info = item.info;
-                    var ab = info.artboardNumber === 0 ? "画板外" : "画板 " + info.artboardNumber;
-
-                    text += "[" + groupItem.id + "] " + ab + "  " + info.textShort + "\n";
-                    shown++;
-                }
-            }
-
-            if (attentionCount > shown) {
-                text += "… 共 " + attentionCount + " 处（仅显示前 " + shown + " 处）\n";
-            }
-
-            text += "\n";
-        }
-
-        return text;
-    }
-
-    function showResultWindow(resultText) {
-        var dlg = new Window("dialog", "样式报告");
-        dlg.orientation = "column";
-        dlg.alignChildren = "fill";
-        dlg.margins = 10;
-
-        var box = dlg.add("edittext", undefined, resultText, {
-            multiline: true,
-            scrolling: true
-        });
-
-        box.preferredSize.width = 560;
-        box.preferredSize.height = 380;
-        box.graphics.font = ScriptUI.newFont(box.graphics.font.name, "REGULAR", 11);
-
-        var btnGroup = dlg.add("group");
-        btnGroup.orientation = "row";
-        btnGroup.alignment = "right";
-
-        var okBtn = btnGroup.add("button", undefined, "确定", { name: "ok" });
-
-        okBtn.onClick = function () {
-            dlg.close();
-        };
-
-        dlg.center();
-        dlg.show();
-    }
 
     function runCheck(options) {
         var selected = options.selectedIndexes;
@@ -1676,8 +1547,13 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
             addLegend(legendLayer, groups, mixedList, options);
         }
 
-        var resultText = buildResultText(groups, checkedFrames, checkedChars, attentionCount, mixedList, options);
-        showResultWindow(resultText);
+        var summaryMsg = "样式检查 v" + SCRIPT_VERSION + "\n\n" +
+            "发现样式：" + groups.length + " 组\n" +
+            (options.attentionMode === 1 ? "需注意（出现 ≤ " + options.rareThreshold + " 次）：" + attentionCount + " 组\n" : "") +
+            (options.markMixed ? "混合样式框：" + mixedList.length + " 个\n" : "") +
+            "\n已在画板标注\n" +
+            "图层：" + LAYER_GROUP_LABELS + (options.createLegend ? " / " + LAYER_LEGEND : "") + (options.markMixed ? " / " + LAYER_MIXED : "");
+        alert(summaryMsg);
 
         } finally {
             try {
@@ -1777,16 +1653,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     rangeInput.characters = 18;
     var selectAllBtn = rangeRow.add("button", undefined, "全部");
 
-    var rangeCheckRow = rangePanel.add("group");
-    rangeCheckRow.orientation = "row";
-    rangeCheckRow.alignChildren = ["left", "center"];
-
-    var onlyVisibleCheck = rangeCheckRow.add("checkbox", undefined, "只检查可见文字");
-    onlyVisibleCheck.value = true;
-
-    var includeOutsideCheck = rangeCheckRow.add("checkbox", undefined, "包含画板外文字");
-    includeOutsideCheck.value = false;
-
     var modeRow = rangePanel.add("group");
     modeRow.orientation = "row";
     modeRow.alignChildren = ["left", "center"];
@@ -1852,58 +1718,34 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     groupColorCheck.onClick = updateMixedEnabled;
     updateMixedEnabled();
 
-    // 3. 标记规则
-    var attentionPanel = dlg.add("panel", undefined, "3. 标记规则");
-    attentionPanel.orientation = "column";
-    attentionPanel.alignChildren = "fill";
-    attentionPanel.margins = 10;
+    // 3. 输出方式
+    var outputPanel = dlg.add("panel", undefined, "3. 输出方式");
+    outputPanel.orientation = "column";
+    outputPanel.alignChildren = "left";
+    outputPanel.margins = 10;
+    outputPanel.spacing = 5;
 
-    var modeGroup = attentionPanel.add("group");
-    modeGroup.orientation = "row";
-    modeGroup.alignChildren = ["left", "center"];
+    var onlyVisibleCheck = outputPanel.add("checkbox", undefined, "只检查可见对象（跳过隐藏图层）");
+    onlyVisibleCheck.value = true;
 
-    var modeLabel = modeGroup.add("statictext", undefined, "规则");
-    modeLabel.preferredSize.width = 110;
+    var includeOutsideCheck = outputPanel.add("checkbox", undefined, "包含画板外文字");
+    includeOutsideCheck.value = false;
 
-    var attentionModeList = modeGroup.add("dropdownlist", undefined, [
-        "仅盘点不标记",
-        "标记出现 ≤ N 次的样式"
-    ]);
-    attentionModeList.selection = 0;
-
-    var attentionRow = attentionPanel.add("group");
+    var attentionRow = outputPanel.add("group");
     attentionRow.orientation = "row";
     attentionRow.alignChildren = ["left", "center"];
-
-    var rareLabel = attentionRow.add("statictext", undefined, "N 值");
-    rareLabel.preferredSize.width = 110;
+    var markAttentionCheck = attentionRow.add("checkbox", undefined, "红框标出出现次数 ≤");
+    markAttentionCheck.value = true;
     var rareThresholdInput = attentionRow.add("edittext", undefined, "1");
-    rareThresholdInput.characters = 8;
+    rareThresholdInput.characters = 3;
+    attentionRow.add("statictext", undefined, "次的样式");
 
-    addHelp(attentionPanel, "默认仅盘点。需标记时填入 N 值（N ≥ 1）。");
-
-    function updateAttentionInputs() {
-        var idx = attentionModeList.selection ? attentionModeList.selection.index : 0;
-        rareThresholdInput.enabled = (idx === 1);
-    }
-
-    attentionModeList.onChange = updateAttentionInputs;
-    updateAttentionInputs();
-
-    // 4. 输出
-    var outputPanel = dlg.add("panel", undefined, "4. 输出");
-    outputPanel.orientation = "column";
-    outputPanel.alignChildren = "fill";
-    outputPanel.margins = 10;
-
-    var outputRow = outputPanel.add("group");
-    outputRow.orientation = "row";
-    outputRow.alignChildren = ["left", "center"];
-
-    var createLegendCheck = outputRow.add("checkbox", undefined, "生成说明");
+    var createLegendCheck = outputPanel.add("checkbox", undefined, "生成说明");
     createLegendCheck.value = true;
 
-    addHelp(outputPanel, "编号 + 需注意默认开，同一图层。\n说明置于首画板上方（画板外白底）。");
+    markAttentionCheck.onClick = function () {
+        rareThresholdInput.enabled = markAttentionCheck.value;
+    };
 
     // 按钮
     var buttonGroup = dlg.add("group");
@@ -1932,13 +1774,8 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
             return;
         }
 
-        if (attentionModeList.selection === null) {
-            alert("请选择注意规则。");
-            return;
-        }
-
         var rareThreshold = toInt(rareThresholdInput.text, 1);
-        var attentionMode = attentionModeList.selection.index;
+        var attentionMode = markAttentionCheck.value ? 1 : 0;
 
         if (attentionMode === 1 && rareThreshold < 1) {
             alert("N 值必须大于等于 1。");

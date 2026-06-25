@@ -3,7 +3,7 @@
 $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
 (function () {
-    var SCRIPT_VERSION = "1.5.8";
+    var SCRIPT_VERSION = "1.5.9";
 
     if (app.documents.length === 0) {
         alert("请先打开 Illustrator 文件。");
@@ -599,18 +599,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     listbox.itemSize = [LIST_W, 18];
     var listIndexes = [];
 
-    var LIST_MAX = 80;
-    var listHint = null;
-    if (totalArtboards > LIST_MAX) {
-        listHint = targetPanel.add(
-            "statictext",
-            undefined,
-            "共 " + totalArtboards + " 个画板，请用「范围」输入（如 3-254），列表仅显示前 " + LIST_MAX + " 个"
-        );
-    }
-
-    var listLimit = totalArtboards > LIST_MAX ? LIST_MAX : totalArtboards;
-    for (var ab = 0; ab < listLimit; ab++) {
+    for (var ab = 0; ab < totalArtboards; ab++) {
         addArtboardListRow(listbox, ab);
         listIndexes.push(ab);
         if (ab === activeIndex) {

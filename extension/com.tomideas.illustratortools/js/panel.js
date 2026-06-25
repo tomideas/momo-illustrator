@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.108";
+    var PANEL_VERSION = "2.125";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}
@@ -84,19 +84,17 @@
     }
 
     bind("btn-duplicate",    "artboard_duplicate_v1.1.2.jsx");
-    bind("btn-relayout",     "artboard_relayout_v1.5.8.jsx");
+    bind("btn-relayout",     "artboard_relayout_v1.5.9.jsx");
     bind("btn-renamer",      "artboard_renamer_v1.2.1.jsx");
     bind("btn-grid",         "grid_system_v1.3.1.jsx");
     bind("btn-page-numbers", "add_page_numbers_tomideas.jsx");
     bind("btn-color-box",    "generate_color_box.jsx");
-    bind("btn-text-checker", "illustrator_text_style_checker_v8.2.0_compact_cn.jsx");
+    bind("btn-text-checker", "illustrator_text_style_checker_v8.3.1_compact_cn.jsx");
     bind("btn-text-color",   "check_text_color.jsx");
     bind("btn-overset",      "check_overset_text.jsx");
     bind("btn-trailing-text", "check_trailing_text.jsx");
     bind("btn-debug",        "research_overset_probe.jsx");
     bind("btn-trailing-debug", "research_trailing_text_probe.jsx");
-    bind("btn-pos-diag",     "diagnose_position.jsx");
-    bind("btn-inv-diag",     "diagnose_inventory.jsx");
 
     document.getElementById("btn-reset").addEventListener("click", function () {
         if (!confirm("确定要重置所有设置吗？\n这将清除颜色库和所有工具参数。")) return;

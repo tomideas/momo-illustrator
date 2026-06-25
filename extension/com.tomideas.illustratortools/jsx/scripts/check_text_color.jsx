@@ -3,9 +3,10 @@
 $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
 (function () {
-    var SCRIPT_VERSION = "1.6.0";
+    var SCRIPT_VERSION = "1.9.1";
     var LAYER_LABELS    = "颜色编号";
     var LAYER_ATTENTION = "单次颜色标注";
+    var LAYER_LEGEND    = "颜色说明";
 
     if (app.documents.length === 0) { alert("请先打开文件。"); return; }
 
@@ -111,6 +112,17 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
     function makeRGB(r, g, b) { var c = new RGBColor(); c.red = r; c.green = g; c.blue = b; return c; }
 
+    // 标注编号配色板：每个颜色编号用一种区分度高、白底可读的颜色（画板标注与图例共用）。
+    var LABEL_COLORS = [
+        [0, 114, 206],   [220, 40, 40],   [0, 150, 70],    [240, 130, 0],
+        [150, 60, 200],  [0, 160, 165],   [205, 0, 140],   [120, 80, 40],
+        [40, 40, 200],   [170, 130, 0],   [90, 90, 90],    [0, 90, 160]
+    ];
+    function labelColor(i) {
+        var c = LABEL_COLORS[i % LABEL_COLORS.length];
+        return makeRGB(c[0], c[1], c[2]);
+    }
+
     function getOrCreateLayer(name) {
         try { return doc.layers.getByName(name); } catch (e) {
             var l = doc.layers.add(); l.name = name; return l;
@@ -129,13 +141,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
             }
             return "形状";
         } catch (e) { return ""; }
-    }
-
-    function artboardsText(set) {
-        var nums = [];
-        for (var k in set) { if (set.hasOwnProperty(k)) nums.push(parseInt(k, 10)); }
-        nums.sort(function (a, b) { return a - b; });
-        return nums.length === 0 ? "画板外" : nums.join(", ");
     }
 
     // ==========================
@@ -173,7 +178,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
                         var fillColor; try { fillColor = ch.characterAttributes.fillColor; } catch (e) { continue; }
                         var key = colorToKey(fillColor);
                         if (!colorMap[key]) {
-                            colorMap[key] = { label: colorToLabel(fillColor), charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
+                            colorMap[key] = { label: colorToLabel(fillColor), color: fillColor, charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
                         }
                         var g = colorMap[key];
                         g.charCount++;
@@ -203,7 +208,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
                     var key = colorToKey(fillColor);
                     if (!colorMap[key]) {
-                        colorMap[key] = { label: colorToLabel(fillColor), charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
+                        colorMap[key] = { label: colorToLabel(fillColor), color: fillColor, charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
                     }
                     var g = colorMap[key];
                     g.charCount++;
@@ -232,7 +237,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
                     var key = "stroke:" + colorToKey(strokeColor);
                     if (!colorMap[key]) {
-                        colorMap[key] = { label: colorToLabel(strokeColor) + "（描边）", charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
+                        colorMap[key] = { label: colorToLabel(strokeColor) + "（描边）", color: strokeColor, charCount: 0, frameCount: 0, seen: {}, frames: [], artboards: {}, sampleText: "" };
                     }
                     var g = colorMap[key];
                     g.charCount++;
@@ -253,7 +258,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     // Mark layers
     // ==========================
     function drawMarkers(colorMap, sortedKeys, opts) {
-        if (opts.removeOld) { removeLayer(LAYER_LABELS); removeLayer(LAYER_ATTENTION); }
+        if (opts.removeOld) { removeLayer(LAYER_LABELS); removeLayer(LAYER_ATTENTION); removeLayer(LAYER_LEGEND); }
 
         var labelLayer    = opts.markLabels    ? getOrCreateLayer(LAYER_LABELS)    : null;
         var attentionLayer = opts.markAttention ? getOrCreateLayer(LAYER_ATTENTION) : null;
@@ -267,6 +272,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
             for (var fi = 0; fi < g.frames.length; fi++) {
                 var obj = g.frames[fi];
+
                 var gb; try { gb = obj.geometricBounds; } catch (e) { continue; }
                 var left = gb[0], top = gb[1], right = gb[2];
 
@@ -276,7 +282,7 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
                     lbl.position = isStroke ? [right + 2, top] : [left - 12, top];
                     try {
                         lbl.textRange.characterAttributes.size = 7;
-                        lbl.textRange.characterAttributes.fillColor = isAttention ? makeRGB(200, 40, 40) : makeRGB(60, 120, 200);
+                        lbl.textRange.characterAttributes.fillColor = labelColor(gi);
                     } catch (e) {}
                 }
 
@@ -296,83 +302,111 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     }
 
     // ==========================
-    // Report
+    // Legend / 生成说明
     // ==========================
-    function buildReport(colorMap, sortedKeys, abIndexes, opts) {
-        var totalChars = 0;
-        for (var i = 0; i < sortedKeys.length; i++) totalChars += colorMap[sortedKeys[i]].charCount;
-
-        var now = new Date();
-        var dateStr = now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate())
-            + "  " + pad2(now.getHours()) + ":" + pad2(now.getMinutes());
-
-        var t = "";
-        t += "颜色检查报告  v" + SCRIPT_VERSION + "\n";
-        t += "检查时间：" + dateStr + "\n";
-        t += "画板范围：" + (abIndexes.length === totalArtboards ? "全部" : abIndexes.map(function(x){return x+1;}).join(", ")) + "\n";
-        t += "颜色种数：" + sortedKeys.length + "   /   总数量：" + totalChars + "\n";
-        var types = [];
-        if (opts.checkText) types.push("文字");
-        if (opts.checkShapes) types.push("形状");
-        if (opts.checkStroke) types.push("描边");
-        t += "检查类型：" + types.join(" + ") + "\n";
-        t += "\n";
-
-        t += "一、颜色分组（按使用量排序）\n";
-        t += "------------------------\n";
-        for (var j = 0; j < sortedKeys.length; j++) {
-            var key = sortedKeys[j];
-            var g = colorMap[key];
-            var pct = Math.round(g.charCount / totalChars * 100);
-            var isAttention = g.frameCount <= opts.threshold;
-            t += "[" + (j + 1) + "] × " + g.frameCount + " 个对象";
-            if (isAttention) t += "    ★ 出现 ≤ " + opts.threshold + " 次（需确认）";
-            t += "\n";
-            t += "    颜色：" + g.label + "\n";
-            t += "    数量：" + g.charCount + " 个（占 " + pct + "%）\n";
-            t += "    画板：" + artboardsText(g.artboards) + "\n";
-            t += "    示例：" + g.sampleText + "\n\n";
-        }
-
-        var N = opts.threshold;
-        t += "二、出现次数 ≤ " + N + " 次的颜色（需确认）\n";
-        t += "------------------------\n";
-        var hasAttention = false;
-        for (var k = 0; k < sortedKeys.length; k++) {
-            var g2 = colorMap[sortedKeys[k]];
-            if (g2.frameCount > N) continue;
-            hasAttention = true;
-            t += "[" + (k + 1) + "]  " + g2.label + "  ×" + g2.frameCount + "\n";
-            t += "    画板：" + artboardsText(g2.artboards) + "\n";
-            t += "    示例：" + g2.sampleText + "\n\n";
-        }
-        if (!hasAttention) t += "没有出现次数 ≤ " + N + " 次的颜色。\n\n";
-
-        return t;
+    function estimateTextWidth(text, size) {
+        return Math.max(80, String(text).length * size * 0.58);
     }
 
-    function pad2(n) { return n < 10 ? "0" + n : String(n); }
-
-    function showResultWindow(reportText, opts) {
-        var rdlg = new Window("dialog", "颜色报告");
-        rdlg.orientation = "column";
-        rdlg.alignChildren = "fill";
-        rdlg.margins = 14;
-
-        rdlg.add("statictext", undefined, "检查完成。★ = 出现次数 ≤ " + opts.threshold + " 次，已在画板上标红框。");
-
-        var box = rdlg.add("edittext", undefined, reportText, { multiline: true, scrolling: true });
-        box.preferredSize.width = 680;
-        box.preferredSize.height = 520;
-
-        var btnGroup = rdlg.add("group");
-        btnGroup.orientation = "row";
-        btnGroup.alignment = "right";
-        btnGroup.add("button", undefined, "确定", { name: "ok" }).onClick = function () { rdlg.close(); };
-
-        rdlg.center();
-        rdlg.show();
+    function setLegendFont(tf) {
+        var names = ["SourceHanSansSC-Regular", "AdobeSongStd-Light", "SimSun"];
+        for (var i = 0; i < names.length; i++) {
+            try { tf.textRange.characterAttributes.textFont = app.textFonts.getByName(names[i]); return; } catch (e) {}
+        }
     }
+
+    function legendTypeText(opts) {
+        var parts = [];
+        if (opts.checkText)   parts.push("文字");
+        if (opts.checkShapes) parts.push("形状");
+        if (opts.checkStroke) parts.push("描边");
+        return parts.join(" / ");
+    }
+
+    function addColorLegend(layer, colorMap, sortedKeys, opts) {
+        try {
+            if (doc.artboards.length === 0) return;
+
+            var padding = 12;
+            var gap = 40;
+            var lineHeight = 16;
+            var titleHeight = 22;
+
+            var lines = [];
+
+            lines.push({ type: "text", text: "颜色编号说明", size: 12, color: makeRGB(0, 0, 0), height: titleHeight });
+            lines.push({ type: "text", text: "检查类型：" + legendTypeText(opts), size: 8, color: makeRGB(0, 0, 0), height: lineHeight });
+            if (opts.markAttention) {
+                lines.push({ type: "text", text: "数字颜色与画板标注一一对应；「需注意」= 出现 ≤ " + opts.threshold + " 次", size: 8, color: makeRGB(0, 0, 0), height: lineHeight + 4 });
+            } else {
+                lines.push({ type: "text", text: "数字颜色与画板标注一一对应；按出现次数由多到少排序", size: 8, color: makeRGB(0, 0, 0), height: lineHeight + 4 });
+            }
+
+            for (var i = 0; i < sortedKeys.length; i++) {
+                var g = colorMap[sortedKeys[i]];
+                var isAttention = opts.markAttention && g.frameCount <= opts.threshold;
+                lines.push({
+                    type: "row",
+                    text: (i + 1) + ". " + g.label + " × " + g.frameCount + (isAttention ? "  需注意" : ""),
+                    size: 8,
+                    color: labelColor(i),
+                    swatchColor: g.color,
+                    height: lineHeight
+                });
+            }
+
+            var maxTextWidth = 0, contentHeight = 0;
+            for (var j = 0; j < lines.length; j++) {
+                var prefixWidth = lines[j].type === "row" ? 16 : 0;
+                var w = prefixWidth + estimateTextWidth(lines[j].text, lines[j].size);
+                if (w > maxTextWidth) maxTextWidth = w;
+                contentHeight += lines[j].height;
+            }
+
+            var legendW = Math.max(260, maxTextWidth + padding * 2);
+            var legendH = contentHeight + padding * 2;
+
+            var firstAb = doc.artboards[0].artboardRect;
+            var x = firstAb[0] + 20;
+            var y = firstAb[1] + gap + legendH - padding;
+
+            var bg = layer.pathItems.rectangle(y + padding, x - padding, legendW, legendH);
+            bg.filled = true;
+            bg.fillColor = makeRGB(255, 255, 255);
+            bg.stroked = true;
+            bg.strokeWidth = 0.5;
+            bg.strokeColor = makeRGB(180, 180, 180);
+
+            var currentY = y;
+            for (var k = 0; k < lines.length; k++) {
+                var lineInfo = lines[k];
+                if (lineInfo.type === "row") {
+                    var swatch = layer.pathItems.rectangle(currentY + 8, x, 10, 10);
+                    swatch.stroked = true;
+                    swatch.strokeWidth = 0.25;
+                    swatch.strokeColor = makeRGB(180, 180, 180);
+                    try { swatch.filled = true; swatch.fillColor = lineInfo.swatchColor; }
+                    catch (eSw) { swatch.filled = false; }
+
+                    var rowText = layer.textFrames.add();
+                    rowText.contents = lineInfo.text;
+                    rowText.textRange.characterAttributes.size = lineInfo.size;
+                    rowText.textRange.characterAttributes.fillColor = lineInfo.color;
+                    setLegendFont(rowText);
+                    rowText.position = [x + 16, currentY + 9];
+                } else {
+                    var textLine = layer.textFrames.add();
+                    textLine.contents = lineInfo.text;
+                    textLine.textRange.characterAttributes.size = lineInfo.size;
+                    textLine.textRange.characterAttributes.fillColor = lineInfo.color;
+                    setLegendFont(textLine);
+                    textLine.position = [x, currentY];
+                }
+                currentY -= lineInfo.height;
+            }
+        } catch (e) {}
+    }
+
 
     // ==========================
     // UI — Input
@@ -386,10 +420,11 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         removeOld: true,
         checkText: true,
         checkShapes: true,
-        checkStroke: true
+        checkStroke: true,
+        createLegend: true
     });
 
-    var dlg = new Window("dialog", "颜色 v" + SCRIPT_VERSION);
+    var dlg = new Window("dialog", "颜色检查 v" + SCRIPT_VERSION);
     dlg.orientation = "column";
     dlg.alignChildren = "fill";
     dlg.spacing = 8;
@@ -430,8 +465,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     var chkVisibleOnly = outPanel.add("checkbox", undefined, "只检查可见对象（跳过隐藏图层）");
     chkVisibleOnly.value = prefs.visibleOnly;
 
-    var chkLabels    = outPanel.add("checkbox", undefined, "标注颜色编号（蓝色数字）");
-
     var attRow = outPanel.add("group");
     attRow.orientation = "row";
     attRow.alignChildren = ["left", "center"];
@@ -441,9 +474,14 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
     attRow.add("statictext", undefined, "次的颜色");
 
     var chkRemoveOld = outPanel.add("checkbox", undefined, "运行前删除旧标注图层");
-    chkLabels.value = prefs.markLabels;
+
+    var chkLegend = outPanel.add("checkbox", undefined, "生成说明");
+    var legendHelp = outPanel.add("statictext", undefined, "编号 + 颜色色块汇总，同一图层。\n说明置于首画板上方（画板外白底）。", { multiline: true });
+    legendHelp.preferredSize = [320, 30];
+
     chkAttention.value = prefs.markAttention;
     chkRemoveOld.value = prefs.removeOld;
+    chkLegend.value = prefs.createLegend;
 
     chkAttention.onClick = function () {
         thresholdInput.enabled = chkAttention.value;
@@ -474,26 +512,27 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         }
 
         var opts = {
-            markLabels:    chkLabels.value,
+            markLabels:    true,
             markAttention: chkAttention.value,
             removeOld:     chkRemoveOld.value,
             threshold:     threshold,
             visibleOnly:   chkVisibleOnly.value,
             checkText:     chkCheckText.value,
             checkShapes:   chkCheckShapes.value,
-            checkStroke:   chkCheckStroke.value
+            checkStroke:   chkCheckStroke.value,
+            createLegend:  chkLegend.value
         };
 
-        savePrefs("color_check.json", { 
-            range: trimText(rangeInput.text), 
-            visibleOnly: chkVisibleOnly.value, 
-            markLabels: chkLabels.value, 
-            markAttention: chkAttention.value, 
-            threshold: trimText(thresholdInput.text), 
+        savePrefs("color_check.json", {
+            range: trimText(rangeInput.text),
+            visibleOnly: chkVisibleOnly.value,
+            markAttention: chkAttention.value,
+            threshold: trimText(thresholdInput.text),
             removeOld: chkRemoveOld.value,
             checkText: chkCheckText.value,
             checkShapes: chkCheckShapes.value,
-            checkStroke: chkCheckStroke.value
+            checkStroke: chkCheckStroke.value,
+            createLegend: chkLegend.value
         });
         var b = dlg.bounds; savePrefs("text_color_pos.json", { x: b[0], y: b[1] });
         dlg.close();
@@ -508,6 +547,11 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
         drawMarkers(colorMap, keys, opts);
 
+        if (opts.createLegend) {
+            var legendLayer = getOrCreateLayer(LAYER_LEGEND);
+            addColorLegend(legendLayer, colorMap, keys, opts);
+        }
+
         // 計算需注意數量
         var attentionCount = 0;
         for (var ai = 0; ai < keys.length; ai++) {
@@ -519,12 +563,8 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
             "发现颜色：" + keys.length + " 种\n" +
             "需注意（出现 ≤ " + opts.threshold + " 次）：" + attentionCount + " 种\n\n" +
             "已在画板标注\n" +
-            "图层：" + LAYER_LABELS + " / " + LAYER_ATTENTION + "\n\n" +
-            "按确定查看详细报告。";
+            "图层：" + LAYER_LABELS + " / " + LAYER_ATTENTION + (opts.createLegend ? " / " + LAYER_LEGEND : "");
         alert(summaryMsg);
-
-        var report = buildReport(colorMap, keys, abIndexes, opts);
-        showResultWindow(report, opts);
     };
 
     var pos = loadPos("text_color_pos.json");

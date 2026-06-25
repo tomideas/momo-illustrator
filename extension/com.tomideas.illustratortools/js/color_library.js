@@ -637,22 +637,35 @@
             'if(!app.documents.length){return "E:no_doc";}' +
             'var sel=app.activeDocument.selection;' +
             'if(!sel||!sel.length){return "E:no_sel";}' +
-            'var item=sel[0];' +
-            'var col;' +
-            'if(item.typename==="TextFrame"){' +
-            'try{col=item.textRange.characterAttributes.fillColor;}catch(e4){try{col=item.fillColor;}catch(e5){return "E:no_fill";}}' +
-'}else if(item.typename==="GroupItem"){' +
-'try{if(item.fillColor&&item.fillColor.typename!=="NoColor"){col=item.fillColor;}}catch(eg){col=null;}' +
-'if(!col){' +
-'for(var gi=0;gi<item.pageItems.length;gi++){' +
-'try{var ch=item.pageItems[gi];if(ch.typename==="TextFrame"){col=ch.textRange.characterAttributes.fillColor;}else{col=ch.fillColor;}if(col&&col.typename!=="NoColor")break;}catch(eg2){col=null;}' +
-'}' +
-'}' +
-'if(!col){' +
-'try{for(var pi=0;pi<item.pathItems.length;pi++){col=item.pathItems[pi].fillColor;if(col&&col.typename!=="NoColor")break;}}catch(eg3){col=null;}' +
-'}' +
-'if(!col)return "E:no_fill";' +
-            '}else{try{col=item.fillColor;}catch(e2){return "E:no_fill";}}' +
+            // 递归查找填色：路径/网格/文字/复合路径/嵌套群组都钻进去找第一个真实填色
+            'function findFill(it){' +
+            'if(!it){return null;}' +
+            'var tn=it.typename,c;' +
+            'try{' +
+            'if(tn==="TextFrame"){' +
+            'try{c=it.textRange.characterAttributes.fillColor;}catch(e){c=null;}' +
+            'if(c&&c.typename!=="NoColor"){return c;}' +
+            'try{c=it.fillColor;}catch(e2){c=null;}' +
+            'return (c&&c.typename!=="NoColor")?c:null;' +
+            '}' +
+            'if(tn==="PathItem"||tn==="MeshItem"){' +
+            'try{c=it.fillColor;}catch(e3){c=null;}' +
+            'return (c&&c.typename!=="NoColor")?c:null;' +
+            '}' +
+            'if(tn==="CompoundPathItem"){' +
+            'try{for(var i=0;i<it.pathItems.length;i++){c=it.pathItems[i].fillColor;if(c&&c.typename!=="NoColor"){return c;}}}catch(e4){}' +
+            'return null;' +
+            '}' +
+            'if(tn==="GroupItem"){' +
+            'try{for(var j=0;j<it.pageItems.length;j++){c=findFill(it.pageItems[j]);if(c){return c;}}}catch(e5){}' +
+            'return null;' +
+            '}' +
+            'try{c=it.fillColor;if(c&&c.typename!=="NoColor"){return c;}}catch(e6){}' +
+            '}catch(e7){}' +
+            'return null;' +
+            '}' +
+            'var col=null;' +
+            'for(var s=0;s<sel.length;s++){col=findFill(sel[s]);if(col){break;}}' +
             'if(!col){return "E:no_fill";}' +
             'if(col.typename==="CMYKColor"){' +
             'var c=+col.cyan,m=+col.magenta,y=+col.yellow,k=+col.black;' +

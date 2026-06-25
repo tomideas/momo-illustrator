@@ -152,6 +152,19 @@
 
   <script>
     (function () {
+      // ── 全局安全网：任何未捕获错误都兜底重绘 ──
+      // 白屏自愈（initUI / 800ms 重绘）排在文件末尾，若前面某行 DOM 操作在 CEF
+      // 还原时序下先抛错（如 getElementById 返回 null → addEventListener 崩），
+      // 整个 IIFE 会在自愈代码注册之前中断 → 永久白屏。此处兜底，分段重试重绘。
+      var _healArmed=false;
+      window.onerror=function(){
+        if(_healArmed)return false;
+        _healArmed=true;
+        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},60);
+        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},300);
+        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},800);
+        return false;
+      };
       // ── Theme ──
       function rgbToHex(c) {if(!c)return"#535353";var col=c.color||c;return"#"+((1<<24)|(Math.round(col.red||0)<<16)|(Math.round(col.green||0)<<8)|Math.round(col.blue||0)).toString(16).slice(1);}
       function isDark(hex){var r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;return(0.2126*r+0.7152*g+0.0722*b)<0.5;}
@@ -188,6 +201,16 @@
         r.style.setProperty("--scrollbar-thumb","#777777");
       }
       applyFallback();
+
+      // ── 讓 Cmd/Ctrl+Z 等快捷鍵留在面板內，別被 AI 主程序當成「撤銷上一步操作」搶走 ──
+      try{
+        var keyEventsInterest=[
+          {keyCode:90,ctrlKey:true},{keyCode:90,metaKey:true},
+          {keyCode:90,ctrlKey:true,shiftKey:true},{keyCode:90,metaKey:true,shiftKey:true},
+          {keyCode:89,ctrlKey:true},{keyCode:89,metaKey:true}
+        ];
+        window.__adobe_cep__.registerKeyEventsInterest(JSON.stringify(keyEventsInterest));
+      }catch(e){}
 
       // ── Real theme from CEP (background, never blocks init) ──
       var _themeRetries=0;
@@ -299,16 +322,18 @@
           if(lines.length<2) return block;
           if(!/^[\s|]*-{2,}[\s|:-]*$/.test(lines[1])) return block;
           function parseRow(l){return l.replace(/^\s*\|/,"").replace(/\|\s*$/,"").split("|").map(function(c){return c.trim();});}
+          // 單元格內把 **粗體** 轉成 <strong>（escapeHtml 不動 * 號，此處安全）
+          function inlineMd(c){return c.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");}
           var headers=parseRow(lines[0]);
           var rows=lines.slice(2).map(parseRow);
           var h="<table><thead><tr>";
-          for(var i=0;i<headers.length;i++) h+="<th>"+headers[i]+"</th>";
+          for(var i=0;i<headers.length;i++) h+="<th>"+inlineMd(headers[i])+"</th>";
           h+="</tr></thead>";
           if(rows.length){
             h+="<tbody>";
             for(var r=0;r<rows.length;r++){
               h+="<tr>";
-              for(var c=0;c<rows[r].length;c++) h+="<td>"+rows[r][c]+"</td>";
+              for(var c=0;c<rows[r].length;c++) h+="<td>"+inlineMd(rows[r][c])+"</td>";
               h+="</tr>";
             }
             h+="</tbody>";
@@ -339,6 +364,19 @@
           e.clipboardData.setData("text/plain",s);
           e.preventDefault();
         }catch(err){}
+      });
+
+      // 明確處理撤銷/重做（保險，避免某些 CEF 版本未自動觸發內建 undo stack）
+      content.addEventListener("keydown",function(e){
+        var z=(e.key==="z"||e.key==="Z"||e.keyCode===90);
+        var y=(e.key==="y"||e.key==="Y"||e.keyCode===89);
+        if((e.metaKey||e.ctrlKey)&&z){
+          e.preventDefault();
+          document.execCommand(e.shiftKey?"redo":"undo");
+        }else if((e.metaKey||e.ctrlKey)&&y){
+          e.preventDefault();
+          document.execCommand("redo");
+        }
       });
 
       function makeRenameHandler(idx, tabEl, nameEl){
@@ -453,6 +491,18 @@
       setTimeout(function(){reloadCurrent(false);},500);
       // AutoVisible 還原白屏自癒：若 tab 列仍為空（CEF 還原時序競爭），延遲重繪一次
       setTimeout(function(){try{if(!tabBar.firstChild)initUI();}catch(e){}},800);
+
+      // ── 強制重繪：CEF 偶爾把面板畫面渲染完卻沒實際刷到螢幕上（無 JS 報錯，純渲染層問題）。
+      // 面板重新可見時，極小幅改動再還原一個樣式屬性，逼 CEF 重新合成畫面。
+      function forceRepaint(){
+        try{
+          var v=document.body.style.zoom;
+          document.body.style.zoom="99.99%";
+          requestAnimationFrame(function(){document.body.style.zoom=v||"100%";});
+        }catch(e){}
+      }
+      document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")forceRepaint();});
+      window.addEventListener("focus",forceRepaint);
   })();
   </script>
 </body>
