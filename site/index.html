@@ -122,11 +122,14 @@
 </div>
 
 <!-- ── 方法二 手动 CEP ── -->
-<div class="install-method" id="install-method-cep">
+<div class="card install-method" id="install-method-cep">
   <h3>【方法二：手动安装（CEP 文件夹）】</h3>
-  <p>下载 <code>momo-tools-*-cep.zip</code> 并解压，得到 <code>com.tomideas.illustratortools</code> 文件夹（名称须保持此样）。再按系统操作：</p>
-<div class="platform-section mac" id="install-mac">
-  <h3>🍎 macOS 安装步骤</h3>
+  <p>下载 <code>momo-tools-*-cep.zip</code> 并解压，得到 <code>com.tomideas.illustratortools</code> 文件夹（名称须保持此样）。再按系统展开下方步骤操作。</p>
+  <p class="callout tip">此方法步骤较多，日常安装建议优先使用 <a href="#install-method-zxp">方法一 ZXP</a>。需要手动部署时再展开对应系统。</p>
+
+  <details class="doc-toggle platform-section mac" id="install-mac">
+    <summary>🍎 macOS 安装步骤</summary>
+    <div class="doc-toggle-body">
 
   <div class="card">
     <h4>1. 创建扩展目录（首次安装必做）</h4>
@@ -171,11 +174,13 @@ defaults write com.adobe.CSXS.12 PlayerDebugMode 1</pre>
     <pre>~/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools</pre>
     <p class="callout tip">颜色库在 <code>~/Library/Application Support/MomoTools/</code>，笔记在面板存储中，卸载扩展不会删除它们。</p>
   </div>
-</div>
 
-<!-- ── Windows ── -->
-<div class="platform-section win" id="install-win">
-  <h3>🪟 Windows 安装步骤</h3>
+    </div>
+  </details>
+
+  <details class="doc-toggle platform-section win" id="install-win">
+    <summary>🪟 Windows 安装步骤</summary>
+    <div class="doc-toggle-body">
 
   <div class="card">
     <h4>1. 创建扩展目录（首次安装必做）</h4>
@@ -227,7 +232,9 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f</pr
     <pre>%APPDATA%\Adobe\CEP\extensions\com.tomideas.illustratortools</pre>
     <p class="callout tip">颜色库在 <code>%APPDATA%\MomoTools\</code>，笔记在面板存储中，卸载扩展不会删除它们。</p>
   </div>
-</div>
+
+    </div>
+  </details>
 </div>
 
 <!-- ====== 快速上手 ====== -->

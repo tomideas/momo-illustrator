@@ -61,4 +61,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const hash = location.hash.replace('#', '');
   if (hash) setActive(hash);
+
+  const openToggleForHash = (id) => {
+    if (!id) return;
+    const target = document.getElementById(id);
+    if (!target) return;
+    const details = target.tagName === 'DETAILS' ? target : target.closest('details.doc-toggle');
+    if (details) details.open = true;
+  };
+
+  openToggleForHash(hash);
+  window.addEventListener('hashchange', () => openToggleForHash(location.hash.replace('#', '')));
+  document.querySelectorAll('.sidebar a[href^="#"]').forEach((a) => {
+    a.addEventListener('click', () => {
+      const id = a.getAttribute('href').slice(1);
+      requestAnimationFrame(() => openToggleForHash(id));
+    });
+  });
 });
