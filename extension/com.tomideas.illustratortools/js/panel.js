@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.126";
+    var PANEL_VERSION = "2.127";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}
@@ -83,6 +83,70 @@
         });
     }
 
+    var SELECT_SAME_COMMANDS = {
+        fill: "Find Fill Color menu item",
+        stroke: "Find Stroke Color menu item",
+        fillStroke: "Find Fill & Stroke menu item"
+    };
+
+    function bindSelectSame(id, commandKey) {
+        document.getElementById(id).addEventListener("click", function () {
+            var command = SELECT_SAME_COMMANDS[commandKey];
+            var ref = commandKey === "fillStroke" ? null : window.MomoToolsColorReference;
+            var script;
+            if (ref) {
+                var c = Math.max(0, Math.min(100, Number(ref.c) || 0));
+                var m = Math.max(0, Math.min(100, Number(ref.m) || 0));
+                var y = Math.max(0, Math.min(100, Number(ref.y) || 0));
+                var k = Math.max(0, Math.min(100, Number(ref.k) || 0));
+                script =
+                    '(function(){' +
+                    'if(!app.documents.length){return "E:no_doc";}' +
+                    'var doc=app.activeDocument,tmpLayer=null,tmp=null,oldSel=[],sel=doc.selection;' +
+                    'try{' +
+                    'if(sel&&typeof sel.length!=="undefined"){for(var i=0;i<sel.length;i++){oldSel.push(sel[i]);}}' +
+                    'doc.selection=null;' +
+                    'tmpLayer=doc.layers.add();tmpLayer.name="__MomoTools_SelectSame__";' +
+                    'var ab=doc.artboards[doc.artboards.getActiveArtboardIndex()].artboardRect;' +
+                    'tmp=tmpLayer.pathItems.rectangle(ab[1],ab[0],1,1);tmp.name="__MomoTools_SelectSame_Reference__";' +
+                    'var ck=new CMYKColor();ck.cyan=' + c + ';ck.magenta=' + m + ';ck.yellow=' + y + ';ck.black=' + k + ';' +
+                    (commandKey === "fill"
+                        ? 'tmp.filled=true;tmp.fillColor=ck;tmp.stroked=false;'
+                        : 'tmp.filled=false;tmp.stroked=true;tmp.strokeColor=ck;tmp.strokeWidth=1;') +
+                    'tmp.selected=true;app.executeMenuCommand("' + command + '");' +
+                    'tmp.remove();tmp=null;tmpLayer.remove();tmpLayer=null;' +
+                    'return "OK:library";' +
+                    '}catch(e){' +
+                    'try{if(tmp){tmp.remove();}}catch(e1){}try{if(tmpLayer){tmpLayer.remove();}}catch(e2){}' +
+                    'try{doc.selection=null;for(var j=0;j<oldSel.length;j++){oldSel[j].selected=true;}}catch(e3){}' +
+                    'return "E:unsupported";' +
+                    '}})()';
+            } else {
+                script =
+                    '(function(){try{' +
+                    'if(!app.documents.length){return "E:no_doc";}' +
+                    'var sel=app.activeDocument.selection;' +
+                    'if(!sel||(typeof sel.length!=="undefined"&&sel.length===0)){return "E:no_sel";}' +
+                    'app.executeMenuCommand("' + command + '");' +
+                    'return "OK";' +
+                    '}catch(e){return "E:unsupported";}})()';
+            }
+            cs.evalScript(script, function (result) {
+                if (result === "OK:library") {
+                    if (typeof window.MomoToolsClearColorReference === "function") {
+                        window.MomoToolsClearColorReference();
+                    }
+                } else if (result === "E:no_doc") {
+                    alert("请先打开 Illustrator 文件。");
+                } else if (result === "E:no_sel") {
+                    alert("请先选择一个参考对象。");
+                } else if (result && result.indexOf("E:") === 0) {
+                    alert("当前 Illustrator 版本不支持此选择条件。");
+                }
+            });
+        });
+    }
+
     bind("btn-duplicate",    "artboard_duplicate_v1.1.2.jsx");
     bind("btn-relayout",     "artboard_relayout_v1.5.9.jsx");
     bind("btn-renamer",      "artboard_renamer_v1.2.1.jsx");
@@ -95,6 +159,9 @@
     bind("btn-trailing-text", "check_trailing_text.jsx");
     bind("btn-debug",        "research_overset_probe.jsx");
     bind("btn-trailing-debug", "research_trailing_text_probe.jsx");
+    bindSelectSame("btn-same-fill", "fill");
+    bindSelectSame("btn-same-stroke", "stroke");
+    bindSelectSame("btn-same-fill-stroke", "fillStroke");
 
     document.getElementById("btn-reset").addEventListener("click", function () {
         if (!confirm("确定要重置所有设置吗？\n这将清除颜色库和所有工具参数。")) return;

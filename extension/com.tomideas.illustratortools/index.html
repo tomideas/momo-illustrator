@@ -120,6 +120,32 @@
   </div>
 
   <div class="group">
+    <div class="group-label">选择相同</div>
+    <div class="same-select-row">
+      <button id="btn-same-fill" title="选择填充颜色相同的对象">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+          <rect x="2" y="2" width="10" height="10" rx="1" fill="currentColor" stroke="none" opacity="0.82"/>
+        </svg>
+        填充颜色
+      </button>
+      <button id="btn-same-stroke" title="选择描边颜色相同的对象">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round">
+          <rect x="2.2" y="2.2" width="9.6" height="9.6" rx="1"/>
+        </svg>
+        描边色
+      </button>
+      <button id="btn-same-fill-stroke" title="选择填色和描边相同的对象">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round">
+          <rect x="5" y="1.5" width="7.5" height="7.5" rx="0.8"/>
+          <rect x="1.5" y="5" width="7.5" height="7.5" rx="0.8" fill="currentColor" stroke="none" opacity="0.82"/>
+          <path d="M5 5h4v4H5z" stroke="var(--bg)" opacity="0.55"/>
+        </svg>
+        填色和描边
+      </button>
+    </div>
+  </div>
+
+  <div class="group">
     <div class="group-label">文字</div>
 
     <button id="btn-text-checker">

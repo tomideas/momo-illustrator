@@ -1,7 +1,7 @@
 # Momo Tools — AI 开发说明文档
 
 > 适用工具：Cursor、Claude Code、GitHub Copilot 等
-> 当前版本：Bundle 2.125 | 最后更新：2026-06-26
+> 当前版本：Bundle 2.127 | 最后更新：2026-07-26
 
 ---
 
@@ -121,6 +121,18 @@ bind("btn-debug",         "research_overset_probe.jsx");
 bind("btn-trailing-debug","research_trailing_text_probe.jsx");
 // 其余按钮见 panel.js 第 87-97 行
 ```
+
+### 选择相同
+
+「填充颜色」「描边色」「填色和描边」三个按钮位于颜色检查下方，由 `panel.js` 的 `SELECT_SAME_COMMANDS` 硬编码映射到 Illustrator 原生命令：
+
+- `Find Fill Color menu item`
+- `Find Stroke Color menu item`
+- `Find Fill & Stroke menu item`
+
+必须继续调用 `app.executeMenuCommand()`，不要改成遍历 `pageItems` 自行比较颜色；原生命令才能保持与 Illustrator「选择 → 相同」对群组、复合路径、专色及外观的判断一致。命令值不得来自用户输入。
+
+颜色库色块单击时还会写入 `window.MomoToolsColorReference` 并显示 `.cl-sw-reference` 高亮。「填充颜色」或「描边色」优先使用该参考色：脚本建立 1×1 pt 临时路径作为原生命令参考，选择完成后必须同时删除临时路径和临时图层；失败时必须恢复原选择。「填色和描边」不使用单色参考色，仍以画布所选对象为准。成功执行一次颜色库参考查找后须调用 `MomoToolsClearColorReference()` 清除状态。
 
 ### 颜色库存储（双层）
 

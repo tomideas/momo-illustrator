@@ -17,7 +17,27 @@
     var libPath    = null; // native FS path, resolved on init
     var editingIdx = -2;  // -2=closed, -1=new color, ≥0=edit existing
     var saveTimer  = null; // debounce timer for saveLibrary
-    
+
+    function clearReferenceColor() {
+        window.MomoToolsColorReference = null;
+        var swatches = document.querySelectorAll(".cl-sw-reference");
+        for (var i = 0; i < swatches.length; i++) {
+            swatches[i].classList.remove("cl-sw-reference");
+        }
+    }
+
+    function setReferenceColor(col, swatch) {
+        clearReferenceColor();
+        window.MomoToolsColorReference = {
+            c: Number(col.c) || 0,
+            m: Number(col.m) || 0,
+            y: Number(col.y) || 0,
+            k: Number(col.k) || 0
+        };
+        swatch.classList.add("cl-sw-reference");
+    }
+
+    window.MomoToolsClearColorReference = clearReferenceColor;
 
     // ── Path init (async via evalScript) ────────────────────────
     // 用 ExtendScript 建立目录（cep.fs.makedir 在部分环境不可靠，会导致目录建不出来 → 写文件全失败）。
@@ -332,6 +352,7 @@
     }
 
     function renderSwatches() {
+        clearReferenceColor();
         var container = document.getElementById("cl-swatches");
         container.innerHTML = "";
 
@@ -371,7 +392,7 @@
         sw.title = col.name + "\n" + cmykLabel(col)
             + "\n" + rgbLabel(rgb.r, rgb.g, rgb.b)
             + "\n" + hexStr
-            + "\n\n单击应用填充，双击编辑，拖动排序";
+            + "\n\n单击设为参考色并应用填充，双击编辑，拖动排序";
 
         sw.addEventListener("dragstart", (function (i) {
             return function (e) {
@@ -424,9 +445,12 @@
         })(idx));
         sw.appendChild(edit);
 
-        sw.addEventListener("click", (function (i) {
-            return function () { applyColor(i); };
-        })(idx));
+        sw.addEventListener("click", (function (i, color, node) {
+            return function () {
+                setReferenceColor(color, node);
+                applyColor(i);
+            };
+        })(idx, col, sw));
 
         sw.addEventListener("dblclick", (function (i) {
             return function (e) { e.stopPropagation(); openEditor(i); };
@@ -573,7 +597,7 @@
         var group = library.groups[curGroup];
         if (!group || !group.colors[colorIdx]) return;
         var col = group.colors[colorIdx];
-        toast("正在应用 C" + Math.round(col.c) + " M" + Math.round(col.m) + " Y" + Math.round(col.y) + " K" + Math.round(col.k) + "...", 800);
+        toast("已设为参考色；正在应用 C" + Math.round(col.c) + " M" + Math.round(col.m) + " Y" + Math.round(col.y) + " K" + Math.round(col.k) + "...", 800);
 
         var script =
             '(function(){' +
@@ -614,7 +638,7 @@
             } else if (r === "E:no_doc") {
                 toast("请先打开 Illustrator 文档");
             } else if (r === "E:no_sel") {
-                toast("请先选中对象");
+                toast("已设为参考色；可点击「填充颜色」或「描边色」");
             } else if (r && r.indexOf("E:apply") === 0) {
                 toast("应用失败：" + r.slice(8));
             } else if (!r) {

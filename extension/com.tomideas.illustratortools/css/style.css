@@ -59,6 +59,15 @@ button:focus,
 button:focus-visible,
 button:active { background: #96a5be !important; border-color: #6e7e96 !important; color: #fff !important; }
 
+/* ═══ 选择相同 Select Same ═══ */
+
+.same-select-row { display: flex; gap: 4px; }
+.same-select-row button {
+  flex: 1 1 0; width: auto; min-width: 0; margin-bottom: 0;
+  padding: 5px 4px; gap: 4px; justify-content: center; font-size: 10px;
+}
+.same-select-row button svg { width: 12px; height: 12px; }
+
 /* ═══ 颜色库 Color Library ═══ */
 
 .cl-group-row { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
@@ -121,6 +130,10 @@ button:active { background: #96a5be !important; border-color: #6e7e96 !important
   overflow: hidden; flex-shrink: 0; transition: border-color 0.1s;
 }
 .cl-swatch:hover { border-color: rgba(255,255,255,0.55); }
+.cl-swatch.cl-sw-reference {
+  border-color: var(--fg-bright, #fff);
+  box-shadow: 0 0 0 2px var(--bg-active, #96a5be);
+}
 .cl-swatch:hover .cl-sw-edit { opacity: 1; }
 .cl-sw-dragover { border-color: var(--bg-active, #96a5be) !important; box-shadow: 0 0 6px rgba(150,165,190,0.6); }
 

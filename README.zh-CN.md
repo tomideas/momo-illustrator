@@ -10,7 +10,7 @@
 |---|---|
 | **安装包** | [Releases](https://github.com/tomideas/momo-illustrator/releases) — `momo-tools-*.zxp` 或 `momo-tools-*-cep.zip` |
 | **使用指南** | [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/) |
-| **版本** | v2.126 · Illustrator 17.0 – 99.9 |
+| **版本** | v2.127 · Illustrator 17.0 – 99.9 |
 
 ## ✨ 功能
 

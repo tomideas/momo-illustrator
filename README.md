@@ -10,7 +10,7 @@
 |---|---|
 | **Download** | [Releases](https://github.com/tomideas/momo-illustrator/releases) — `momo-tools-*.zxp` or `momo-tools-*-cep.zip` |
 | **User guide** | [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/) |
-| **Version** | v2.126 · Illustrator 17.0 – 99.9 |
+| **Version** | v2.127 · Illustrator 17.0 – 99.9 |
 
 ## ✨ Features
 
