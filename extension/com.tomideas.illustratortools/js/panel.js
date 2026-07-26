@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.134";
+    var PANEL_VERSION = "2.135";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}

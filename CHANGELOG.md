@@ -1,5 +1,10 @@
 # Changelog - Momo Tools
 
+## [2.135] — 2026-07-26
+
+### 修復
+- **侧栏简化：移除折叠与二级标题 / Simpler sidebar — no collapsible groups, no sub-items**：按需求「二级标题不用展示」，移除全部 `<button>` toggle 与 `.nav-children`，子链接（ZXP 安装、手动安装、macOS、Windows、主面板一览）不再出现在侧栏，仅保留一级导航。移除对应 CSS（`nav-toggle`、`nav-children`、`nav-sub`、`nav-sub2`）与 JS（`setupNavToggles`、`setupParentButtons`、`expandParentForHash`、`restoreCollapseState`、`loadState/saveState/applyCollapse`）。
+
 ## [2.134] — 2026-07-26
 
 ### 修復

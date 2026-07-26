@@ -1,4 +1,4 @@
-/* Momo Tools Docs — sidebar nav, search, scroll spy, collapsible groups */
+/* Momo Tools Docs — sidebar nav, search, scroll spy */
 try {
 (function () {
   var sidebar = document.querySelector('.sidebar');
@@ -7,9 +7,6 @@ try {
   setupMenuToggle();
   setupSearch();
   setupScrollSpy();
-  setupNavToggles();
-  restoreCollapseState();
-  setupParentButtons();
 
   function setupMenuToggle() {
     var toggle = document.querySelector('.menu-toggle');
@@ -48,7 +45,6 @@ try {
 
   function setupScrollSpy() {
     var navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
-    var navToggles = document.querySelectorAll('.sidebar button.nav-toggle[data-target]');
     var sections = [];
     navLinks.forEach(function (a) {
       var el = document.querySelector(a.getAttribute('href'));
@@ -59,111 +55,18 @@ try {
       navLinks.forEach(function (a) {
         a.classList.toggle('active', a.getAttribute('href') === '#' + id);
       });
-      navToggles.forEach(function (btn) {
-        btn.classList.toggle('active', btn.getAttribute('data-target') === id);
-      });
     }
 
     setActive(location.hash.replace('#', ''));
 
     if (sections.length && 'IntersectionObserver' in window) {
-      var observer = new IntersectionObserver(function (entries) {
+      var obs = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-            expandParentForHash(entry.target.id);
-          }
+          if (entry.isIntersecting) setActive(entry.target.id);
         });
       }, { rootMargin: '-20% 0px -60% 0px' });
-      sections.forEach(function (s) { observer.observe(s); });
+      sections.forEach(function (s) { obs.observe(s); });
     }
-
-    navLinks.forEach(function (a) {
-      a.addEventListener('click', function () {
-        expandParentForHash(a.getAttribute('href').slice(1));
-      });
-    });
-  }
-
-  /* Click on parent toggle (label) -> jump to target + ensure expanded */
-  function setupParentButtons() {
-    document.querySelectorAll('.sidebar button.nav-toggle[data-target]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var key = btn.getAttribute('data-toggle');
-        var target = btn.getAttribute('data-target');
-        var isOpen = btn.getAttribute('aria-expanded') === 'true';
-
-        if (target) {
-          var el = document.getElementById(target);
-          if (el) {
-            history.pushState(null, '', '#' + target);
-            el.scrollIntoView();
-          }
-        }
-
-        if (!isOpen) {
-          applyCollapse(key, true);
-          openSet[key] = true;
-          saveState();
-        }
-      });
-    });
-  }
-
-  var storageKey = 'momo-docs-sidebar';
-  var openSet = {};
-
-  function loadState() {
-    try { openSet = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch (e) { openSet = {}; }
-  }
-  function saveState() {
-    try { localStorage.setItem(storageKey, JSON.stringify(openSet)); } catch (e) {}
-  }
-
-  function applyCollapse(key, expanded) {
-    var panel = document.querySelector('[data-children="' + key + '"]');
-    var btn = document.querySelector('[data-toggle="' + key + '"]');
-    if (!panel || !btn) return;
-    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-    panel.classList.toggle('open', expanded);
-  }
-
-  function setupNavToggles() {
-    /* no-op: chevron interaction handled inside setupParentButtons via the same button;
-       if a toggle has no data-target, fall back to pure toggle */
-    document.querySelectorAll('.sidebar button.nav-toggle:not([data-target])').forEach(function (btn) {
-      var key = btn.getAttribute('data-toggle');
-      btn.addEventListener('click', function () {
-        var isOpen = btn.getAttribute('aria-expanded') === 'true';
-        var next = !isOpen;
-        applyCollapse(key, next);
-        openSet[key] = next;
-        saveState();
-      });
-    });
-  }
-
-  function restoreCollapseState() {
-    loadState();
-    document.querySelectorAll('.sidebar button.nav-toggle').forEach(function (btn) {
-      var key = btn.getAttribute('data-toggle');
-      applyCollapse(key, !!openSet[key]);
-    });
-    expandParentForHash(location.hash.replace('#', ''));
-  }
-
-  /* Expand a sidebar group whose children link to the given hash */
-  function expandParentForHash(id) {
-    if (!id) return;
-    document.querySelectorAll('.sidebar .nav-children').forEach(function (panel) {
-      var key = panel.getAttribute('data-children');
-      var hasMatch = panel.querySelector('a[href="#' + id + '"]');
-      if (hasMatch && !panel.classList.contains('open')) {
-        applyCollapse(key, true);
-        openSet[key] = true;
-        saveState();
-      }
-    });
   }
 })();
 } catch (e) { console.error('[momo-docs]', e.message, e.stack); }
