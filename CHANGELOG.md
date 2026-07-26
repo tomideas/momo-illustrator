@@ -1,5 +1,12 @@
 # Changelog - Momo Tools
 
+## [2.134] — 2026-07-26
+
+### 修復
+- **侧栏折叠按钮对齐 / Sidebar toggle button alignment**：`all:unset` 移除 `margin-left:auto` 后父级按钮贴左；改用显式 reset（`background/border/padding/font`），加上 `display:block` 与去掉 `width:100%`，让 `.sidebar>*{margin-left:auto,width:min(100%,180px)}` 规则在父级按钮上同样生效。
+- **`expandParentForChild` 选择器错配 / expandParentForChild selector bug**：旧版检查 `panel.contains(target)`，但 `target` 是正文里的 H2 永远不在侧栏 `.nav-children` 内，所以"滚动到子项时自动展开"从未触发；改为检查 `panel.querySelector('a[href="#id"]')`。
+- **点击父级标题直接跳转 + 展开 / Parent click jumps and expands**：折叠按钮新增 `data-target`，点击时 `history.pushState + scrollIntoView` 同步跳转到对应锚点，并确保子项组处于展开状态（已开不再重复触发）。同时给当前激活的父级按钮加 `.active` 蓝色高亮。
+
 ## [2.133] — 2026-07-26
 
 ### 改善

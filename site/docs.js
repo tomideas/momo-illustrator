@@ -9,6 +9,7 @@ try {
   setupScrollSpy();
   setupNavToggles();
   restoreCollapseState();
+  setupParentButtons();
 
   function setupMenuToggle() {
     var toggle = document.querySelector('.menu-toggle');
@@ -47,6 +48,7 @@ try {
 
   function setupScrollSpy() {
     var navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+    var navToggles = document.querySelectorAll('.sidebar button.nav-toggle[data-target]');
     var sections = [];
     navLinks.forEach(function (a) {
       var el = document.querySelector(a.getAttribute('href'));
@@ -57,6 +59,9 @@ try {
       navLinks.forEach(function (a) {
         a.classList.toggle('active', a.getAttribute('href') === '#' + id);
       });
+      navToggles.forEach(function (btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-target') === id);
+      });
     }
 
     setActive(location.hash.replace('#', ''));
@@ -66,7 +71,7 @@ try {
         entries.forEach(function (entry) {
           if (entry.isIntersecting) {
             setActive(entry.target.id);
-            expandParentForChild(entry.target.id);
+            expandParentForHash(entry.target.id);
           }
         });
       }, { rootMargin: '-20% 0px -60% 0px' });
@@ -75,7 +80,32 @@ try {
 
     navLinks.forEach(function (a) {
       a.addEventListener('click', function () {
-        expandParentForChild(a.getAttribute('href').slice(1));
+        expandParentForHash(a.getAttribute('href').slice(1));
+      });
+    });
+  }
+
+  /* Click on parent toggle (label) -> jump to target + ensure expanded */
+  function setupParentButtons() {
+    document.querySelectorAll('.sidebar button.nav-toggle[data-target]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.getAttribute('data-toggle');
+        var target = btn.getAttribute('data-target');
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+
+        if (target) {
+          var el = document.getElementById(target);
+          if (el) {
+            history.pushState(null, '', '#' + target);
+            el.scrollIntoView();
+          }
+        }
+
+        if (!isOpen) {
+          applyCollapse(key, true);
+          openSet[key] = true;
+          saveState();
+        }
       });
     });
   }
@@ -99,11 +129,13 @@ try {
   }
 
   function setupNavToggles() {
-    document.querySelectorAll('.sidebar button.nav-toggle').forEach(function (btn) {
+    /* no-op: chevron interaction handled inside setupParentButtons via the same button;
+       if a toggle has no data-target, fall back to pure toggle */
+    document.querySelectorAll('.sidebar button.nav-toggle:not([data-target])').forEach(function (btn) {
       var key = btn.getAttribute('data-toggle');
       btn.addEventListener('click', function () {
-        var expanded = btn.getAttribute('aria-expanded') === 'true';
-        var next = !expanded;
+        var isOpen = btn.getAttribute('aria-expanded') === 'true';
+        var next = !isOpen;
         applyCollapse(key, next);
         openSet[key] = next;
         saveState();
@@ -117,16 +149,16 @@ try {
       var key = btn.getAttribute('data-toggle');
       applyCollapse(key, !!openSet[key]);
     });
-    expandParentForChild(location.hash.replace('#', ''));
+    expandParentForHash(location.hash.replace('#', ''));
   }
 
-  function expandParentForChild(id) {
+  /* Expand a sidebar group whose children link to the given hash */
+  function expandParentForHash(id) {
     if (!id) return;
-    var target = document.getElementById(id);
-    if (!target) return;
     document.querySelectorAll('.sidebar .nav-children').forEach(function (panel) {
       var key = panel.getAttribute('data-children');
-      if (panel.contains(target) && !panel.classList.contains('open')) {
+      var hasMatch = panel.querySelector('a[href="#' + id + '"]');
+      if (hasMatch && !panel.classList.contains('open')) {
         applyCollapse(key, true);
         openSet[key] = true;
         saveState();

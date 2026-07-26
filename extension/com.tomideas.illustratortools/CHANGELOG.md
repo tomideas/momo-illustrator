@@ -1,3 +1,10 @@
+## [2.134] — 2026-07-26
+
+### 修復
+- **侧栏折叠按钮对齐**：CSS `all:unset` 移除 `margin-left:auto` 后父级按钮贴左；改为显式 reset + `display:block`，让父级按钮与一级项同宽同位。
+- **`expandParentForChild` 选择器错配**：改为 `panel.querySelector('a[href="#id"]')`。
+- **点击父级标题直接跳转 + 展开**：折叠按钮加 `data-target`，点击同步跳转到锚点 + 展开子项组。
+
 ## [2.133] — 2026-07-26
 
 ### 改善
