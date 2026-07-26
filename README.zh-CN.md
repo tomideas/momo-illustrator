@@ -10,7 +10,7 @@
 |---|---|
 | **安装包** | [Releases](https://github.com/tomideas/momo-illustrator/releases) — `momo-tools-*.zxp` 或 `momo-tools-*-cep.zip` |
 | **使用指南** | [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/) |
-| **版本** | v2.125 · Illustrator 17.0 – 99.9 |
+| **版本** | v2.126 · Illustrator 17.0 – 99.9 |
 
 ## ✨ 功能
 
@@ -75,8 +75,8 @@ defaults write com.adobe.CSXS.12 PlayerDebugMode 1
 
 ```cmd
 REM Windows
-reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_STRING /d 1 /f
-reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f
+reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f
 ```
 
 4. 🔄 重启 Illustrator → 从扩展菜单打开 **Momo Tools**

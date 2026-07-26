@@ -1,6 +1,18 @@
 # Changelog - Momo Tools
 
+## [2.126] — 2026-07-26
+
+### 修復
+- **使用指南（site）/ README Win 命令**：启用未签名扩展的 `reg add` 指令类型 `REG_STRING` 改为正确的 Windows 注册表字符串类型 `REG_SZ`（Windows Registry String, null-terminated）。`REG_STRING` 不是有效类型，旧指令在 Win 下执行会报错，是教程笔误。新指令用户实测可成功写入。
+
+### 文档
+- **README.md / README.zh-CN.md**：Windows 启用命令类型由 `REG_STRING` 改为 `REG_SZ`
+- **使用指南（site）**：同步上述 Windows 注册表命令类型
+
 ## [Unreleased]
+
+### 修復
+- **颜色库「提取」CMYK 不一致**：递归群组时跳过隐藏、无填色及剪切路径；以当前文档 ICC 做 RGB 匹配与 CMYK 回转验证，将 Illustrator DOM 展开的等色四色灰归一化为 Color Picker 的 K-only 数值（如 `C76 M72 Y70 K38 → C0 M0 Y0 K90`）
 
 ### 文档
 - **使用指南（site）**：批量页码新增演示视频

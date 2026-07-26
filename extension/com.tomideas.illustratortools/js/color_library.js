@@ -640,6 +640,7 @@
             // 递归查找填色：路径/网格/文字/复合路径/嵌套群组都钻进去找第一个真实填色
             'function findFill(it){' +
             'if(!it){return null;}' +
+            'try{if(it.hidden){return null;}}catch(e0){}' +
             'var tn=it.typename,c;' +
             'try{' +
             'if(tn==="TextFrame"){' +
@@ -648,12 +649,16 @@
             'try{c=it.fillColor;}catch(e2){c=null;}' +
             'return (c&&c.typename!=="NoColor")?c:null;' +
             '}' +
-            'if(tn==="PathItem"||tn==="MeshItem"){' +
+            'if(tn==="PathItem"){' +
+            'try{if(it.filled===false||it.clipping){return null;}c=it.fillColor;}catch(e3){c=null;}' +
+            'return (c&&c.typename!=="NoColor")?c:null;' +
+            '}' +
+            'if(tn==="MeshItem"){' +
             'try{c=it.fillColor;}catch(e3){c=null;}' +
             'return (c&&c.typename!=="NoColor")?c:null;' +
             '}' +
             'if(tn==="CompoundPathItem"){' +
-            'try{for(var i=0;i<it.pathItems.length;i++){c=it.pathItems[i].fillColor;if(c&&c.typename!=="NoColor"){return c;}}}catch(e4){}' +
+            'try{for(var i=0;i<it.pathItems.length;i++){var p=it.pathItems[i];if(p.hidden||p.filled===false||p.clipping){continue;}c=p.fillColor;if(c&&c.typename!=="NoColor"){return c;}}}catch(e4){}' +
             'return null;' +
             '}' +
             'if(tn==="GroupItem"){' +
@@ -667,8 +672,28 @@
             'var col=null;' +
             'for(var s=0;s<sel.length;s++){col=findFill(sel[s]);if(col){break;}}' +
             'if(!col){return "E:no_fill";}' +
+            // Illustrator DOM 有时把纯 K 灰按当前文档 ICC 展开为四色 CMYK；Color Picker 则保留纯 K 表示。
+            // 仅当纯 K 的 RGB 相符，且 RGB→CMYK 回转能还原 DOM 四色值时，才归一化为 K-only。
+            'function normalizeKOnly(c,m,y,k){' +
+            'if(Math.abs(c)<0.01&&Math.abs(m)<0.01&&Math.abs(y)<0.01){return [c,m,y,k];}' +
+            'try{' +
+            'var src=app.convertSampleColor(ImageColorSpace.CMYK,[c,m,y,k],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
+            'var lum=function(v){return 0.299*v[0]+0.587*v[1]+0.114*v[2];};' +
+            'var target=lum(src),lo=0,hi=100;' +
+            'for(var n=0;n<7;n++){var mid=Math.floor((lo+hi)/2);var mr=app.convertSampleColor(ImageColorSpace.CMYK,[0,0,0,mid],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);if(lum(mr)>target){lo=mid;}else{hi=mid;}}' +
+            'var bestK=k,bestD=1e9,bestRGB=null;' +
+            'for(var q=Math.max(0,lo-1);q<=Math.min(100,hi+1);q++){var kr=app.convertSampleColor(ImageColorSpace.CMYK,[0,0,0,q],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);var d=Math.pow(kr[0]-src[0],2)+Math.pow(kr[1]-src[1],2)+Math.pow(kr[2]-src[2],2);if(d<bestD){bestD=d;bestK=q;bestRGB=kr;}}' +
+            'if(bestD<=4&&bestRGB){' +
+            'var rt=app.convertSampleColor(ImageColorSpace.RGB,bestRGB,ImageColorSpace.CMYK,ColorConvertPurpose.defaultpurpose);' +
+            'var delta=Math.max(Math.abs(rt[0]-c),Math.abs(rt[1]-m),Math.abs(rt[2]-y),Math.abs(rt[3]-k));' +
+            'if(delta<=0.75){return [0,0,0,bestK];}' +
+            '}' +
+            '}catch(en){}' +
+            'return [c,m,y,k];' +
+            '}' +
             'if(col.typename==="CMYKColor"){' +
             'var c=+col.cyan,m=+col.magenta,y=+col.yellow,k=+col.black;' +
+            'var nk=normalizeKOnly(c,m,y,k);c=nk[0];m=nk[1];y=nk[2];k=nk[3];' +
             'var hex="";' +
             'try{' +
             'var rgb=app.convertSampleColor(ImageColorSpace.CMYK,[c,m,y,k],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +

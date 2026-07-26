@@ -224,7 +224,7 @@ var editingIdx = -2;   // -2=关闭, -1=新增, ≥0=编辑
 #### 颜色提取逻辑
 
 **支持的颜色类型**:
-1. **CMYK Color** - 直接获取 CMYK 值
+1. **CMYK Color** - 读取对象 CMYK；若 Illustrator DOM 按当前文档 ICC 将纯 K 展开为等色四色值，则以 `K → RGB → CMYK` 回转验证后还原为原生 Color Picker 的 K-only 表示。不同文件必须使用各自活动文档的转换环境，不能套用固定 CMYK 门槛
 2. **RGB Color** - 转换为 CMYK:
    ```
    k = 1 - max(r/255, g/255, b/255)
@@ -233,6 +233,8 @@ var editingIdx = -2;   // -2=关闭, -1=新增, ≥0=编辑
    y = (1 - b/255 - k) / (1 - k) × 100
    ```
 3. **Spot Color** - 提取 Spot 的基础 CMYK 颜色
+
+> 提取的是对象填色，不是透明度、混合模式、渐变、图片或效果叠加后的屏幕渲染像素。CEP/ExtendScript 没有公开读取原生 Eyedropper 最终配方的接口。
 
 #### 菜单项绑定
 

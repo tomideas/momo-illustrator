@@ -10,7 +10,7 @@
 |---|---|
 | **Download** | [Releases](https://github.com/tomideas/momo-illustrator/releases) — `momo-tools-*.zxp` or `momo-tools-*-cep.zip` |
 | **User guide** | [tomideas.github.io/momo-illustrator](https://tomideas.github.io/momo-illustrator/) |
-| **Version** | v2.125 · Illustrator 17.0 – 99.9 |
+| **Version** | v2.126 · Illustrator 17.0 – 99.9 |
 
 ## ✨ Features
 
@@ -73,8 +73,8 @@ defaults write com.adobe.CSXS.12 PlayerDebugMode 1
 
 ```cmd
 REM Windows
-reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_STRING /d 1 /f
-reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_STRING /d 1 /f
+reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f
 ```
 
 4. 🔄 Restart Illustrator → open **Momo Tools** from the Extensions menu

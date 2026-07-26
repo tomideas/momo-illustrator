@@ -1,3 +1,8 @@
+## [Unreleased]
+
+### 修復
+- **颜色库「提取」CMYK 不一致**：递归群组时跳过隐藏、无填色及剪切路径；以当前文档 ICC 做 RGB 匹配与 CMYK 回转验证，将 Illustrator DOM 展开的等色四色灰归一化为 Color Picker 的 K-only 数值（如 `C76 M72 Y70 K38 → C0 M0 Y0 K90`）
+
 ## [2.125] — 2026-06-26
 
 ### 移除 / Removed
