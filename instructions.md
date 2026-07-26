@@ -1,7 +1,32 @@
 # Momo Tools — AI 开发说明文档
 
 > 适用工具：Cursor、Claude Code、GitHub Copilot 等
-> 当前版本：Bundle 2.131 | 最后更新：2026-07-26
+> 当前版本：Bundle 2.135 | 最后更新：2026-07-26
+
+---
+
+## 🔐 API Key 区（仅本机 / Local-only · 绝不入库 · Local Only · Never Commit）
+
+> ⚠️ **安全守则 · Security rules**
+> 1. 本节位于 `.gitignore` 第 24 行的 `instructions.md` 内，被 ignore 排除，`git add` / `git push` 永远不会包含它。
+> 2. **每次开启新 AI 工具会话**（Cursor / Claude Code / Copilot / 其他），第一步必须用 Read 工具读取本节，然后向用户确认 Key 是否过期 / 是否更换；过期或更换时**停下动作等用户提供新值**。
+> 3. 本节内容**禁止**回显到 commit、远程、日志、工单、聊天输出；任何此类行为都视为泄露，必须立即撤销并轮换。
+> 4. 推送 GitHub 时用一次性 `credential.helper` 传入 token，结束后立刻 `git config --local --unset credential.helper`，token 不入 `.git/config`。
+
+### 已登记的 Key
+
+| 用途 | Provider | Key | 过期检查 | 上次确认 |
+|------|----------|-----|----------|---------|
+| GitHub PAT (push) | GitHub | `<paste-new-ghp-here>` | 90 天 | 2026-07-26 |
+
+> 占位说明：上表 `<paste-new-ghp-here>` 是待填槽位；用户给我新 PAT 后我会原地替换，不留任何历史值。
+
+### 会话开始检查清单（每次新 AI 工具会话必走 / Session-start checklist）
+
+- [ ] **读本节**：用 Read 读取"🔐 API Key 区"表格，确认 Key 仍存在。
+- [ ] **询问用户**：「上次登记的 GitHub PAT（`<paste-new-ghp-here>` 占位所在行）是否仍有效？需要提供新 key 吗？」
+- [ ] 若用户回"不变" → 沿用；若"换 key" → 让用户直接贴新值，**仅就地覆写表格该行的 Key 单元格**，不要写入 commit、不要再次贴回聊天。
+- [ ] 推送时用一次性 `credential.helper`（不入 `.git/config`），结束后立刻 unset。
 
 ---
 
