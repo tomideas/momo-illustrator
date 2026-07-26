@@ -75,9 +75,11 @@ defaults write com.adobe.CSXS.12 PlayerDebugMode 1
 
 ```cmd
 REM Windows
-reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_SZ /d 1 /f
-reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode /t REG_SZ /d 1 /f
 ```
+
+Adobe 官方兼容表显示 Illustrator 25.3 集成 CEP 11、Illustrator 29.5.1 开始集成 CEP 12。两条都执行可兼容不同版本；插件清单里的 `RequiredRuntime 6.0` 只是最低要求，不代表应使用 `CSXS.6`。
 
 4. 🔄 重启 Illustrator → 从扩展菜单打开 **Momo Tools**
 

@@ -1,7 +1,7 @@
 # Momo Tools — AI 开发说明文档
 
 > 适用工具：Cursor、Claude Code、GitHub Copilot 等
-> 当前版本：Bundle 2.127 | 最后更新：2026-07-26
+> 当前版本：Bundle 2.131 | 最后更新：2026-07-26
 
 ---
 
@@ -75,7 +75,7 @@ extension/com.tomideas.illustratortools/
 │   ├── artboard_renamer_v1.2.1.jsx     # 画板更名
 │   ├── artboard_relayout_v1.5.9.jsx    # 重新排列
 │   ├── add_page_numbers_tomideas.jsx   # 批量页码
-│   ├── grid_system_v1.3.1.jsx          # 网格系统（圆形色块选色，间距默认关）
+│   ├── grid_system_v1.3.1.jsx          # 网格系统 v1.3.5（蒙版边界、完整设置记忆、整组输出）
 │   ├── generate_color_box.jsx          # 颜色标签生成
 │   ├── debug_overset.jsx               # 旧版调试脚本（保留备用）
 │   ├── research_overset_probe.jsx      # 溢出诊断（交互式，面板按钮触发）
@@ -122,7 +122,7 @@ bind("btn-trailing-debug","research_trailing_text_probe.jsx");
 // 其余按钮见 panel.js 第 87-97 行
 ```
 
-### 选择相同
+### 选取相同工具（Illustrator「选择相同」）
 
 「填充颜色」「描边色」「填色和描边」三个按钮位于颜色检查下方，由 `panel.js` 的 `SELECT_SAME_COMMANDS` 硬编码映射到 Illustrator 原生命令：
 
@@ -278,6 +278,10 @@ function detectTrailingIssue(tf) {
 ---
 
 ## 调试技巧
+
+### PlayerDebugMode 与 CSXS 版本
+
+未签名扩展使用的 `PlayerDebugMode` 键由 Illustrator 内置的 CEP 版本决定，不能根据 `manifest.xml` 的最低 `RequiredRuntime` 推断。Adobe 官方兼容表显示 Illustrator 25.3 集成 CEP 11、Illustrator 29.5.1 开始集成 CEP 12；安装说明应同时提供 `CSXS.11` 与 `CSXS.12`，Windows 类型必须为 `REG_SZ`、数值为 `1`，并保留 `/f` 避免覆盖确认。
 
 ### 打开 CEP 调试工具
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momo Tools v2.127 — 使用指南</title>
+<title>Momo Tools v2.131 — 使用指南</title>
 <link rel="stylesheet" href="docs.css">
 <script src="docs.js" defer></script>
 </head>
@@ -39,6 +39,7 @@
   <div class="group-title">功能</div>
   <a href="#artboard">画板工具</a>
   <a href="#color">颜色工具</a>
+  <a href="#select-same-color">选取相同工具</a>
   <a href="#text">文字工具</a>
   <a href="#tools">工具集</a>
   <a href="#notes">笔记面板</a>
@@ -50,7 +51,7 @@
 <main class="main-content">
 
 <h1 id="intro">Momo Tools 使用指南</h1>
-<p class="page-desc">Adobe Illustrator 外挂面板 v2.127 — 画板、颜色、文字、排版工具集 · 2026-07-26</p>
+<p class="page-desc">Adobe Illustrator 外挂面板 v2.131 — 画板、颜色、文字、排版工具集 · 2026-07-26</p>
 
 <div class="callout info">
   <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出、清点文档用色、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
@@ -137,7 +138,7 @@ open ~/Library/Application\ Support/Adobe/CEP/extensions</pre>
     <p>Momo Tools 为开发版 CEP 扩展，须开启 <b>PlayerDebugMode</b>。请先<b>完全退出</b> Illustrator，再打开「终端」执行：</p>
     <pre>defaults write com.adobe.CSXS.11 PlayerDebugMode 1
 defaults write com.adobe.CSXS.12 PlayerDebugMode 1</pre>
-    <p class="callout info">Illustrator 2024 及更新版本通常对应 <b>CSXS.12</b>；较旧版本用 <b>CSXS.11</b>。两条都执行可兼容不同版本。</p>
+    <p class="callout info">Adobe 官方兼容表显示：Illustrator 25.3 集成 CEP 11，Illustrator 29.5.1 开始集成 CEP 12。两条都执行可兼容不同 Illustrator 版本；插件清单里的 <code>RequiredRuntime 6.0</code> 只是最低要求，不是这里的 CSXS 键版本。</p>
   </div>
 
   <div class="card">
@@ -193,9 +194,13 @@ explorer "%APPDATA%\Adobe\CEP\extensions"</pre>
   <div class="card" id="install-debug-win">
     <h4>3. 启用未签名扩展（首次必做）</h4>
     <p>请先<b>完全退出</b> Illustrator，打开「命令提示符」执行：</p>
-    <pre>reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_SZ /d 1 /f
-reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
-    <p class="callout info">Illustrator 2024 及更新版本通常对应 <b>CSXS.12</b>；较旧版本用 <b>CSXS.11</b>。两条都执行可兼容不同版本。</p>
+    <pre>reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
+    <p class="callout info">Adobe 官方兼容表显示：Illustrator 25.3 集成 CEP 11，Illustrator 29.5.1 开始集成 CEP 12。两条都执行可兼容不同 Illustrator 版本；<code>/f</code> 会直接覆盖旧值，避免命令停在确认提示。</p>
+    <p>执行后可检查是否写入成功：</p>
+    <pre>reg query "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode
+reg query "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode</pre>
+    <p>输出应显示类型为 <code>REG_SZ</code>、数值为 <code>1</code>。</p>
   </div>
 
   <div class="card">
@@ -232,7 +237,7 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
   <table>
     <tr><th>分组</th><th>按钮</th><th>详情</th></tr>
     <tr><td><b>画板</b></td><td>复制 · 重新排列 · 更名</td><td><a href="#artboard">画板工具</a></td></tr>
-    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库</td><td><a href="#color">颜色工具</a></td></tr>
+    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库 · 选取相同工具</td><td><a href="#color">颜色工具</a></td></tr>
     <tr><td><b>文字</b></td><td>样式检查 · 溢出检查 · 尾端空白</td><td><a href="#text">文字工具</a></td></tr>
     <tr><td><b>工具</b></td><td>网格系统 · 批量页码 · 笔记</td><td><a href="#tools">工具集</a> · <a href="#notes">笔记面板</a></td></tr>
   </table>
@@ -427,6 +432,33 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
   <p class="callout tip">数据保存在 <code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）；文件写入失败时会暂存面板 localStorage。建议定期导出 JSON 备份。</p>
 </div>
 
+<div class="card" id="select-same-color">
+  <h3>选取相同工具（Illustrator「选择相同」）</h3>
+  <p>快速选中当前文件里颜色相同的对象，不必逐层展开群组，也不用反复打开 Illustrator 的「选择 → 相同」菜单。功能直接调用 Illustrator 原生命令，对群组、复合路径、专色与外观的判断规则与 Illustrator 保持一致。</p>
+
+  <figure class="doc-figure">
+    <video class="doc-video" src="assets/videos/select-same.mp4" autoplay muted loop playsinline controls preload="auto">
+      您的浏览器不支持视频播放。请<a href="assets/videos/select-same.mp4">下载视频</a>查看选取相同工具演示。
+    </video>
+    <figcaption>选取相同工具演示</figcaption>
+  </figure>
+
+  <h4>两种使用方式</h4>
+  <table>
+    <tr><td><b>以画布对象为参考</b></td><td>先选中一个对象，再点「填充颜色」「描边色」或「填色和描边」。适合从稿件中的现有对象开始查找</td></tr>
+    <tr><td><b>以颜色库色块为参考</b></td><td>先点击颜色库色块，色块出现高亮边框；再点「填充颜色」或「描边色」。选择完成后参考色会自动清除</td></tr>
+  </table>
+
+  <h4>按钮说明</h4>
+  <table>
+    <tr><td>填充颜色</td><td>选择填充颜色相同的对象</td></tr>
+    <tr><td>描边色</td><td>选择描边颜色相同的对象</td></tr>
+    <tr><td>填色和描边</td><td>同时比较对象的填色与描边；必须先在画布选中参考对象</td></tr>
+  </table>
+
+  <p class="callout tip">颜色库色块只能提供一种颜色，因此只用于「填充颜色」或「描边色」；「填色和描边」仍以画布所选对象为参考。所有选择都只发生在当前 Illustrator 文件中，不会修改对象颜色。</p>
+</div>
+
 <!-- ====== 文字工具 ====== -->
 <h2 id="text">文字工具</h2>
 
@@ -552,6 +584,9 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
   <h4>共用参数</h4>
   <table>
     <tr><td>作用范围</td><td>当前画板 / 选中的图形 / 全部画板</td></tr>
+    <tr><td>设置记忆</td><td>重新打开时恢复网格类型、全部参数、单位、内边距、颜色、作用范围和导出选项</td></tr>
+    <tr><td>剪切蒙版</td><td>选择剪切蒙版群组时，以蒙版路径的几何边界生成网格，不使用蒙版外的隐藏内容边界</td></tr>
+    <tr><td>生成结构</td><td>每个目标的列、行、边框与对角线合并在一个顶层组中，可一次选择并整体移动</td></tr>
     <tr><td>单位</td><td>px / mm / pt，自动按文档单位转换</td></tr>
     <tr><td>内边距</td><td>上/下/左/右 4 边独立，可一键全部同步</td></tr>
     <tr><td>网格线颜色</td><td>6 种浅色圆形色块点选（浅蓝 / 浅绿 / 浅红 / 浅黄 / 浅灰 / 浅橙），选中显示蓝色高亮环</td></tr>
@@ -738,14 +773,14 @@ reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
     <li>完全退出并重启 Illustrator</li>
   </ol>
   <p>颜色库（<code>MomoTools/</code>）与笔记数据与扩展文件夹分开存放，覆盖更新不会删除它们。</p>
-  <p class="callout tip">当前文档对应版本：<b>v2.127</b> · 发布日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
+  <p class="callout tip">当前文档对应版本：<b>v2.131</b> · 发布日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
 </div>
 
 </main>
 </div>
 
 <footer class="site-footer">
-  Momo Tools v2.127 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
+  Momo Tools v2.131 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
 </footer>
 
 </body>

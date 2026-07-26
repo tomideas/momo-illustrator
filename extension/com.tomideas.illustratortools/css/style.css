@@ -59,7 +59,7 @@ button:focus,
 button:focus-visible,
 button:active { background: #96a5be !important; border-color: #6e7e96 !important; color: #fff !important; }
 
-/* ═══ 选择相同 Select Same ═══ */
+/* ═══ 选取相同 Select Same ═══ */
 
 .same-select-row { display: flex; gap: 4px; }
 .same-select-row button {

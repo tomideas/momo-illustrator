@@ -3,7 +3,7 @@
 $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
 (function () {
-var SCRIPT_VERSION = "1.0.0";
+var SCRIPT_VERSION = "1.3.5";
 function clamp(v, lo, hi) {
 return Math.max(lo, Math.min(hi, v));
 }
@@ -22,6 +22,35 @@ for (var i = 0; i < doc.artboards.length; i += 1) {
 var r = doc.artboards[i].artboardRect;
 artboards.push({bounds: {B: r[3], H: r[1] - r[3], L: r[0], R: r[2], T: r[1], W: r[2] - r[0]}, index: i, name: doc.artboards[i].name});}
 return artboards;
+}
+function getClippingBounds(item) {
+if ((!item) || (item.typename !== "GroupItem") || (!item.clipped)) {
+return null;
+}
+for (var i = 0; i < item.pageItems.length; i += 1) {
+var child = item.pageItems[i];
+try {
+if ((child.typename === "PathItem") && child.clipping) {
+return child.geometricBounds;
+}
+if (child.typename === "CompoundPathItem") {
+for (var j = 0; j < child.pathItems.length; j += 1) {
+if (child.pathItems[j].clipping) {
+return child.geometricBounds;
+}
+}
+}
+} catch (e) {
+}
+}
+return null;
+}
+function getTargetBounds(item) {
+var clippingBounds = getClippingBounds(item);
+if (clippingBounds) {
+return clippingBounds;
+}
+return item.visibleBounds;
 }
 function withPadSides(b, t, r, bt, l) {
 t = Math.max(0, (t) || (0));
@@ -472,6 +501,15 @@ return "\u9ec4\u91d1\u6bd4\u4f8b\u7f51\u683c";
 }
 return "\u745e\u58eb\u7f51\u683c";
 }
+function getSelectedGridTypeKey() {
+if (equalRadio.value) {
+return "equal";
+}
+if (goldenRadio.value) {
+return "golden";
+}
+return "swiss";
+}
 function getSelectedUnit() {
 if (pxRadio.value) { 
 return "px";
@@ -495,6 +533,47 @@ if (selectionRadio.value) {
 return "\u5df2\u9009\u56fe\u5f62";
 }
 return "\u5f53\u524d\u753b\u677f";
+}
+function getSelectedScopeKey() {
+if (allArtboardsRadio.value) {
+return "all";
+}
+if (selectionRadio.value) {
+return "selection";
+}
+return "current";
+}
+function saveDialogPrefs() {
+var b = dlg.bounds;
+savePrefs("grid_system_pos.json", { x: b[0], y: b[1] });
+savePrefs("grid_system_settings.json", {
+gridType: getSelectedGridTypeKey(),
+cols: String(colValue.text),
+rows: String(rowValue.text),
+colGutterOn: !!colGutterCheck.value,
+colGutter: String(colGutter.text),
+rowGutterOn: !!rowGutterCheck.value,
+rowGutter: String(rowGutter.text),
+divisions: String(divValue.text),
+equalGutterOn: !!equalGutterCheck.value,
+equalGutter: String(gutterValue.text),
+equalDiags: !!diagCheck.value,
+fibTerms: String(termsValue.text),
+fibBothAxes: !!bothAxesCheck.value,
+goldenDiags: !!goldenDiagCheck.value,
+unit: getSelectedUnit(),
+paddingOn: !!paddingCheck.value,
+paddingSync: !!paddingSyncCheck.value,
+paddingTop: String(topValue.text),
+paddingRight: String(rightValue.text),
+paddingBottom: String(bottomValue.text),
+paddingLeft: String(leftValue.text),
+colorIndex: _selColorIdx,
+scope: getSelectedScopeKey(),
+drawFrame: !!drawFrame.value,
+toGuides: !!toGuides.value,
+keepPrevious: !!keepPrevious.value
+});
 }
 function readOpts() {
 var t = getSelectedGridType();
@@ -537,75 +616,55 @@ throw Error("\u5185\u8fb9\u8ddd\u76f8\u5bf9\u4e8e\u76ee\u6807\u8fc7\u5927\u3002"
 }
 var abLayerName = (artboardName) || (doc.artboards[doc.artboards.getActiveArtboardIndex()].name);
 var abLayer = ensureSubLayer(parent, abLayerName);
+var gridGroup = abLayer.groupItems.add();
+gridGroup.name = o.type;
 if (o.type === "\u745e\u58eb\u7f51\u683c") { 
-var colsL = ensureSubLayer(abLayer, "\u5217");
-clearLayer(colsL);
-var colsG = colsL.groupItems.add();
+var colsG = gridGroup.groupItems.add();
 colsG.name = "\u5217";
 var targetsSwiss = {cols: colsG};
 if (o.rowsOn) { 
-var rowsL = ensureSubLayer(abLayer, "\u884c");
-clearLayer(rowsL);
-var rowsG = rowsL.groupItems.add();
+var rowsG = gridGroup.groupItems.add();
 rowsG.name = "\u884c";
 targetsSwiss.rows = rowsG;
 }
 if (o.drawPadFrame) { 
-var frameL = ensureSubLayer(abLayer, "\u8fb9\u6846");
-clearLayer(frameL);
-var frameG = frameL.groupItems.add();
+var frameG = gridGroup.groupItems.add();
 frameG.name = "\u8fb9\u6846";
 targetsSwiss.frame = frameG;
 }
 buildSwiss(targetsSwiss, baseB, padB, o.cols, o.colGutter, o.rowsOn, o.rowsCount, o.rowGutter, o.snapOn, 0.5, o.drawPadFrame, o.unit);
 }
 else if (o.type === "\u7b49\u5206\u7f51\u683c") {
-var vertL = ensureSubLayer(abLayer, "\u5782\u76f4");
-var horzL = ensureSubLayer(abLayer, "\u6c34\u5e73");
-clearLayer(vertL);
-clearLayer(horzL);
-var vertG = vertL.groupItems.add();
+var vertG = gridGroup.groupItems.add();
 vertG.name = "\u5782\u76f4";
-var horzG = horzL.groupItems.add();
+var horzG = gridGroup.groupItems.add();
 horzG.name = "\u6c34\u5e73";
 var targetsEqual = {horz: horzG, vert: vertG};
 if (o.equalDiags) { 
-var diagL = ensureSubLayer(abLayer, "\u5bf9\u89d2\u7ebf");
-clearLayer(diagL);
-var diagG = diagL.groupItems.add();
+var diagG = gridGroup.groupItems.add();
 diagG.name = "\u5bf9\u89d2\u7ebf";
 targetsEqual.diag = diagG;
 }
 if (o.drawPadFrame) { 
-var frameL = ensureSubLayer(abLayer, "\u8fb9\u6846");
-clearLayer(frameL);
-var frameG = frameL.groupItems.add();
+var frameG = gridGroup.groupItems.add();
 frameG.name = "\u8fb9\u6846";
 targetsEqual.frame = frameG;
 }
 buildEqual(targetsEqual, baseB, padB, o.divisions, o.equalGutter, o.equalDiags, o.drawPadFrame, o.unit);
 }
 else {
-var xL = ensureSubLayer(abLayer, "X\u5206\u5272");
-var yL = ensureSubLayer(abLayer, "Y\u5206\u5272");
-clearLayer(xL);
-clearLayer(yL);
-var xG = xL.groupItems.add();
+var xG = gridGroup.groupItems.add();
 xG.name = "X\u5206\u5272";
-var yG = yL.groupItems.add();
+var yG = gridGroup.groupItems.add();
 yG.name = "Y\u5206\u5272";
 var targetsGolden = {xpart: xG, ypart: yG};
 if (o.goldenDiags) { 
-var diagL = ensureSubLayer(abLayer, "\u5bf9\u89d2\u7ebf");
-clearLayer(diagL);
-var diagG = diagL.groupItems.add();
+var diagG = gridGroup.groupItems.add();
 diagG.name = "\u5bf9\u89d2\u7ebf";
 targetsGolden.diag = diagG;
 }
 if (o.drawPadFrame) { 
-var frameL = ensureSubLayer(abLayer, "\u8fb9\u6846");
-clearLayer(frameL);
-var frameG = frameL.groupItems.add();
+var frameG = gridGroup.groupItems.add();
 frameG.name = "\u8fb9\u6846";
 targetsGolden.frame = frameG;
 }
@@ -632,7 +691,7 @@ return;
 for (var si = 0; si < sel.length; si++) {
 var item = sel[si];
 var bb;
-try { bb = item.visibleBounds; } catch (e1) { continue; }
+try { bb = getTargetBounds(item); } catch (e1) { continue; }
 if (!bb) continue;
 var bounds = {B: bb[3], T: bb[1], L: bb[0], R: bb[2], H: bb[1] - bb[3], W: bb[2] - bb[0]};
 var lbl = item.name || ("\u5df2\u9009" + (si + 1));
@@ -753,7 +812,7 @@ return;
 for (var si = 0; si < sel.length; si++) {
 var item = sel[si];
 var bb;
-try { bb = item.visibleBounds; } catch (e1) { continue; }
+try { bb = getTargetBounds(item); } catch (e1) { continue; }
 if (!bb) continue;
 var baseB = {B: bb[3], T: bb[1], L: bb[0], R: bb[2], H: bb[1] - bb[3], W: bb[2] - bb[0]};
 var padB = withPadSides(baseB, o.paddingSides.top, o.paddingSides.right, o.paddingSides.bottom, o.paddingSides.left);
@@ -803,7 +862,7 @@ applyStrokeRecursive(parent, o.stroke, DEFAULT_STROKE_COLOR);
 if (o.convertToGuides) { 
 layerToGuidesDeep(parent);
 }
-var b = dlg.bounds; savePrefs("grid_system_pos.json", { x: b[0], y: b[1] });
+saveDialogPrefs();
 dlg.close(1);
 } catch (e) {alert("\u5e94\u7528\u9519\u8bef\uff1a" + e.message);
 }
@@ -826,7 +885,7 @@ var _gridColor = { r: 170, g: 170, b: 170 };
 var DEFAULT_STROKE_COLOR = rgb(_gridColor.r, _gridColor.g, _gridColor.b);
 var COLORS = {background: [248, 249, 250], border: [222, 226, 230], primary: [0, 120, 215], secondary: [108, 117, 125], success: [40, 167, 69], text: [33, 37, 41]};
 var SPACING = {lg: 15, md: 11, sm: 7, xl: 19, xs: 4, xxl: 23};
-var dlg = new Window("dialog", "\u7f51\u683c\u7cfb\u7edf v1.3.1");
+var dlg = new Window("dialog", "\u7f51\u683c\u7cfb\u7edf v" + SCRIPT_VERSION);
 dlg.orientation = "column";
 dlg.alignChildren = ["fill", "top"];
 dlg.spacing = SPACING.md;
@@ -1136,12 +1195,86 @@ apply();
 };
 cancelBtn.onClick = function () {
 removeLayer("_\u7f51\u683c\u9884\u89c8");
-var b = dlg.bounds; savePrefs("grid_system_pos.json", { x: b[0], y: b[1] });
+saveDialogPrefs();
 dlg.close(0);
 };
 var pos = loadPos("grid_system_pos.json");
 try { dlg.location = [pos.x, pos.y]; } catch (e) { dlg.center(); }
-switchGridType("swiss");
+var savedSettings = loadPrefs("grid_system_settings.json", {
+gridType: "swiss",
+cols: "12",
+rows: "8",
+colGutterOn: true,
+colGutter: "20",
+rowGutterOn: false,
+rowGutter: "20",
+divisions: "6",
+equalGutterOn: false,
+equalGutter: "0",
+equalDiags: false,
+fibTerms: "8",
+fibBothAxes: true,
+goldenDiags: false,
+unit: "px",
+paddingOn: true,
+paddingSync: true,
+paddingTop: "10",
+paddingRight: "10",
+paddingBottom: "10",
+paddingLeft: "10",
+colorIndex: 0,
+scope: "current",
+drawFrame: true,
+toGuides: false,
+keepPrevious: false
+});
+var savedGridType = savedSettings.gridType;
+if ((savedGridType !== "equal") && (savedGridType !== "golden")) {
+savedGridType = "swiss";
+}
+swissRadio.value = savedGridType === "swiss";
+equalRadio.value = savedGridType === "equal";
+goldenRadio.value = savedGridType === "golden";
+colValue.text = String(savedSettings.cols);
+colSlider.value = clamp(Math.round(toNum(savedSettings.cols, 12)), 1, 32);
+rowValue.text = String(savedSettings.rows);
+rowSlider.value = clamp(Math.round(toNum(savedSettings.rows, 8)), 1, 32);
+colGutterCheck.value = !!savedSettings.colGutterOn;
+colGutter.text = String(savedSettings.colGutter);
+rowGutterCheck.value = !!savedSettings.rowGutterOn;
+rowGutter.text = String(savedSettings.rowGutter);
+divValue.text = String(savedSettings.divisions);
+divSlider.value = clamp(Math.round(toNum(savedSettings.divisions, 6)), 2, 32);
+equalGutterCheck.value = !!savedSettings.equalGutterOn;
+gutterValue.text = String(savedSettings.equalGutter);
+diagCheck.value = !!savedSettings.equalDiags;
+termsValue.text = String(savedSettings.fibTerms);
+termsSlider.value = clamp(Math.round(toNum(savedSettings.fibTerms, 8)), 2, 15);
+bothAxesCheck.value = !!savedSettings.fibBothAxes;
+goldenDiagCheck.value = !!savedSettings.goldenDiags;
+pxRadio.value = savedSettings.unit !== "mm" && savedSettings.unit !== "pt";
+mmRadio.value = savedSettings.unit === "mm";
+ptRadio.value = savedSettings.unit === "pt";
+paddingCheck.value = !!savedSettings.paddingOn;
+paddingSyncCheck.value = !!savedSettings.paddingSync;
+topValue.text = String(savedSettings.paddingTop);
+rightValue.text = String(savedSettings.paddingRight);
+bottomValue.text = String(savedSettings.paddingBottom);
+leftValue.text = String(savedSettings.paddingLeft);
+var savedColorIndex = clamp(Math.round(toNum(savedSettings.colorIndex, 0)), 0, PALETTE.length - 1);
+_selColorIdx = savedColorIndex;
+_gridColor.r = PALETTE[savedColorIndex].r;
+_gridColor.g = PALETTE[savedColorIndex].g;
+_gridColor.b = PALETTE[savedColorIndex].b;
+DEFAULT_STROKE_COLOR = rgb(_gridColor.r, _gridColor.g, _gridColor.b);
+_redrawSwatches();
+currentArtboardRadio.value = savedSettings.scope !== "all" && savedSettings.scope !== "selection";
+allArtboardsRadio.value = savedSettings.scope === "all";
+selectionRadio.value = savedSettings.scope === "selection";
+drawFrame.value = !!savedSettings.drawFrame;
+toGuides.value = !!savedSettings.toGuides;
+keepPrevious.value = !!savedSettings.keepPrevious;
+switchGridType(savedGridType);
 updatePaddingSync();
 attachSpin(colValue, {max: 20, min: 1, onAfter: function (v) {
 colSlider.value = v;
@@ -1189,9 +1322,9 @@ onAnyChange();
 pxRadio.onClick = onAnyChange;
 mmRadio.onClick = onAnyChange;
 ptRadio.onClick = onAnyChange;
-currentArtboardRadio.onClick = onAnyChange;
-allArtboardsRadio.onClick = onAnyChange;
-selectionRadio.onClick = onAnyChange;
+currentArtboardRadio.onClick = function () { onAnyChange(); saveDialogPrefs(); };
+allArtboardsRadio.onClick = function () { onAnyChange(); saveDialogPrefs(); };
+selectionRadio.onClick = function () { onAnyChange(); saveDialogPrefs(); };
 paddingCheck.onClick = onAnyChange;
 paddingSyncCheck.onClick = function () {
 updatePaddingSync();
@@ -1287,6 +1420,10 @@ toGuides.onClick = onAnyChange;
 
 updateUnitLabels();
 updateGutterSync();  // 让间距输入框的 enabled 状态与复选框默认值一致
+dlg.onClose = function () {
+try { saveDialogPrefs(); } catch (e) {}
+return true;
+};
 var _busy = false;
 var _ts = 0;
 dlg.show();

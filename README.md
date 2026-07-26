@@ -73,9 +73,11 @@ defaults write com.adobe.CSXS.12 PlayerDebugMode 1
 
 ```cmd
 REM Windows
-reg add HKCU\Software\Adobe\CSXS.11 /v PlayerDebugMode /t REG_SZ /d 1 /f
-reg add HKCU\Software\Adobe\CSXS.12 /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
+reg add "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode /t REG_SZ /d 1 /f
 ```
+
+Adobe's compatibility table maps Illustrator 25.3 to CEP 11 and Illustrator 29.5.1 onward to CEP 12. Run both commands to cover different Illustrator versions. The manifest's `RequiredRuntime 6.0` is only the minimum requirement; it does not mean the registry key should be `CSXS.6`.
 
 4. 🔄 Restart Illustrator → open **Momo Tools** from the Extensions menu
 
