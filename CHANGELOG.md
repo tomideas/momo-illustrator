@@ -1,5 +1,10 @@
 # Changelog - Momo Tools
 
+## [2.133] — 2026-07-26
+
+### 改善
+- **使用指南侧栏可折叠分组 / Docs sidebar collapsible groups**：含子项的父级改为 `<button>` 点击切换展开／折叠，默认折叠，点击后展开子项并记录状态到 `localStorage`；滚动到子项对应章节时自动展开父级。使用 CSS `max-height` 动画过渡，无 JavaScript `transitionend` 依赖。删除 ASCII 树符（`└`、`　└`、`　　　· `），父子级缩进由 CSS `padding-left` 控制。
+
 ## [2.132] — 2026-07-26
 
 ### 改善

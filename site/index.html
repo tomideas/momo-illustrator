@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momo Tools v2.132 — 使用指南</title>
+<title>Momo Tools v2.133 — 使用指南</title>
 <link rel="stylesheet" href="docs.css">
-<script src="docs.js" defer></script>
 </head>
 <body>
 
@@ -29,13 +28,17 @@
   </div>
   <div class="group-title">开始使用</div>
   <a href="#intro">简介</a>
-  <a href="#install">安装与启动</a>
-  <a href="#install-method-zxp" class="nav-sub">方法一：ZXP 安装</a>
-  <a href="#install-method-cep" class="nav-sub">方法二：手动安装</a>
-  <a href="#install-mac" class="nav-sub2">macOS</a>
-  <a href="#install-win" class="nav-sub2">Windows</a>
-  <a href="#quick">快速上手</a>
-  <a href="#quick-panel" class="nav-sub">主面板一览</a>
+  <button type="button" class="nav-toggle" data-toggle="nav-install" aria-expanded="false">安装与启动</button>
+  <div class="nav-children" data-children="nav-install">
+    <a href="#install-method-zxp" class="nav-sub">方法一：ZXP 安装</a>
+    <a href="#install-method-cep" class="nav-sub">方法二：手动安装</a>
+    <a href="#install-mac" class="nav-sub2">macOS</a>
+    <a href="#install-win" class="nav-sub2">Windows</a>
+  </div>
+  <button type="button" class="nav-toggle" data-toggle="nav-quick" aria-expanded="false">快速上手</button>
+  <div class="nav-children" data-children="nav-quick">
+    <a href="#quick-panel" class="nav-sub">主面板一览</a>
+  </div>
   <div class="group-title">功能</div>
   <a href="#artboard">画板工具</a>
   <a href="#color">颜色工具</a>
@@ -51,7 +54,7 @@
 <main class="main-content">
 
 <h1 id="intro">Momo Tools 使用指南</h1>
-<p class="page-desc">Adobe Illustrator 外挂面板 v2.132 — 画板、颜色、文字、排版工具集 · 2026-07-26</p>
+<p class="page-desc">Adobe Illustrator 外挂面板 v2.133 — 画板、颜色、文字、排版工具集 · 2026-07-26</p>
 
 <div class="callout info">
   <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出、清点文档用色、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
@@ -773,15 +776,16 @@ reg query "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode</pre>
     <li>完全退出并重启 Illustrator</li>
   </ol>
   <p>颜色库（<code>MomoTools/</code>）与笔记数据与扩展文件夹分开存放，覆盖更新不会删除它们。</p>
-  <p class="callout tip">当前文档对应版本：<b>v2.132</b> · 发布日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
+  <p class="callout tip">当前文档对应版本：<b>v2.133</b> · 发布日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
 </div>
 
 </main>
 </div>
 
 <footer class="site-footer">
-  Momo Tools v2.132 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
+  Momo Tools v2.133 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
 </footer>
 
+<script src="docs.js"></script>
 </body>
 </html>

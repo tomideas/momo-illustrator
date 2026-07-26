@@ -1,81 +1,137 @@
-/* Momo Tools Docs — sidebar nav, search, scroll spy */
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.querySelector('.menu-toggle');
-  const sidebar = document.querySelector('.sidebar');
-  const backdrop = document.querySelector('.backdrop');
-  if (toggle && sidebar) {
-    const close = () => {
-      sidebar.classList.remove('open');
-      backdrop?.classList.remove('show');
-    };
-    toggle.addEventListener('click', () => {
+/* Momo Tools Docs — sidebar nav, search, scroll spy, collapsible groups */
+try {
+(function () {
+  var sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  setupMenuToggle();
+  setupSearch();
+  setupScrollSpy();
+  setupNavToggles();
+  restoreCollapseState();
+
+  function setupMenuToggle() {
+    var toggle = document.querySelector('.menu-toggle');
+    var backdrop = document.querySelector('.backdrop');
+    if (!toggle || !sidebar) return;
+    function close() { sidebar.classList.remove('open'); if (backdrop) backdrop.classList.remove('show'); }
+    toggle.addEventListener('click', function () {
       sidebar.classList.toggle('open');
-      backdrop?.classList.toggle('show');
+      if (backdrop) backdrop.classList.toggle('show');
     });
-    backdrop?.addEventListener('click', close);
-    sidebar.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
+    if (backdrop) backdrop.addEventListener('click', close);
+    sidebar.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
   }
 
-  const input = document.querySelector('.sidebar-search input');
-  if (input) {
-    const links = [...document.querySelectorAll('.sidebar a[href^="#"]')];
-    const groups = [...document.querySelectorAll('.sidebar .group-title')];
-    input.addEventListener('input', () => {
-      const q = input.value.trim().toLowerCase();
-      links.forEach((a) => {
-        const match = !q || a.textContent.toLowerCase().includes(q);
-        a.classList.toggle('hidden', !match);
+  function setupSearch() {
+    var input = document.querySelector('.sidebar-search input');
+    if (!input) return;
+    var links = document.querySelectorAll('.sidebar a[href^="#"]');
+    var groups = document.querySelectorAll('.sidebar .group-title');
+    input.addEventListener('input', function () {
+      var q = input.value.trim().toLowerCase();
+      links.forEach(function (a) {
+        a.classList.toggle('hidden', q !== '' && a.textContent.toLowerCase().indexOf(q) === -1);
       });
-      groups.forEach((g) => {
-        let next = g.nextElementSibling;
-        let hasVisible = false;
-        while (next && !next.classList.contains('group-title')) {
-          if (next.tagName === 'A' && !next.classList.contains('hidden')) hasVisible = true;
+      groups.forEach(function (g) {
+        var next = g.nextElementSibling;
+        var found = false;
+        while (next && next.classList && !next.classList.contains('group-title')) {
+          if (next.tagName === 'A' && !next.classList.contains('hidden')) { found = true; break; }
           next = next.nextElementSibling;
         }
-        g.style.display = hasVisible ? '' : 'none';
+        g.style.display = found ? '' : 'none';
       });
     });
   }
 
-  const navLinks = [...document.querySelectorAll('.sidebar a[href^="#"]')];
-  const sections = navLinks
-    .map((a) => document.querySelector(a.getAttribute('href')))
-    .filter(Boolean);
+  function setupScrollSpy() {
+    var navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+    var sections = [];
+    navLinks.forEach(function (a) {
+      var el = document.querySelector(a.getAttribute('href'));
+      if (el) sections.push(el);
+    });
 
-  const setActive = (id) => {
-    navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-  };
+    function setActive(id) {
+      navLinks.forEach(function (a) {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    }
 
-  if (sections.length && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id);
+    setActive(location.hash.replace('#', ''));
+
+    if (sections.length && 'IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+            expandParentForChild(entry.target.id);
+          }
         });
-      },
-      { rootMargin: '-20% 0px -60% 0px', threshold: 0 }
-    );
-    sections.forEach((s) => observer.observe(s));
+      }, { rootMargin: '-20% 0px -60% 0px' });
+      sections.forEach(function (s) { observer.observe(s); });
+    }
+
+    navLinks.forEach(function (a) {
+      a.addEventListener('click', function () {
+        expandParentForChild(a.getAttribute('href').slice(1));
+      });
+    });
   }
 
-  const hash = location.hash.replace('#', '');
-  if (hash) setActive(hash);
+  var storageKey = 'momo-docs-sidebar';
+  var openSet = {};
 
-  const openToggleForHash = (id) => {
-    if (!id) return;
-    const target = document.getElementById(id);
-    if (!target) return;
-    const details = target.tagName === 'DETAILS' ? target : target.closest('details.doc-toggle');
-    if (details) details.open = true;
-  };
+  function loadState() {
+    try { openSet = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch (e) { openSet = {}; }
+  }
+  function saveState() {
+    try { localStorage.setItem(storageKey, JSON.stringify(openSet)); } catch (e) {}
+  }
 
-  openToggleForHash(hash);
-  window.addEventListener('hashchange', () => openToggleForHash(location.hash.replace('#', '')));
-  document.querySelectorAll('.sidebar a[href^="#"]').forEach((a) => {
-    a.addEventListener('click', () => {
-      const id = a.getAttribute('href').slice(1);
-      requestAnimationFrame(() => openToggleForHash(id));
+  function applyCollapse(key, expanded) {
+    var panel = document.querySelector('[data-children="' + key + '"]');
+    var btn = document.querySelector('[data-toggle="' + key + '"]');
+    if (!panel || !btn) return;
+    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+    panel.classList.toggle('open', expanded);
+  }
+
+  function setupNavToggles() {
+    document.querySelectorAll('.sidebar button.nav-toggle').forEach(function (btn) {
+      var key = btn.getAttribute('data-toggle');
+      btn.addEventListener('click', function () {
+        var expanded = btn.getAttribute('aria-expanded') === 'true';
+        var next = !expanded;
+        applyCollapse(key, next);
+        openSet[key] = next;
+        saveState();
+      });
     });
-  });
-});
+  }
+
+  function restoreCollapseState() {
+    loadState();
+    document.querySelectorAll('.sidebar button.nav-toggle').forEach(function (btn) {
+      var key = btn.getAttribute('data-toggle');
+      applyCollapse(key, !!openSet[key]);
+    });
+    expandParentForChild(location.hash.replace('#', ''));
+  }
+
+  function expandParentForChild(id) {
+    if (!id) return;
+    var target = document.getElementById(id);
+    if (!target) return;
+    document.querySelectorAll('.sidebar .nav-children').forEach(function (panel) {
+      var key = panel.getAttribute('data-children');
+      if (panel.contains(target) && !panel.classList.contains('open')) {
+        applyCollapse(key, true);
+        openSet[key] = true;
+        saveState();
+      }
+    });
+  }
+})();
+} catch (e) { console.error('[momo-docs]', e.message, e.stack); }
