@@ -1,5 +1,10 @@
 # Changelog - Momo Tools
 
+## [2.147] — 2026-09-14
+
+### 改善
+- **文件統一繁體中文**：`README.zh-CN.md` 更名 `README.zh-Hant.md`、使用指南（site）與 `docs/help.html` 轉為繁體中文（`lang` 改為 `zh-Hant`）；英文 README 語言連結同步更新。
+
 ## [2.146] — 2026-09-14
 
 ### 改善

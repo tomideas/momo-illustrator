@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momo Tools v2.135 — 使用指南</title>
+<title>Momo Tools v2.147 — 使用指南</title>
 <link rel="stylesheet" href="docs.css">
 </head>
 <body>
@@ -11,10 +11,10 @@
 <header class="site-header">
   <a class="logo" href="#">🎨 Momo Tools Docs</a>
   <nav>
-    <a href="#install" class="hide-mobile">安装</a>
+    <a href="#install" class="hide-mobile">安裝</a>
     <a href="https://github.com/tomideas/momo-illustrator/releases" class="hide-mobile" target="_blank" rel="noopener">Releases</a>
     <a href="https://github.com/tomideas/momo-illustrator" class="hide-mobile" target="_blank" rel="noopener">GitHub</a>
-    <button class="menu-toggle" type="button" aria-label="菜单">☰</button>
+    <button class="menu-toggle" type="button" aria-label="選單">☰</button>
   </nav>
 </header>
 
@@ -24,194 +24,194 @@
 <aside class="sidebar">
   <div class="sidebar-search">
     <span class="search-icon">🔍</span>
-    <input type="search" placeholder="搜索章节…" autocomplete="off">
+    <input type="search" placeholder="搜尋章節…" autocomplete="off">
   </div>
-  <div class="group-title">开始使用</div>
-  <a href="#intro">简介</a>
-  <a href="#install">安装与启动</a>
+  <div class="group-title">開始使用</div>
+  <a href="#intro">簡介</a>
+  <a href="#install">安裝與啟動</a>
   <a href="#quick">快速上手</a>
   <div class="group-title">功能</div>
-  <a href="#artboard">画板工具</a>
-  <a href="#color">颜色工具</a>
-  <a href="#select-same-color">选取相同工具</a>
+  <a href="#artboard">畫板工具</a>
+  <a href="#color">顏色工具</a>
+  <a href="#select-same-color">選取相同工具</a>
   <a href="#text">文字工具</a>
   <a href="#tools">工具集</a>
-  <a href="#notes">笔记面板</a>
+  <a href="#notes">筆記面板</a>
   <div class="group-title">其他</div>
   <a href="#tips">使用技巧</a>
-  <a href="#trouble">常见问题</a>
+  <a href="#trouble">常見問題</a>
 </aside>
 
 <main class="main-content">
 
 <h1 id="intro">Momo Tools 使用指南</h1>
-<p class="page-desc">Adobe Illustrator 外挂面板 v2.135 — 画板、颜色、文字、排版工具集 · 2026-07-26</p>
+<p class="page-desc">Adobe Illustrator 外掛面板 v2.147 — 畫板、顏色、文字、排版工具集 · 2026-07-26</p>
 
 <div class="callout info">
-  <p>Momo Tools 是一套 Illustrator 小工具集，帮你在一个面板里完成那些 AI 原生功能做不到、或做起来很慢的事：<strong>批量复制画板（带着内容一起）、一键检查全文件的文字溢出、清点文档用色、管理品牌色库、生成排版网格、自动加页码</strong>。</p>
-  <p>没有弹窗、不用记快捷键。安装完成后见下方<b>快速上手</b>，再按功能分组了解每个按钮。</p>
+  <p>Momo Tools 是一套 Illustrator 小工具集，幫你在一個面板裡完成那些 AI 原生功能做不到、或做起來很慢的事：<strong>批次複製畫板（帶著內容一起）、一鍵檢查全檔案的文字溢位、清點文件用色、管理品牌色庫、生成排版網格、自動加頁碼</strong>。</p>
+  <p>沒有彈窗、不用記快捷鍵。安裝完成後見下方<b>快速上手</b>，再按功能分組瞭解每個按鈕。</p>
 </div>
 
-<!-- ====== 安装 ====== -->
-<h2 id="install">安装与启动</h2>
+<!-- ====== 安裝 ====== -->
+<h2 id="install">安裝與啟動</h2>
 
-<p>任选下面<b>一种</b>安装方式即可（不必两种都做）。安装完成后均需<b>完全退出并重启</b> Illustrator。</p>
+<p>任選下面<b>一種</b>安裝方式即可（不必兩種都做）。安裝完成後均需<b>完全退出並重啟</b> Illustrator。</p>
 
-<h3 id="install-methods">安装方法</h3>
+<h3 id="install-methods">安裝方法</h3>
 
 <!-- ── 方法一 ZXP ── -->
 <div class="card install-method" id="install-method-zxp">
-  <h3>【方法一：ZXP 文件安装】</h3>
-  <p>适合不熟悉复制文件夹路径的用户。macOS 与 Windows 步骤相同。</p>
+  <h3>【方法一：ZXP 檔案安裝】</h3>
+  <p>適合不熟悉複製資料夾路徑的使用者。macOS 與 Windows 步驟相同。</p>
   <ol class="steps">
-    <li>从 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">GitHub Releases</a> 下载 <code>.zxp</code> 文件</li>
+    <li>從 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">GitHub Releases</a> 下載 <code>.zxp</code> 檔案</li>
   </ol>
   <figure class="doc-figure">
-    <img class="doc-img doc-img-native" src="assets/images/install-releases-download.png" alt="GitHub Releases 下载 momo-tools-x.xx.zxp">
-    <figcaption>在 Releases 的 Assets 中下载 <code>momo-tools-x.xx.zxp</code></figcaption>
+    <img class="doc-img doc-img-native" src="assets/images/install-releases-download.png" alt="GitHub Releases 下載 momo-tools-x.xx.zxp">
+    <figcaption>在 Releases 的 Assets 中下載 <code>momo-tools-x.xx.zxp</code></figcaption>
   </figure>
   <ol class="steps steps-continue-from-1">
-    <li>安装 <a href="https://aescripts.com/learn/post/zxp-installer?gad_source=1&amp;gad_campaignid=21051771972&amp;gbraid=0AAAAADprpt3zHNyBAMEpo2vrQSe2mP9rE&amp;gclid=Cj0KCQjwo_PRBhDNARIsAEcVALV3GlBMOLZ4ccLZ74xMORhFPK1XuaMqygiVQCLKqHvOdWchvnQTolMaAkIMEALw_wcB" target="_blank" rel="noopener"><b>ZXP/UXP Installer</b></a></li>
+    <li>安裝 <a href="https://aescripts.com/learn/post/zxp-installer?gad_source=1&amp;gad_campaignid=21051771972&amp;gbraid=0AAAAADprpt3zHNyBAMEpo2vrQSe2mP9rE&amp;gclid=Cj0KCQjwo_PRBhDNARIsAEcVALV3GlBMOLZ4ccLZ74xMORhFPK1XuaMqygiVQCLKqHvOdWchvnQTolMaAkIMEALw_wcB" target="_blank" rel="noopener"><b>ZXP/UXP Installer</b></a></li>
   </ol>
   <figure class="doc-figure">
-    <img class="doc-img doc-img-native" src="assets/images/install-zxp-installer-download.png" alt="aescripts ZXP/UXP Installer 下载页">
-    <figcaption>从 aescripts 下载 macOS 或 Windows 版 ZXP/UXP Installer</figcaption>
+    <img class="doc-img doc-img-native" src="assets/images/install-zxp-installer-download.png" alt="aescripts ZXP/UXP Installer 下載頁">
+    <figcaption>從 aescripts 下載 macOS 或 Windows 版 ZXP/UXP Installer</figcaption>
   </figure>
   <ol class="steps steps-continue-from-2">
-    <li>打开 ZXP Installer，将 <code>.zxp</code> 文件<b>拖入</b>窗口完成安装</li>
+    <li>開啟 ZXP Installer，將 <code>.zxp</code> 檔案<b>拖入</b>視窗完成安裝</li>
   </ol>
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/install-zxp-demo.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/install-zxp-demo.mp4">下载视频</a>查看 ZXP 安装过程。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/install-zxp-demo.mp4">下載影片</a>檢視 ZXP 安裝過程。
     </video>
-    <figcaption>将 zxp 拖入 ZXP Installer 窗口完成安装</figcaption>
+    <figcaption>將 zxp 拖入 ZXP Installer 視窗完成安裝</figcaption>
   </figure>
   <ol class="steps steps-continue">
-    <li><b>完全退出并重启 Illustrator</b></li>
-    <li>菜单打开 <b>Momo Tools</b>（macOS：<code>窗口 → 扩展功能</code>；Windows：<code>Window → Extensions</code>）</li>
+    <li><b>完全退出並重啟 Illustrator</b></li>
+    <li>選單開啟 <b>Momo Tools</b>（macOS：<code>視窗 → 擴充套件功能</code>；Windows：<code>Window → Extensions</code>）</li>
   </ol>
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/install-open-panel.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/install-open-panel.mp4">下载视频</a>查看从菜单打开 Momo Tools 的过程。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/install-open-panel.mp4">下載影片</a>檢視從選單開啟 Momo Tools 的過程。
     </video>
-    <figcaption>从 Illustrator 菜单打开 Momo Tools 面板</figcaption>
+    <figcaption>從 Illustrator 選單開啟 Momo Tools 面板</figcaption>
   </figure>
 </div>
 
-<!-- ── 方法二 手动 CEP ── -->
+<!-- ── 方法二 手動 CEP ── -->
 <div class="card install-method" id="install-method-cep">
-  <h3>【方法二：手动安装（CEP 文件夹）】</h3>
-  <p>从 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">GitHub Releases</a> 下载 <code>momo-tools-*-cep.zip</code> 并解压，得到 <code>com.tomideas.illustratortools</code> 文件夹（名称须保持此样）。再按系统展开下方步骤操作。</p>
-  <p class="callout tip">此方法步骤较多，日常安装建议优先使用 <a href="#install-method-zxp">方法一 ZXP</a>。需要手动部署时再展开对应系统。</p>
+  <h3>【方法二：手動安裝（CEP 資料夾）】</h3>
+  <p>從 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">GitHub Releases</a> 下載 <code>momo-tools-*-cep.zip</code> 並解壓，得到 <code>com.tomideas.illustratortools</code> 資料夾（名稱須保持此樣）。再按系統展開下方步驟操作。</p>
+  <p class="callout tip">此方法步驟較多，日常安裝建議優先使用 <a href="#install-method-zxp">方法一 ZXP</a>。需要手動部署時再展開對應系統。</p>
 
   <details class="doc-toggle platform-section mac" id="install-mac">
-    <summary>🍎 macOS 安装步骤</summary>
+    <summary>🍎 macOS 安裝步驟</summary>
     <div class="doc-toggle-body">
 
   <div class="card">
-    <h4>1. 创建扩展目录（首次安装必做）</h4>
-    <p>macOS 通常没有现成的 CEP 文件夹，需自行创建：</p>
+    <h4>1. 建立擴充套件目錄（首次安裝必做）</h4>
+    <p>macOS 通常沒有現成的 CEP 資料夾，需自行建立：</p>
     <pre>mkdir -p ~/Library/Application\ Support/Adobe/CEP/extensions
 open ~/Library/Application\ Support/Adobe/CEP/extensions</pre>
-    <p>目标路径（Finder 中「前往文件夹」可粘贴）：</p>
+    <p>目標路徑（Finder 中「前往資料夾」可貼上）：</p>
     <pre>~/Library/Application Support/Adobe/CEP/extensions/</pre>
-    <p>完整示例（把 <code>你的用户名</code> 换成实际用户名）：</p>
-    <pre>/Users/你的用户名/Library/Application Support/Adobe/CEP/extensions/</pre>
-    <!-- 截图占位：assets/images/install-mac-folder.png -->
+    <p>完整示例（把 <code>你的使用者名稱</code> 換成實際使用者名稱）：</p>
+    <pre>/Users/你的使用者名稱/Library/Application Support/Adobe/CEP/extensions/</pre>
+    <!-- 截圖佔位：assets/images/install-mac-folder.png -->
   </div>
 
   <div class="card">
-    <h4>2. 放入扩展文件夹</h4>
-    <p>将解压得到的 <code>com.tomideas.illustratortools</code> 拖入上一步打开的 <code>extensions</code> 文件夹。</p>
-    <p>最终应存在：</p>
+    <h4>2. 放入擴充套件資料夾</h4>
+    <p>將解壓得到的 <code>com.tomideas.illustratortools</code> 拖入上一步開啟的 <code>extensions</code> 資料夾。</p>
+    <p>最終應存在：</p>
     <pre>.../CEP/extensions/com.tomideas.illustratortools/</pre>
   </div>
 
   <div class="card" id="install-debug-mac">
-    <h4>3. 启用未签名扩展（首次必做）</h4>
-    <p>Momo Tools 为开发版 CEP 扩展，须开启 <b>PlayerDebugMode</b>。请先<b>完全退出</b> Illustrator，再打开「终端」执行：</p>
+    <h4>3. 啟用未簽名擴充套件（首次必做）</h4>
+    <p>Momo Tools 為開發版 CEP 擴充套件，須開啟 <b>PlayerDebugMode</b>。請先<b>完全退出</b> Illustrator，再開啟「終端」執行：</p>
     <pre>defaults write com.adobe.CSXS.11 PlayerDebugMode 1
 defaults write com.adobe.CSXS.12 PlayerDebugMode 1</pre>
-    <p class="callout info">Adobe 官方兼容表显示：Illustrator 25.3 集成 CEP 11，Illustrator 29.5.1 开始集成 CEP 12。两条都执行可兼容不同 Illustrator 版本；插件清单里的 <code>RequiredRuntime 6.0</code> 只是最低要求，不是这里的 CSXS 键版本。</p>
+    <p class="callout info">Adobe 官方相容表顯示：Illustrator 25.3 整合 CEP 11，Illustrator 29.5.1 開始整合 CEP 12。兩條都執行可相容不同 Illustrator 版本；外掛清單裡的 <code>RequiredRuntime 6.0</code> 只是最低要求，不是這裡的 CSXS 鍵版本。</p>
   </div>
 
   <div class="card">
-    <h4>4. 启动面板</h4>
+    <h4>4. 啟動面板</h4>
     <ol class="steps">
-      <li>完全退出并重新打开 Adobe Illustrator</li>
-      <li>菜单栏：<b>窗口</b> → <b>扩展功能</b> → <b>Momo Tools</b>（部分版本为 <b>窗口</b> → <b>扩展</b>）</li>
-      <li>笔记面板：<b>窗口</b> → <b>扩展功能</b> → <b>Momo Notes</b>，或主面板「笔记」按钮</li>
+      <li>完全退出並重新開啟 Adobe Illustrator</li>
+      <li>選單欄：<b>視窗</b> → <b>擴充套件功能</b> → <b>Momo Tools</b>（部分版本為 <b>視窗</b> → <b>擴充套件</b>）</li>
+      <li>筆記面板：<b>視窗</b> → <b>擴充套件功能</b> → <b>Momo Notes</b>，或主面板「筆記」按鈕</li>
     </ol>
-    <p>面板底部显示版本号即表示加载成功。</p>
+    <p>面板底部顯示版本號即表示載入成功。</p>
   </div>
 
   <div class="card">
-    <h4>5. 卸载（macOS）</h4>
-    <p>删除以下文件夹后重启 Illustrator：</p>
+    <h4>5. 解除安裝（macOS）</h4>
+    <p>刪除以下資料夾後重啟 Illustrator：</p>
     <pre>~/Library/Application Support/Adobe/CEP/extensions/com.tomideas.illustratortools</pre>
-    <p class="callout tip">颜色库在 <code>~/Library/Application Support/MomoTools/</code>，笔记在面板存储中，卸载扩展不会删除它们。</p>
+    <p class="callout tip">顏色庫在 <code>~/Library/Application Support/MomoTools/</code>，筆記在面板儲存中，解除安裝擴充套件不會刪除它們。</p>
   </div>
 
     </div>
   </details>
 
   <details class="doc-toggle platform-section win" id="install-win">
-    <summary>🪟 Windows 安装步骤</summary>
+    <summary>🪟 Windows 安裝步驟</summary>
     <div class="doc-toggle-body">
 
   <div class="card">
-    <h4>1. 创建扩展目录（首次安装必做）</h4>
-    <p>Windows 通常没有现成的 CEP 文件夹，需自行创建。任选一种方式：</p>
-    <p><b>方式 A — 资源管理器</b></p>
+    <h4>1. 建立擴充套件目錄（首次安裝必做）</h4>
+    <p>Windows 通常沒有現成的 CEP 資料夾，需自行建立。任選一種方式：</p>
+    <p><b>方式 A — 資源管理器</b></p>
     <ol>
-      <li>打开资源管理器，地址栏输入 <code>%APPDATA%</code> 回车</li>
-      <li>若无 <code>Adobe</code> 文件夹则新建</li>
+      <li>開啟資源管理器，位址列輸入 <code>%APPDATA%</code> 回車</li>
+      <li>若無 <code>Adobe</code> 資料夾則新建</li>
       <li>在 <code>Adobe</code> 下新建 <code>CEP</code>，再在 <code>CEP</code> 下新建 <code>extensions</code></li>
     </ol>
     <p><b>方式 B — 命令提示符</b></p>
     <pre>mkdir "%APPDATA%\Adobe\CEP\extensions"
 explorer "%APPDATA%\Adobe\CEP\extensions"</pre>
-    <p>目标路径：</p>
+    <p>目標路徑：</p>
     <pre>%APPDATA%\Adobe\CEP\extensions\</pre>
     <p>完整示例：</p>
-    <pre>C:\Users\你的用户名\AppData\Roaming\Adobe\CEP\extensions\</pre>
-    <!-- 截图占位：assets/images/install-win-folder.png -->
+    <pre>C:\Users\你的使用者名稱\AppData\Roaming\Adobe\CEP\extensions\</pre>
+    <!-- 截圖佔位：assets/images/install-win-folder.png -->
   </div>
 
   <div class="card">
-    <h4>2. 放入扩展文件夹</h4>
-    <p>将解压得到的 <code>com.tomideas.illustratortools</code> 文件夹复制到 <code>extensions</code> 内。</p>
-    <p>最终应存在：</p>
+    <h4>2. 放入擴充套件資料夾</h4>
+    <p>將解壓得到的 <code>com.tomideas.illustratortools</code> 資料夾複製到 <code>extensions</code> 內。</p>
+    <p>最終應存在：</p>
     <pre>...\Adobe\CEP\extensions\com.tomideas.illustratortools\</pre>
   </div>
 
   <div class="card" id="install-debug-win">
-    <h4>3. 启用未签名扩展（首次必做）</h4>
-    <p>请先<b>完全退出</b> Illustrator，打开「命令提示符」执行：</p>
+    <h4>3. 啟用未簽名擴充套件（首次必做）</h4>
+    <p>請先<b>完全退出</b> Illustrator，開啟「命令提示符」執行：</p>
     <pre>reg add "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode /t REG_SZ /d 1 /f
 reg add "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode /t REG_SZ /d 1 /f</pre>
-    <p class="callout info">Adobe 官方兼容表显示：Illustrator 25.3 集成 CEP 11，Illustrator 29.5.1 开始集成 CEP 12。两条都执行可兼容不同 Illustrator 版本；<code>/f</code> 会直接覆盖旧值，避免命令停在确认提示。</p>
-    <p>执行后可检查是否写入成功：</p>
+    <p class="callout info">Adobe 官方相容表顯示：Illustrator 25.3 整合 CEP 11，Illustrator 29.5.1 開始整合 CEP 12。兩條都執行可相容不同 Illustrator 版本；<code>/f</code> 會直接覆蓋舊值，避免命令停在確認提示。</p>
+    <p>執行後可檢查是否寫入成功：</p>
     <pre>reg query "HKCU\Software\Adobe\CSXS.11" /v PlayerDebugMode
 reg query "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode</pre>
-    <p>输出应显示类型为 <code>REG_SZ</code>、数值为 <code>1</code>。</p>
+    <p>輸出應顯示型別為 <code>REG_SZ</code>、數值為 <code>1</code>。</p>
   </div>
 
   <div class="card">
-    <h4>4. 启动面板</h4>
+    <h4>4. 啟動面板</h4>
     <ol class="steps">
-      <li>完全退出并重新打开 Adobe Illustrator</li>
-      <li>菜单栏：<b>Window</b> → <b>Extensions</b> → <b>Momo Tools</b></li>
-      <li>笔记面板：<b>Window</b> → <b>Extensions</b> → <b>Momo Notes</b>，或主面板「笔记」按钮</li>
+      <li>完全退出並重新開啟 Adobe Illustrator</li>
+      <li>選單欄：<b>Window</b> → <b>Extensions</b> → <b>Momo Tools</b></li>
+      <li>筆記面板：<b>Window</b> → <b>Extensions</b> → <b>Momo Notes</b>，或主面板「筆記」按鈕</li>
     </ol>
-    <p>面板底部显示版本号即表示加载成功。</p>
+    <p>面板底部顯示版本號即表示載入成功。</p>
   </div>
 
   <div class="card">
-    <h4>5. 卸载（Windows）</h4>
-    <p>删除以下文件夹后重启 Illustrator：</p>
+    <h4>5. 解除安裝（Windows）</h4>
+    <p>刪除以下資料夾後重啟 Illustrator：</p>
     <pre>%APPDATA%\Adobe\CEP\extensions\com.tomideas.illustratortools</pre>
-    <p class="callout tip">颜色库在 <code>%APPDATA%\MomoTools\</code>，笔记在面板存储中，卸载扩展不会删除它们。</p>
+    <p class="callout tip">顏色庫在 <code>%APPDATA%\MomoTools\</code>，筆記在面板儲存中，解除安裝擴充套件不會刪除它們。</p>
   </div>
 
     </div>
@@ -220,561 +220,561 @@ reg query "HKCU\Software\Adobe\CSXS.12" /v PlayerDebugMode</pre>
 
 <!-- ====== 快速上手 ====== -->
 <h2 id="quick">快速上手</h2>
-<p class="page-desc">主面板按工作流分为四组：<b>画板</b>（复制、排列、更名）、<b>颜色</b>（标签、检查、色库）、<b>文字</b>（样式 / 溢出 / 尾端空白检查）、<b>工具</b>（网格、页码、笔记）。<b>点按钮即执行</b>，有参数时会在弹窗中确认；结果在 Illustrator 窗口底部短暂提示。</p>
+<p class="page-desc">主面板按工作流分為四組：<b>畫板</b>（複製、排列、更名）、<b>顏色</b>（標籤、檢查、色庫）、<b>文字</b>（樣式 / 溢位 / 尾端空白檢查）、<b>工具</b>（網格、頁碼、筆記）。<b>點按鈕即執行</b>，有引數時會在彈窗中確認；結果在 Illustrator 視窗底部短暫提示。</p>
 
 <div class="card" id="quick-panel">
   <figure class="doc-figure">
-    <img class="doc-img doc-img-native" src="assets/images/panel-layout.png" alt="Momo Tools 主面板与 Momo Notes 笔记面板">
+    <img class="doc-img doc-img-native" src="assets/images/panel-layout.png" alt="Momo Tools 主面板與 Momo Notes 筆記面板">
     <figcaption>左：Momo Notes · 右：Momo Tools 主面板</figcaption>
   </figure>
-  <p>上图右为主工作面板，自上而下对应下方四组按钮；左为 <b>Momo Notes</b>，用于暂存文案、贴参考文字，与主面板独立。需要记笔记时可点主面板「笔记」，或从菜单单独打开 <b>Momo Notes</b>，两个面板可拖放并排使用。主题自动跟随 Illustrator 深浅色，无需额外设置。各组功能细节见下表，点击链接跳转到对应章节。</p>
+  <p>上圖右為主工作面板，自上而下對應下方四組按鈕；左為 <b>Momo Notes</b>，用於暫存文案、貼參考文字，與主面板獨立。需要記筆記時可點主面板「筆記」，或從選單單獨開啟 <b>Momo Notes</b>，兩個面板可拖放並排使用。主題自動跟隨 Illustrator 深淺色，無需額外設定。各組功能細節見下表，點選連結跳轉到對應章節。</p>
   <table>
-    <tr><th>分组</th><th>按钮</th><th>详情</th></tr>
-    <tr><td><b>画板</b></td><td>复制 · 重新排列 · 更名</td><td><a href="#artboard">画板工具</a></td></tr>
-    <tr><td><b>颜色</b></td><td>颜色标签 · 颜色检查 · 颜色库 · 选取相同工具</td><td><a href="#color">颜色工具</a></td></tr>
-    <tr><td><b>文字</b></td><td>样式检查 · 溢出检查 · 尾端空白</td><td><a href="#text">文字工具</a></td></tr>
-    <tr><td><b>工具</b></td><td>网格系统 · 批量页码 · 笔记</td><td><a href="#tools">工具集</a> · <a href="#notes">笔记面板</a></td></tr>
+    <tr><th>分組</th><th>按鈕</th><th>詳情</th></tr>
+    <tr><td><b>畫板</b></td><td>複製 · 重新排列 · 更名</td><td><a href="#artboard">畫板工具</a></td></tr>
+    <tr><td><b>顏色</b></td><td>顏色標籤 · 顏色檢查 · 顏色庫 · 選取相同工具</td><td><a href="#color">顏色工具</a></td></tr>
+    <tr><td><b>文字</b></td><td>樣式檢查 · 溢位檢查 · 尾端空白</td><td><a href="#text">文字工具</a></td></tr>
+    <tr><td><b>工具</b></td><td>網格系統 · 批次頁碼 · 筆記</td><td><a href="#tools">工具集</a> · <a href="#notes">筆記面板</a></td></tr>
   </table>
 </div>
 
-<!-- ====== 画板工具 ====== -->
-<h2 id="artboard">画板工具</h2>
+<!-- ====== 畫板工具 ====== -->
+<h2 id="artboard">畫板工具</h2>
 
 <div class="card">
-  <h3>复制画板</h3>
-  <p>复制选中的画板及其所有内容。这是 Momo Tools 与 AI 原生「复制画板」的关键区别——后者不携带内容。</p>
+  <h3>複製畫板</h3>
+  <p>複製選中的畫板及其所有內容。這是 Momo Tools 與 AI 原生「複製畫板」的關鍵區別——後者不攜帶內容。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/artboard-duplicate.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/artboard-duplicate.mp4">下载视频</a>查看复制画板演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/artboard-duplicate.mp4">下載影片</a>檢視複製畫板演示。
     </video>
-    <figcaption>复制画板演示</figcaption>
+    <figcaption>複製畫板演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>在 AI 中选中画板（Shift 多选或用画板面板）</li>
-    <li>点击「复制画板」按钮</li>
-    <li>设置参数后点「确定」</li>
+    <li>在 AI 中選中畫板（Shift 多選或用畫板面板）</li>
+    <li>點選「複製畫板」按鈕</li>
+    <li>設定引數後點「確定」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>重命名复制的画板</td><td>勾选后启用查找/替换命名。例：查 <code>FR_</code> 替 <code>EN_</code> → FR_01 变成 EN_01</td></tr>
-    <tr><td>左右/上下间距</td><td>复制出的画板与原始画板的净距（pt）。默认自动检测</td></tr>
-    <tr><td>整体位移 X/Y</td><td>对整个复制结果做额外偏移。负值向左/上移动</td></tr>
+    <tr><td>重新命名複製的畫板</td><td>勾選後啟用查詢/替換命名。例：查 <code>FR_</code> 替 <code>EN_</code> → FR_01 變成 EN_01</td></tr>
+    <tr><td>左右/上下間距</td><td>複製出的畫板與原始畫板的淨距（pt）。預設自動檢測</td></tr>
+    <tr><td>整體位移 X/Y</td><td>對整個複製結果做額外偏移。負值向左/上移動</td></tr>
   </table>
 
-  <p class="callout tip">无选中画板时按钮自动置灰，无需记忆。</p>
+  <p class="callout tip">無選中畫板時按鈕自動置灰，無需記憶。</p>
 </div>
 
 <div class="card">
   <h3>重新排列</h3>
-  <p>将全部画板按网格重新排列。不会修改画板内部内容位置。</p>
+  <p>將全部畫板按網格重新排列。不會修改畫板內部內容位置。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/artboard-relayout.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/artboard-relayout.mp4">下载视频</a>查看重新排列演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/artboard-relayout.mp4">下載影片</a>檢視重新排列演示。
     </video>
     <figcaption>重新排列演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>在对话框列表中勾选要排列的画板（或输入范围如 <code>1-10</code>）</li>
-    <li>设置每行个数与左右 / 上下间距</li>
-    <li>选择放置位置后点「确定」</li>
+    <li>在對話方塊列表中勾選要排列的畫板（或輸入範圍如 <code>1-10</code>）</li>
+    <li>設定每行個數與左右 / 上下間距</li>
+    <li>選擇放置位置後點「確定」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>每行个数</td><td>逗号分隔，如 <code>3,3,2</code> = 第一行 3 个、第二行 3 个、第三行 2 个。也可填单个数字表示每行固定数量</td></tr>
-    <tr><td>左右/上下间距</td><td>画板之间的净距，单位跟随当前文档</td></tr>
-    <tr><td>放置位置</td><td>选区左上 / 某画板正下方（可设偏移量）</td></tr>
-    <tr><td>画板列表</td><td>显示全部画板，也可用范围输入（如 <code>1-594</code>）选取</td></tr>
+    <tr><td>每行個數</td><td>逗號分隔，如 <code>3,3,2</code> = 第一行 3 個、第二行 3 個、第三行 2 個。也可填單個數字表示每行固定數量</td></tr>
+    <tr><td>左右/上下間距</td><td>畫板之間的淨距，單位跟隨當前文件</td></tr>
+    <tr><td>放置位置</td><td>選區左上 / 某畫板正下方（可設偏移量）</td></tr>
+    <tr><td>畫板列表</td><td>顯示全部畫板，也可用範圍輸入（如 <code>1-594</code>）選取</td></tr>
   </table>
 </div>
 
 <div class="card">
-  <h3>画板更名</h3>
-  <p>4 种命名模式，互斥单选。适合批量改名或单个改名场景。</p>
+  <h3>畫板更名</h3>
+  <p>4 種命名模式，互斥單選。適合批次改名或單個改名場景。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/artboard-rename.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/artboard-rename.mp4">下载视频</a>查看画板更名演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/artboard-rename.mp4">下載影片</a>檢視畫板更名演示。
     </video>
-    <figcaption>画板更名演示</figcaption>
+    <figcaption>畫板更名演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点击「画板更名」按钮</li>
-    <li>在列表中多选画板，或输入范围（如 <code>1-5, 8</code>）</li>
-    <li>选择命名模式（模板 / 替换 / 逐行 / 后缀），填写参数后点「确定」</li>
+    <li>點選「畫板更名」按鈕</li>
+    <li>在列表中多選畫板，或輸入範圍（如 <code>1-5, 8</code>）</li>
+    <li>選擇命名模式（模板 / 替換 / 逐行 / 字尾），填寫引數後點「確定」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td><b>模板</b></td><td>用 <code>{n}</code> 表示序号、<code>{name}</code> 表示原名。例：<code>页_{n}</code> → 页_01, 页_02… 可设起始值和步长</td></tr>
-    <tr><td><b>替换</b></td><td>查找原名中的文字 → 替换为新文字。支持正则表达式</td></tr>
-    <tr><td><b>逐行</b></td><td>在文本框中逐行输入新名称，一行对应一个画板。空行保留原名</td></tr>
-    <tr><td><b>后缀</b></td><td>在原名末尾统一追加固定文字。例：后缀 <code>_v2</code> → FR_01_v2</td></tr>
+    <tr><td><b>模板</b></td><td>用 <code>{n}</code> 表示序號、<code>{name}</code> 表示原名。例：<code>頁_{n}</code> → 頁_01, 頁_02… 可設起始值和步長</td></tr>
+    <tr><td><b>替換</b></td><td>查詢原名中的文字 → 替換為新文字。支援正規表示式</td></tr>
+    <tr><td><b>逐行</b></td><td>在文字框中逐行輸入新名稱，一行對應一個畫板。空行保留原名</td></tr>
+    <tr><td><b>字尾</b></td><td>在原名末尾統一追加固定文字。例：字尾 <code>_v2</code> → FR_01_v2</td></tr>
   </table>
 
-  <p class="callout tip">列表支持多选（Ctrl / Shift），可仅对选中画板改名。列表上方的输入框支持范围语法，如 <code>1-5, 8</code>。</p>
+  <p class="callout tip">列表支援多選（Ctrl / Shift），可僅對選中畫板改名。列表上方的輸入框支援範圍語法，如 <code>1-5, 8</code>。</p>
 </div>
 
-<!-- ====== 颜色工具 ====== -->
-<h2 id="color">颜色工具</h2>
+<!-- ====== 顏色工具 ====== -->
+<h2 id="color">顏色工具</h2>
 
 <div class="card">
-  <h3>颜色标签生成</h3>
-  <p>从选中物件提取填色，自动生成带色值说明的色块标签。支持多选、同色去重，常用于包装稿颜色标注或给印刷厂的色值指示图。</p>
+  <h3>顏色標籤生成</h3>
+  <p>從選中物件提取填色，自動生成帶色值說明的色塊標籤。支援多選、同色去重，常用於包裝稿顏色標註或給印刷廠的色值指示圖。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-label.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/color-label.mp4">下载视频</a>查看颜色标签生成演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/color-label.mp4">下載影片</a>檢視顏色標籤生成演示。
     </video>
-    <figcaption>颜色标签生成演示</figcaption>
+    <figcaption>顏色標籤生成演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>在 AI 中选中一个或多个物件（群组会递归提取内部填色）</li>
-    <li>点击「颜色标签」按钮</li>
-    <li>确认检测到的颜色列表，设置尺寸与位置后点「生成」</li>
+    <li>在 AI 中選中一個或多個物件（群組會遞迴提取內部填色）</li>
+    <li>點選「顏色標籤」按鈕</li>
+    <li>確認檢測到的顏色列表，設定尺寸與位置後點「生成」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>色块尺寸</td><td>宽 / 高（pt），默认 20×20</td></tr>
-    <tr><td>字体大小</td><td>色值文字字号（pt）</td></tr>
-    <tr><td>文字颜色</td><td>黑色 K100 / 白色 K0</td></tr>
-    <tr><td>排列方向</td><td>横排 → 或纵排 ↓（文字在色块上方或右侧）</td></tr>
-    <tr><td>色块位置</td><td>画板右 / 下 / 左 / 外侧，或各物件右侧</td></tr>
-    <tr><td>间距</td><td>色块之间及距画板的净距（pt）</td></tr>
+    <tr><td>色塊尺寸</td><td>寬 / 高（pt），預設 20×20</td></tr>
+    <tr><td>字型大小</td><td>色值文字字號（pt）</td></tr>
+    <tr><td>文字顏色</td><td>黑色 K100 / 白色 K0</td></tr>
+    <tr><td>排列方向</td><td>橫排 → 或縱排 ↓（文字在色塊上方或右側）</td></tr>
+    <tr><td>色塊位置</td><td>畫板右 / 下 / 左 / 外側，或各物件右側</td></tr>
+    <tr><td>間距</td><td>色塊之間及距畫板的淨距（pt）</td></tr>
   </table>
 
-  <p class="callout tip">标签写入图层「颜色标签」；CMYK 文件显示 CMYK 值，RGB / 专色 / 灰色也会按类型标注。再次生成会接续排在同侧已有标签之后。</p>
+  <p class="callout tip">標籤寫入圖層「顏色標籤」；CMYK 檔案顯示 CMYK 值，RGB / 專色 / 灰色也會按型別標註。再次生成會接續排在同側已有標籤之後。</p>
 </div>
 
 <div class="card">
-  <h3>颜色检查</h3>
-  <p>清点指定画板内的用色：给每个对象标<b>彩色编号</b>，可选红框标出出现次数过少的稀有色。勾选「生成说明」会在首画板上方输出颜色汇总图例。</p>
+  <h3>顏色檢查</h3>
+  <p>清點指定畫板內的用色：給每個物件標<b>彩色編號</b>，可選紅框標出出現次數過少的稀有色。勾選「生成說明」會在首畫板上方輸出顏色彙總圖例。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-check.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/color-check.mp4">下载视频</a>查看颜色检查演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/color-check.mp4">下載影片</a>檢視顏色檢查演示。
     </video>
-    <figcaption>颜色检查演示</figcaption>
+    <figcaption>顏色檢查演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点击「颜色检查」按钮</li>
-    <li>设置画板范围与检查类型（文字 / 形状 / 描边）</li>
-    <li>确认输出选项后点「检查」</li>
+    <li>點選「顏色檢查」按鈕</li>
+    <li>設定畫板範圍與檢查型別（文字 / 形狀 / 描邊）</li>
+    <li>確認輸出選項後點「檢查」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>画板范围</td><td><code>all</code> 全部；<code>1-10</code>；<code>1,3,5</code> 指定画板</td></tr>
-    <tr><td>检查类型</td><td>文字填色、形状填色、描边色，至少勾选一种</td></tr>
-    <tr><td>只检查可见对象</td><td>跳过隐藏图层</td></tr>
-    <tr><td>红框标出 ≤ N 次</td><td>默认 N=1，标出稀有色；关闭则只标编号</td></tr>
-    <tr><td>生成说明</td><td>首画板上方输出图例，编号颜色与画板标注一致</td></tr>
-    <tr><td>删除旧标注图层</td><td>清除上次的「颜色编号」「单次颜色标注」「颜色说明」</td></tr>
+    <tr><td>畫板範圍</td><td><code>all</code> 全部；<code>1-10</code>；<code>1,3,5</code> 指定畫板</td></tr>
+    <tr><td>檢查型別</td><td>文字填色、形狀填色、描邊色，至少勾選一種</td></tr>
+    <tr><td>只檢查可見物件</td><td>跳過隱藏圖層</td></tr>
+    <tr><td>紅框標出 ≤ N 次</td><td>預設 N=1，標出稀有色；關閉則只標編號</td></tr>
+    <tr><td>生成說明</td><td>首畫板上方輸出圖例，編號顏色與畫板標註一致</td></tr>
+    <tr><td>刪除舊標註圖層</td><td>清除上次的「顏色編號」「單次顏色標註」「顏色說明」</td></tr>
   </table>
 
-  <p class="callout tip">填色稀有色为红框，描边稀有色为橙框。只标记不改色；渐变、图案填色不统计。</p>
+  <p class="callout tip">填色稀有色為紅框，描邊稀有色為橙框。只標記不改色；漸變、圖案填色不統計。</p>
 </div>
 
 <div class="card">
-  <h3>颜色库</h3>
-  <p>在面板内管理品牌标准色，跨文件、重启 Illustrator 后仍可用。点击色块即可填到当前选中物件（群组内物件也会填）。</p>
+  <h3>顏色庫</h3>
+  <p>在面板內管理品牌標準色，跨檔案、重啟 Illustrator 後仍可用。點選色塊即可填到當前選中物件（群組內物件也會填）。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/color-library.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/color-library.mp4">下载视频</a>查看颜色库演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/color-library.mp4">下載影片</a>檢視顏色庫演示。
     </video>
-    <figcaption>颜色库演示</figcaption>
+    <figcaption>顏色庫演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点分组旁的 <b>+</b> 新建分组（如「包装色」「Meeting Pro」）</li>
-    <li>录入颜色：双击空白处手动输入，或选中物件（含群组、复合路径）后点「提取」——用<b>选择工具（V）</b>直接选中即可</li>
-    <li>在 AI 中选中要填色的物件，点击色块应用</li>
+    <li>點分組旁的 <b>+</b> 新建分組（如「包裝色」「Meeting Pro」）</li>
+    <li>錄入顏色：雙擊空白處手動輸入，或選中物件（含群組、複合路徑）後點「提取」——用<b>選擇工具（V）</b>直接選中即可</li>
+    <li>在 AI 中選中要填色的物件，點選色塊應用</li>
   </ol>
 
   <h4>面板功能</h4>
   <table>
-    <tr><td>编辑 / 删除</td><td>悬停色块 → <b>✎</b> 进入编辑器；删除在编辑器内红色按钮</td></tr>
-    <tr><td>拖拽排序</td><td>拖拽色块调整顺序</td></tr>
-    <tr><td>分组管理</td><td>点击分组名可改名；「•••」可按名称升序 / 降序排列分组</td></tr>
-    <tr><td>CMYK / HEX</td><td>以 <b>CMYK 为准</b>，两边互算同步。只改 HEX 未同步 CMYK 可能导致重启后颜色变白</td></tr>
+    <tr><td>編輯 / 刪除</td><td>懸停色塊 → <b>✎</b> 進入編輯器；刪除在編輯器內紅色按鈕</td></tr>
+    <tr><td>拖拽排序</td><td>拖拽色塊調整順序</td></tr>
+    <tr><td>分組管理</td><td>點選分組名可改名；「•••」可按名稱升序 / 降序排列分組</td></tr>
+    <tr><td>CMYK / HEX</td><td>以 <b>CMYK 為準</b>，兩邊互算同步。只改 HEX 未同步 CMYK 可能導致重啟後顏色變白</td></tr>
   </table>
 
-  <h4>备份与导入</h4>
+  <h4>備份與匯入</h4>
   <table>
-    <tr><td>导出库</td><td>「•••」→ 导出全部 JSON，含所有分组</td></tr>
-    <tr><td>导出当前分组</td><td>「•••」→ 仅导出当前分组，便于分享给团队</td></tr>
-    <tr><td>导入库</td><td>「•••」→ 覆盖整个颜色库</td></tr>
-    <tr><td>导入到当前分组</td><td>「•••」→ 仅追加到当前分组</td></tr>
+    <tr><td>匯出庫</td><td>「•••」→ 匯出全部 JSON，含所有分組</td></tr>
+    <tr><td>匯出當前分組</td><td>「•••」→ 僅匯出當前分組，便於分享給團隊</td></tr>
+    <tr><td>匯入庫</td><td>「•••」→ 覆蓋整個顏色庫</td></tr>
+    <tr><td>匯入到當前分組</td><td>「•••」→ 僅追加到當前分組</td></tr>
   </table>
 
-  <p class="callout tip">数据保存在 <code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）；文件写入失败时会暂存面板 localStorage。建议定期导出 JSON 备份。</p>
+  <p class="callout tip">資料儲存在 <code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）；檔案寫入失敗時會暫存面板 localStorage。建議定期匯出 JSON 備份。</p>
 </div>
 
 <div class="card" id="select-same-color">
-  <h3>选取相同工具（Illustrator「选择相同」）</h3>
-  <p>快速选中当前文件里颜色相同的对象，不必逐层展开群组，也不用反复打开 Illustrator 的「选择 → 相同」菜单。功能直接调用 Illustrator 原生命令，对群组、复合路径、专色与外观的判断规则与 Illustrator 保持一致。</p>
+  <h3>選取相同工具（Illustrator「選擇相同」）</h3>
+  <p>快速選中當前檔案裡顏色相同的物件，不必逐層展開群組，也不用反覆開啟 Illustrator 的「選擇 → 相同」選單。功能直接呼叫 Illustrator 原生命令，對群組、複合路徑、專色與外觀的判斷規則與 Illustrator 保持一致。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/select-same.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/select-same.mp4">下载视频</a>查看选取相同工具演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/select-same.mp4">下載影片</a>檢視選取相同工具演示。
     </video>
-    <figcaption>选取相同工具演示</figcaption>
+    <figcaption>選取相同工具演示</figcaption>
   </figure>
 
-  <h4>两种使用方式</h4>
+  <h4>兩種使用方式</h4>
   <table>
-    <tr><td><b>以画布对象为参考</b></td><td>先选中一个对象，再点「填充颜色」「描边色」或「填色和描边」。适合从稿件中的现有对象开始查找</td></tr>
-    <tr><td><b>以颜色库色块为参考</b></td><td>先点击颜色库色块，色块出现高亮边框；再点「填充颜色」或「描边色」。选择完成后参考色会自动清除</td></tr>
+    <tr><td><b>以畫布物件為參考</b></td><td>先選中一個物件，再點「填充顏色」「描邊色」或「填色和描邊」。適合從稿件中的現有物件開始查詢</td></tr>
+    <tr><td><b>以顏色庫色塊為參考</b></td><td>先點選顏色庫色塊，色塊出現高亮邊框；再點「填充顏色」或「描邊色」。選擇完成後參考色會自動清除</td></tr>
   </table>
 
-  <h4>按钮说明</h4>
+  <h4>按鈕說明</h4>
   <table>
-    <tr><td>填充颜色</td><td>选择填充颜色相同的对象</td></tr>
-    <tr><td>描边色</td><td>选择描边颜色相同的对象</td></tr>
-    <tr><td>填色和描边</td><td>同时比较对象的填色与描边；必须先在画布选中参考对象</td></tr>
+    <tr><td>填充顏色</td><td>選擇填充顏色相同的物件</td></tr>
+    <tr><td>描邊色</td><td>選擇描邊顏色相同的物件</td></tr>
+    <tr><td>填色和描邊</td><td>同時比較物件的填色與描邊；必須先在畫布選中參考物件</td></tr>
   </table>
 
-  <p class="callout tip">颜色库色块只能提供一种颜色，因此只用于「填充颜色」或「描边色」；「填色和描边」仍以画布所选对象为参考。所有选择都只发生在当前 Illustrator 文件中，不会修改对象颜色。</p>
+  <p class="callout tip">顏色庫色塊只能提供一種顏色，因此只用於「填充顏色」或「描邊色」；「填色和描邊」仍以畫布所選物件為參考。所有選擇都只發生在當前 Illustrator 檔案中，不會修改物件顏色。</p>
 </div>
 
 <!-- ====== 文字工具 ====== -->
 <h2 id="text">文字工具</h2>
 
-<p class="callout tip">三个文字工具建议按顺序使用：<b>样式检查 → 溢出检查 → 尾端空白检查</b>。</p>
+<p class="callout tip">三個文字工具建議按順序使用：<b>樣式檢查 → 溢位檢查 → 尾端空白檢查</b>。</p>
 
 <div class="card">
-  <h3>文字样式检查</h3>
-  <p>按<b>字号 / 字体 / 颜色</b>将文字分组并编号，可选红框标出出现次数过少的样式组，或检测框内混合样式。勾选「生成说明」会在首画板上方输出样式汇总图例；完整清单以画板标注与图例为准，不再弹出详细报告窗口。</p>
+  <h3>文字樣式檢查</h3>
+  <p>按<b>字號 / 字型 / 顏色</b>將文字分組並編號，可選紅框標出出現次數過少的樣式組，或檢測框內混合樣式。勾選「生成說明」會在首畫板上方輸出樣式彙總圖例；完整清單以畫板標註與圖例為準，不再彈出詳細報告視窗。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/text-style-check.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/text-style-check.mp4">下载视频</a>查看文字样式检查演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/text-style-check.mp4">下載影片</a>檢視文字樣式檢查演示。
     </video>
-    <figcaption>文字样式检查演示</figcaption>
+    <figcaption>文字樣式檢查演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点击「样式检查」按钮</li>
-    <li>选定画板范围（列表多选，或输入 <code>all</code>、<code>1-10</code> 等）；画板很多时可用「延续」分段检查、接续编号</li>
-    <li>勾选分组维度与输出选项后点「检查」</li>
+    <li>點選「樣式檢查」按鈕</li>
+    <li>選定畫板範圍（列表多選，或輸入 <code>all</code>、<code>1-10</code> 等）；畫板很多時可用「延續」分段檢查、接續編號</li>
+    <li>勾選分組維度與輸出選項後點「檢查」</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>画板范围</td><td>列表多选，或输入 <code>all</code>、<code>1-10</code>、<code>1,3,5</code></td></tr>
-    <tr><td>全新 / 延续</td><td>大文件分段检查时用「延续」接续上次编号</td></tr>
-    <tr><td>分组维度</td><td>字号、字体、颜色，至少勾选一种（决定哪些属性相同才算「同一组」）</td></tr>
-    <tr><td>框内混合检查</td><td>同一文本框内一行出现多种样式时标<b>红框</b></td></tr>
-    <tr><td>只检查可见对象</td><td>跳过隐藏图层</td></tr>
-    <tr><td>包含画板外文字</td><td>纳入画板范围外的游离文字</td></tr>
-    <tr><td>红框标出 ≤ N 次的样式</td><td>默认 N=1，标出少见样式组；关闭则只标编号</td></tr>
-    <tr><td>生成说明</td><td>首画板上方输出图例，与画板编号对应</td></tr>
+    <tr><td>畫板範圍</td><td>列表多選，或輸入 <code>all</code>、<code>1-10</code>、<code>1,3,5</code></td></tr>
+    <tr><td>全新 / 延續</td><td>大檔案分段檢查時用「延續」接續上次編號</td></tr>
+    <tr><td>分組維度</td><td>字號、字型、顏色，至少勾選一種（決定哪些屬性相同才算「同一組」）</td></tr>
+    <tr><td>框內混合檢查</td><td>同一文字框內一行出現多種樣式時標<b>紅框</b></td></tr>
+    <tr><td>只檢查可見物件</td><td>跳過隱藏圖層</td></tr>
+    <tr><td>包含畫板外文字</td><td>納入畫板範圍外的遊離文字</td></tr>
+    <tr><td>紅框標出 ≤ N 次的樣式</td><td>預設 N=1，標出少見樣式組；關閉則只標編號</td></tr>
+    <tr><td>生成說明</td><td>首畫板上方輸出圖例，與畫板編號對應</td></tr>
   </table>
 </div>
 
 <div class="card">
-  <h3>文字溢出检查</h3>
-  <p>检测区域文字（Area Text）是否有内容超出文本框——即 AI 右下角的红色「＋」号。这是印前最常见的排版事故。</p>
+  <h3>文字溢位檢查</h3>
+  <p>檢測區域文字（Area Text）是否有內容超出文字框——即 AI 右下角的紅色「＋」號。這是印前最常見的排版事故。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/text-overflow-check.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/text-overflow-check.mp4">下载视频</a>查看文字溢出检查演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/text-overflow-check.mp4">下載影片</a>檢視文字溢位檢查演示。
     </video>
-    <figcaption>文字溢出检查演示</figcaption>
+    <figcaption>文字溢位檢查演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>在对话框中选择要检查的画板（勾选列表或输入 <code>1-5, 8</code>）</li>
-    <li>点击「溢出检查」运行</li>
-    <li>有溢出的文本框会被<b>红框</b>标记，按标记位置逐一修正</li>
+    <li>在對話方塊中選擇要檢查的畫板（勾選列表或輸入 <code>1-5, 8</code>）</li>
+    <li>點選「溢位檢查」執行</li>
+    <li>有溢位的文字框會被<b>紅框</b>標記，按標記位置逐一修正</li>
   </ol>
 
-  <h4>检测规则</h4>
+  <h4>檢測規則</h4>
   <table>
-    <tr><td><span class="rule-tag">M4a</span> 字符溢出</td><td>文本内容的字符数超过了总行数所能容纳的量（垂直溢出）。适用于多行区域文字。</td></tr>
-    <tr><td><span class="rule-tag">M8</span> 水平溢出</td><td>将文本框转为点文字后内容变短了（水平溢出）。适用于单行/窄框文字。</td></tr>
-    <tr><td><span class="rule-tag">M12</span> 段高溢出</td><td>段落的总高度（段落数 × 行距）超出了文本框高度（尾端空段溢出）。</td></tr>
+    <tr><td><span class="rule-tag">M4a</span> 字元溢位</td><td>文字內容的字元數超過了總行數所能容納的量（垂直溢位）。適用於多行區域文字。</td></tr>
+    <tr><td><span class="rule-tag">M8</span> 水平溢位</td><td>將文字框轉為點文字後內容變短了（水平溢位）。適用於單行/窄框文字。</td></tr>
+    <tr><td><span class="rule-tag">M12</span> 段高溢位</td><td>段落的總高度（段落數 × 行距）超出了文字框高度（尾端空段溢位）。</td></tr>
   </table>
 
-  <p class="callout warning">仅检查区域文字（Area Text）。点文字不会溢出，不检查。尾端仅 Enter/空格导致的红色「+」目前<b>不支持</b>可靠检测。</p>
+  <p class="callout warning">僅檢查區域文字（Area Text）。點文字不會溢位，不檢查。尾端僅 Enter/空格導致的紅色「+」目前<b>不支援</b>可靠檢測。</p>
 </div>
 
 <div class="card">
-  <h3>尾端空白检查</h3>
-  <p>检测区域文字末尾的多余空格、制表符（Tab）、空段落。这些内容肉眼不可见，但在排版中会导致对齐异常或导出问题。</p>
+  <h3>尾端空白檢查</h3>
+  <p>檢測區域文字末尾的多餘空格、製表符（Tab）、空段落。這些內容肉眼不可見，但在排版中會導致對齊異常或匯出問題。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/text-trailing-whitespace-check.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/text-trailing-whitespace-check.mp4">下载视频</a>查看尾端空白检查演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/text-trailing-whitespace-check.mp4">下載影片</a>檢視尾端空白檢查演示。
     </video>
-    <figcaption>尾端空白检查演示</figcaption>
+    <figcaption>尾端空白檢查演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>选择要检查的画板范围</li>
-    <li>点击「尾端空白」运行</li>
-    <li>有问题处以<b>橙框</b>标出，按标记位置清理</li>
+    <li>選擇要檢查的畫板範圍</li>
+    <li>點選「尾端空白」執行</li>
+    <li>有問題處以<b>橙框</b>標出，按標記位置清理</li>
   </ol>
 
-  <h4>检查内容</h4>
+  <h4>檢查內容</h4>
   <table>
-    <tr><td>末尾空格</td><td>段落末尾的空格字符</td></tr>
-    <tr><td>末尾 Tab</td><td>段落末尾的制表符（<code>\t</code>）</td></tr>
-    <tr><td>空段落</td><td>由连续回车产生的空白段落</td></tr>
+    <tr><td>末尾空格</td><td>段落末尾的空格字元</td></tr>
+    <tr><td>末尾 Tab</td><td>段落末尾的製表符（<code>\t</code>）</td></tr>
+    <tr><td>空段落</td><td>由連續回車產生的空白段落</td></tr>
   </table>
 
-  <p>问题已被标出来（橙框），你一眼就能看到。AI 在段落末尾会自动加一个看不见的段落标记，Momo Tools 不会把这个误判成「空段落」。</p>
+  <p>問題已被標出來（橙框），你一眼就能看到。AI 在段落末尾會自動加一個看不見的段落標記，Momo Tools 不會把這個誤判成「空段落」。</p>
 </div>
 
 <!-- ====== 工具集 ====== -->
 <h2 id="tools">工具集</h2>
 
 <div class="card">
-  <h3>网格系统</h3>
-  <p>一键在画板上绘制设计网格参考线。原创作者：火山字型 canfei (hstype.com)。</p>
+  <h3>網格系統</h3>
+  <p>一鍵在畫板上繪製設計網格參考線。原創作者：火山字型 canfei (hstype.com)。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/grid-system.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/grid-system.mp4">下载视频</a>查看网格系统演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/grid-system.mp4">下載影片</a>檢視網格系統演示。
     </video>
-    <figcaption>网格系统演示</figcaption>
+    <figcaption>網格系統演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点击「网格系统」按钮打开对话框</li>
-    <li>选择网格类型和参数</li>
-    <li>点「预览」查看效果（生成到 <code>_网格预览</code> 图层）</li>
-    <li>满意后点「应用」，或点「转为参考线」转为 AI 原生参考线</li>
-    <li>不满意点「取消」——预览会自动清除</li>
+    <li>點選「網格系統」按鈕開啟對話方塊</li>
+    <li>選擇網格型別和引數</li>
+    <li>點「預覽」檢視效果（生成到 <code>_網格預覽</code> 圖層）</li>
+    <li>滿意後點「應用」，或點「轉為參考線」轉為 AI 原生參考線</li>
+    <li>不滿意點「取消」——預覽會自動清除</li>
   </ol>
 
-  <h4>网格类型</h4>
+  <h4>網格型別</h4>
   <table>
-    <tr><td><b>瑞士网格</b></td><td>经典平面设计网格。参数：列数、行数、间距。适合：书籍、画册、品牌物料排版</td></tr>
-    <tr><td><b>等分网格</b></td><td>N 等分画板，支持间距和可选对角线。参数：分割数。适合：海报、封面、等分布局</td></tr>
-    <tr><td><b>黄金比例</b></td><td>基于斐波那契数列的黄金分割。参数：斐波那契项数、双轴/单轴、可选对角线。适合：摄影构图、视觉焦点安排</td></tr>
+    <tr><td><b>瑞士網格</b></td><td>經典平面設計網格。引數：列數、行數、間距。適合：書籍、畫冊、品牌物料排版</td></tr>
+    <tr><td><b>等分網格</b></td><td>N 等分畫板，支援間距和可選對角線。引數：分割數。適合：海報、封面、等分佈局</td></tr>
+    <tr><td><b>黃金比例</b></td><td>基於斐波那契數列的黃金分割。引數：斐波那契項數、雙軸/單軸、可選對角線。適合：攝影構圖、視覺焦點安排</td></tr>
   </table>
 
-  <h4>共用参数</h4>
+  <h4>共用引數</h4>
   <table>
-    <tr><td>作用范围</td><td>当前画板 / 选中的图形 / 全部画板</td></tr>
-    <tr><td>设置记忆</td><td>重新打开时恢复网格类型、全部参数、单位、内边距、颜色、作用范围和导出选项</td></tr>
-    <tr><td>剪切蒙版</td><td>选择剪切蒙版群组时，以蒙版路径的几何边界生成网格，不使用蒙版外的隐藏内容边界</td></tr>
-    <tr><td>生成结构</td><td>每个目标的列、行、边框与对角线合并在一个顶层组中，可一次选择并整体移动</td></tr>
-    <tr><td>单位</td><td>px / mm / pt，自动按文档单位转换</td></tr>
-    <tr><td>内边距</td><td>上/下/左/右 4 边独立，可一键全部同步</td></tr>
-    <tr><td>网格线颜色</td><td>6 种浅色圆形色块点选（浅蓝 / 浅绿 / 浅红 / 浅黄 / 浅灰 / 浅橙），选中显示蓝色高亮环</td></tr>
-    <tr><td>间距默认值</td><td>瑞士网格「列数」间距默认<b>开启</b>；「行数」间距与等分网格间距默认<b>关闭</b>（可手动勾选）</td></tr>
-    <tr><td>保留上次网格</td><td>勾选后，再次生成网格不会清除上次的线，而是叠加在上面。方便同时使用多种网格（如瑞士网格+黄金比例）</td></tr>
-    <tr><td>间距开关</td><td>列数、行数、等分网格各有一个独立的「间距」复选框。取消勾选则对应间距强制为 0（无间距排列）。三个复选框独立，样式一致</td></tr>
+    <tr><td>作用範圍</td><td>當前畫板 / 選中的圖形 / 全部畫板</td></tr>
+    <tr><td>設定記憶</td><td>重新開啟時恢復網格型別、全部引數、單位、內邊距、顏色、作用範圍和匯出選項</td></tr>
+    <tr><td>剪下蒙版</td><td>選擇剪下蒙版群組時，以蒙版路徑的幾何邊界生成網格，不使用蒙版外的隱藏內容邊界</td></tr>
+    <tr><td>生成結構</td><td>每個目標的列、行、邊框與對角線合併在一個頂層組中，可一次選擇並整體移動</td></tr>
+    <tr><td>單位</td><td>px / mm / pt，自動按文件單位轉換</td></tr>
+    <tr><td>內邊距</td><td>上/下/左/右 4 邊獨立，可一鍵全部同步</td></tr>
+    <tr><td>網格線顏色</td><td>6 種淺色圓形色塊點選（淺藍 / 淺綠 / 淺紅 / 淺黃 / 淺灰 / 淺橙），選中顯示藍色高亮環</td></tr>
+    <tr><td>間距預設值</td><td>瑞士網格「列數」間距預設<b>開啟</b>；「行數」間距與等分網格間距預設<b>關閉</b>（可手動勾選）</td></tr>
+    <tr><td>保留上次網格</td><td>勾選後，再次生成網格不會清除上次的線，而是疊加在上面。方便同時使用多種網格（如瑞士網格+黃金比例）</td></tr>
+    <tr><td>間距開關</td><td>列數、行數、等分網格各有一個獨立的「間距」核取方塊。取消勾選則對應間距強制為 0（無間距排列）。三個核取方塊獨立，樣式一致</td></tr>
   </table>
 
-  <p class="callout tip">预览不会覆盖你已有的设计内容。如果已有同名图层，会先清空再重建。</p>
+  <p class="callout tip">預覽不會覆蓋你已有的設計內容。如果已有同名圖層，會先清空再重建。</p>
 </div>
 
 <div class="card">
-  <h3>批量页码</h3>
-  <p>自动在多个画板上添加页码。适合多页画册、提案文件、产品型录。</p>
+  <h3>批次頁碼</h3>
+  <p>自動在多個畫板上新增頁碼。適合多頁畫冊、提案檔案、產品型錄。</p>
 
   <figure class="doc-figure">
     <video class="doc-video" src="assets/videos/page-numbers.mp4" autoplay muted loop playsinline controls preload="auto">
-      您的浏览器不支持视频播放。请<a href="assets/videos/page-numbers.mp4">下载视频</a>查看批量页码演示。
+      您的瀏覽器不支援影片播放。請<a href="assets/videos/page-numbers.mp4">下載影片</a>檢視批次頁碼演示。
     </video>
-    <figcaption>批量页码演示</figcaption>
+    <figcaption>批次頁碼演示</figcaption>
   </figure>
 
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>点击「页码」按钮</li>
-    <li>选择要编号的画板</li>
-    <li>设置位置（9 宫格）、起始页码与格式后确认</li>
+    <li>點選「頁碼」按鈕</li>
+    <li>選擇要編號的畫板</li>
+    <li>設定位置（9 宮格）、起始頁碼與格式後確認</li>
   </ol>
 
-  <h4>参数说明</h4>
+  <h4>引數說明</h4>
   <table>
-    <tr><td>页码位置</td><td>9 个方位，对应数字键盘 1-9（底部左/中/右、中部左/中/右、顶部左/中/右）</td></tr>
-    <tr><td>起始页码</td><td>从第几页开始编号（默认 1）</td></tr>
-    <tr><td>格式</td><td>自定义前缀/后缀，如 <code>第{n}页</code>、<code>Page {n}</code></td></tr>
+    <tr><td>頁碼位置</td><td>9 個方位，對應數字鍵盤 1-9（底部左/中/右、中部左/中/右、頂部左/中/右）</td></tr>
+    <tr><td>起始頁碼</td><td>從第幾頁開始編號（預設 1）</td></tr>
+    <tr><td>格式</td><td>自定義字首/字尾，如 <code>第{n}頁</code>、<code>Page {n}</code></td></tr>
   </table>
 </div>
 
-<!-- ====== 笔记 ====== -->
-<h2 id="notes">笔记面板 (Momo Notes)</h2>
+<!-- ====== 筆記 ====== -->
+<h2 id="notes">筆記面板 (Momo Notes)</h2>
 
-<p>独立 CEP 面板，在 Illustrator 内记录项目备注——不切换应用、不离开工作区。</p>
+<p>獨立 CEP 面板，在 Illustrator 內記錄專案備註——不切換應用、不離開工作區。</p>
 
 <figure class="doc-figure">
   <video class="doc-video" src="assets/videos/notes-demo.mp4" autoplay muted loop playsinline controls preload="auto">
-    您的浏览器不支持视频播放。请<a href="assets/videos/notes-demo.mp4">下载视频</a>查看 Momo Notes 笔记面板。
+    您的瀏覽器不支援影片播放。請<a href="assets/videos/notes-demo.mp4">下載影片</a>檢視 Momo Notes 筆記面板。
   </video>
-  <figcaption>Momo Notes 笔记面板演示</figcaption>
+  <figcaption>Momo Notes 筆記面板演示</figcaption>
 </figure>
 
 <div class="card">
-  <h4>操作步骤</h4>
+  <h4>操作步驟</h4>
   <ol class="steps">
-    <li>主面板点「笔记」，或菜单 <code>窗口 → 扩展功能 → Momo Notes</code></li>
-    <li>点 <b>+</b> 新建标签页，点击标签名可重命名</li>
-    <li>在编辑区输入备注；底部可调整字号、清除或重载</li>
+    <li>主面板點「筆記」，或選單 <code>視窗 → 擴充套件功能 → Momo Notes</code></li>
+    <li>點 <b>+</b> 新建標籤頁，點選標籤名可重新命名</li>
+    <li>在編輯區輸入備註；底部可調整字號、清除或過載</li>
   </ol>
 
-  <h4>功能一览</h4>
+  <h4>功能一覽</h4>
   <table>
-    <tr><td>多标签</td><td>最多 10 个标签页，按项目或主题分离笔记</td></tr>
-    <tr><td>拖拽排序</td><td>拖拽标签页重新排列</td></tr>
-    <tr><td>行内重命名</td><td>点击标签名即可编辑，无弹窗</td></tr>
-    <tr><td>Markdown 表格</td><td>在编辑器中输入表格文本（如 <code>| A | B |</code>），面板自动检测并渲染为可视化表格；单元格内 <code>**粗体**</code> 可正确显示</td></tr>
-    <tr><td>撤销 / 重做</td><td>支持 <code>Cmd+Z</code> / <code>Cmd+Shift+Z</code>（Windows：<code>Ctrl+Z</code> / <code>Ctrl+Y</code>），在笔记内编辑时不会被 AI 抢走快捷键</td></tr>
-    <tr><td>字号控制</td><td>可在 9px - 32px 之间调整字体大小</td></tr>
+    <tr><td>多標籤</td><td>最多 10 個標籤頁，按專案或主題分離筆記</td></tr>
+    <tr><td>拖拽排序</td><td>拖拽標籤頁重新排列</td></tr>
+    <tr><td>行內重新命名</td><td>點選標籤名即可編輯，無彈窗</td></tr>
+    <tr><td>Markdown 表格</td><td>在編輯器中輸入表格文字（如 <code>| A | B |</code>），面板自動檢測並渲染為視覺化表格；單元格內 <code>**粗體**</code> 可正確顯示</td></tr>
+    <tr><td>撤銷 / 重做</td><td>支援 <code>Cmd+Z</code> / <code>Cmd+Shift+Z</code>（Windows：<code>Ctrl+Z</code> / <code>Ctrl+Y</code>），在筆記內編輯時不會被 AI 搶走快捷鍵</td></tr>
+    <tr><td>字號控制</td><td>可在 9px - 32px 之間調整字型大小</td></tr>
   </table>
 
-  <p class="callout tip">笔记保存在面板浏览器存储中，重启 Illustrator 后仍在。重要内容建议复制备份。</p>
+  <p class="callout tip">筆記儲存在面板瀏覽器儲存中，重啟 Illustrator 後仍在。重要內容建議複製備份。</p>
 </div>
 
 <!-- ====== 技巧 ====== -->
 <h2 id="tips">使用技巧</h2>
 
 <div class="card">
-  <h3>印前标准检查流程</h3>
-  <p>每次交付文件前，建议按以下顺序执行 4 项检查（约 1 分钟完成）：</p>
+  <h3>印前標準檢查流程</h3>
+  <p>每次交付檔案前，建議按以下順序執行 4 項檢查（約 1 分鐘完成）：</p>
   <ol class="steps">
-    <li><b>文字溢出检查</b> — 红框处理。这是印前最常见也最严重的问题</li>
-    <li><b>尾端空白检查</b> — 橙框处理</li>
-    <li><b>文字样式检查</b> — 清点样式组，标出少见样式与框内混合样式</li>
-    <li><b>颜色检查</b> — 清点用色，标出出现次数过少的稀有色</li>
+    <li><b>文字溢位檢查</b> — 紅框處理。這是印前最常見也最嚴重的問題</li>
+    <li><b>尾端空白檢查</b> — 橙框處理</li>
+    <li><b>文字樣式檢查</b> — 清點樣式組，標出少見樣式與框內混合樣式</li>
+    <li><b>顏色檢查</b> — 清點用色，標出出現次數過少的稀有色</li>
   </ol>
 </div>
 
 <div class="card">
-  <h3>颜色库使用建议</h3>
+  <h3>顏色庫使用建議</h3>
   <ul>
-    <li>按产品线建立分组（而非按颜色类型分类）——因为你的日常流程是「做 Meeting Pro 的物料，我需要它的标准色」，而非「我要找个蓝色」</li>
-    <li>定期导出 JSON 备份（「•••」→ 导出库）</li>
-    <li>跨设备使用：导出 → 复制 JSON → 导入</li>
-    <li>编辑 CMYK 后确认 HEX 是否正确更新（反之亦然），两者经 ICC 转换后互算</li>
+    <li>按產品線建立分組（而非按顏色型別分類）——因為你的日常流程是「做 Meeting Pro 的物料，我需要它的標準色」，而非「我要找個藍色」</li>
+    <li>定期匯出 JSON 備份（「•••」→ 匯出庫）</li>
+    <li>跨裝置使用：匯出 → 複製 JSON → 匯入</li>
+    <li>編輯 CMYK 後確認 HEX 是否正確更新（反之亦然），兩者經 ICC 轉換後互算</li>
   </ul>
 </div>
 
 <div class="card">
-  <h3>画板技巧</h3>
+  <h3>畫板技巧</h3>
   <ul>
-    <li>先 <b>复制画板</b> 生成变体 → 再 <b>画板更名</b> 统一命名 → 最后 <b>重新排列</b> 整理布局</li>
-    <li>范围输入支持混合语法：<code>1-5, 8, 10-12</code></li>
-    <li>复制画板后检查查找/替换是否影响非目标文字（如画板名中的公共部分）</li>
+    <li>先 <b>複製畫板</b> 生成變體 → 再 <b>畫板更名</b> 統一命名 → 最後 <b>重新排列</b> 整理佈局</li>
+    <li>範圍輸入支援混合語法：<code>1-5, 8, 10-12</code></li>
+    <li>複製畫板後檢查查詢/替換是否影響非目標文字（如畫板名中的公共部分）</li>
   </ul>
 </div>
 
 <div class="card">
-  <h3>标注框颜色规则</h3>
+  <h3>標註框顏色規則</h3>
   <table>
-    <tr><td>红框</td><td>文字溢出（印前阻塞）</td></tr>
+    <tr><td>紅框</td><td>文字溢位（印前阻塞）</td></tr>
     <tr><td>橙框</td><td>尾端空白</td></tr>
-    <tr><td>红框（样式检查）</td><td>出现次数 ≤ 阈值的样式组、框内混合样式</td></tr>
-    <tr><td>红框 / 橙框（颜色检查）</td><td>填色稀有色 / 描边稀有色（出现次数 ≤ 阈值）</td></tr>
-    <tr><td>彩色数字</td><td>颜色检查编号，颜色与首画板图例一一对应</td></tr>
+    <tr><td>紅框（樣式檢查）</td><td>出現次數 ≤ 閾值的樣式組、框內混合樣式</td></tr>
+    <tr><td>紅框 / 橙框（顏色檢查）</td><td>填色稀有色 / 描邊稀有色（出現次數 ≤ 閾值）</td></tr>
+    <tr><td>彩色數字</td><td>顏色檢查編號，顏色與首畫板圖例一一對應</td></tr>
   </table>
 </div>
 
-<!-- ====== 常见问题 ====== -->
-<h2 id="trouble">常见问题</h2>
+<!-- ====== 常見問題 ====== -->
+<h2 id="trouble">常見問題</h2>
 
 <div class="card">
-  <h3>菜单里找不到 Momo Tools</h3>
+  <h3>選單裡找不到 Momo Tools</h3>
   <ul>
-    <li>确认已执行 <a href="#install-debug-mac">macOS PlayerDebugMode</a> 或 <a href="#install-debug-win">Windows PlayerDebugMode</a>，并<b>完全重启</b> Illustrator</li>
-    <li>文件夹名称必须是 <code>com.tomideas.illustratortools</code>（见 <a href="#install-mac">macOS</a> / <a href="#install-win">Windows</a> 安装路径）</li>
-    <li>部分版本菜单为「扩展」而非「扩展功能」</li>
+    <li>確認已執行 <a href="#install-debug-mac">macOS PlayerDebugMode</a> 或 <a href="#install-debug-win">Windows PlayerDebugMode</a>，並<b>完全重啟</b> Illustrator</li>
+    <li>資料夾名稱必須是 <code>com.tomideas.illustratortools</code>（見 <a href="#install-mac">macOS</a> / <a href="#install-win">Windows</a> 安裝路徑）</li>
+    <li>部分版本選單為「擴充套件」而非「擴充套件功能」</li>
   </ul>
 </div>
 
 <div class="card">
-  <h3>面板打不开 / 白屏</h3>
-  <p>试试这些方法：</p>
+  <h3>面板打不開 / 白屏</h3>
+  <p>試試這些方法：</p>
   <ul>
-    <li><b>重新打开面板</b>：菜单栏 → 窗口 → 扩展功能 → Momo Tools</li>
-    <li><b>重启 Illustrator</b></li>
-    <li><b>检查是否装对位置</b>：确认 <code>com.tomideas.illustratortools</code> 文件夹在正确的扩展目录下（见上方安装步骤）</li>
+    <li><b>重新開啟面板</b>：選單欄 → 視窗 → 擴充套件功能 → Momo Tools</li>
+    <li><b>重啟 Illustrator</b></li>
+    <li><b>檢查是否裝對位置</b>：確認 <code>com.tomideas.illustratortools</code> 資料夾在正確的擴充套件目錄下（見上方安裝步驟）</li>
   </ul>
 </div>
 
 <div class="card">
-  <h3>Momo Notes 白屏或标签页消失</h3>
+  <h3>Momo Notes 白屏或標籤頁消失</h3>
   <ol class="steps">
-    <li><b>先关闭</b> Momo Notes 面板（<code>窗口 → 扩展功能</code>，取消勾选 Momo Notes）</li>
-    <li><b>完全退出并重启</b> Illustrator</li>
-    <li>重启后从主面板「笔记」按钮或菜单重新打开</li>
+    <li><b>先關閉</b> Momo Notes 面板（<code>視窗 → 擴充套件功能</code>，取消勾選 Momo Notes）</li>
+    <li><b>完全退出並重啟</b> Illustrator</li>
+    <li>重啟後從主面板「筆記」按鈕或選單重新開啟</li>
   </ol>
 </div>
 
 <div class="card">
-  <h3>颜色库数据丢了 / 重启后变白</h3>
-  <p>颜色库有两份存档（见<a href="#color">颜色库 → 数据保存位置</a>）：</p>
+  <h3>顏色庫資料丟了 / 重啟後變白</h3>
+  <p>顏色庫有兩份存檔（見<a href="#color">顏色庫 → 資料儲存位置</a>）：</p>
   <ul>
-    <li>文件：<code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）</li>
-    <li>备用：面板 <code>localStorage</code></li>
+    <li>檔案：<code>~/Library/Application Support/MomoTools/color_library.json</code>（macOS）或 <code>%APPDATA%\MomoTools\</code>（Windows）</li>
+    <li>備用：面板 <code>localStorage</code></li>
   </ul>
-  <p><b>重启后颜色变白</b>：通常是只改了 HEX、CMYK 未同步。请用 ✎ 编辑颜色，确认 CMYK 与 HEX 一致后保存。建议定期「•••」→ 导出库 备份 JSON。</p>
+  <p><b>重啟後顏色變白</b>：通常是隻改了 HEX、CMYK 未同步。請用 ✎ 編輯顏色，確認 CMYK 與 HEX 一致後儲存。建議定期「•••」→ 匯出庫 備份 JSON。</p>
 </div>
 
 <div class="card">
-  <h3>颜色库保存失败？</h3>
+  <h3>顏色庫儲存失敗？</h3>
   <ul>
-    <li>若出现「已暂存本地，但写入文件失败」提示，数据仍在 localStorage，但重启 CEF 缓存可能被清——请尽快导出 JSON 备份</li>
-    <li>检查对 <code>MomoTools</code> 目录是否有写权限</li>
-  </ul>
-</div>
-
-<div class="card">
-  <h3>文字溢出检查结果不准确</h3>
-  <p>三种情况：</p>
-  <ul>
-    <li><b>漏掉了没标出来</b>：极少数情况三规则没覆盖到（如极窄竖排文字）。可以反馈给开发者</li>
-    <li><b>标错了（没溢出却标了）</b>：同样可以反馈案例</li>
-    <li><b>不会检查的对象</b>：点文字（直接用文字工具点一下打出来的字）不会溢出，不用检查。路径上的文字检测有局限</li>
+    <li>若出現「已暫存本地，但寫入檔案失敗」提示，資料仍在 localStorage，但重啟 CEF 快取可能被清——請儘快匯出 JSON 備份</li>
+    <li>檢查對 <code>MomoTools</code> 目錄是否有寫許可權</li>
   </ul>
 </div>
 
 <div class="card">
-  <h3>面板颜色不跟随 AI 切换</h3>
-  <p>面板启动时会读取 AI 的主题设置。如果切了主题面板没变：关掉面板重新打开，或重启 AI。</p>
+  <h3>文字溢位檢查結果不準確</h3>
+  <p>三種情況：</p>
+  <ul>
+    <li><b>漏掉了沒標出來</b>：極少數情況三規則沒覆蓋到（如極窄豎排文字）。可以反饋給開發者</li>
+    <li><b>標錯了（沒溢位卻標了）</b>：同樣可以反饋案例</li>
+    <li><b>不會檢查的物件</b>：點文字（直接用文字工具點一下打出來的字）不會溢位，不用檢查。路徑上的文字檢測有侷限</li>
+  </ul>
 </div>
 
 <div class="card">
-  <h3>怎么更新版本</h3>
+  <h3>面板顏色不跟隨 AI 切換</h3>
+  <p>面板啟動時會讀取 AI 的主題設定。如果切了主題面板沒變：關掉面板重新開啟，或重啟 AI。</p>
+</div>
+
+<div class="card">
+  <h3>怎麼更新版本</h3>
   <ol class="steps">
-    <li>从 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">Releases</a> 下载最新 <code>momo-tools-*-cep.zip</code></li>
-    <li>解压后用新的 <code>com.tomideas.illustratortools</code> 文件夹<b>覆盖</b> CEP 扩展目录中的旧版</li>
-    <li>完全退出并重启 Illustrator</li>
+    <li>從 <a href="https://github.com/tomideas/momo-illustrator/releases" target="_blank" rel="noopener">Releases</a> 下載最新 <code>momo-tools-*-cep.zip</code></li>
+    <li>解壓後用新的 <code>com.tomideas.illustratortools</code> 資料夾<b>覆蓋</b> CEP 擴充套件目錄中的舊版</li>
+    <li>完全退出並重啟 Illustrator</li>
   </ol>
-  <p>颜色库（<code>MomoTools/</code>）与笔记数据与扩展文件夹分开存放，覆盖更新不会删除它们。</p>
-  <p class="callout tip">当前文档对应版本：<b>v2.135</b> · 发布日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日志</a></p>
+  <p>顏色庫（<code>MomoTools/</code>）與筆記資料與擴充套件資料夾分開存放，覆蓋更新不會刪除它們。</p>
+  <p class="callout tip">當前文件對應版本：<b>v2.147</b> · 釋出日期：2026-07-26 · <a href="https://github.com/tomideas/momo-illustrator/blob/main/CHANGELOG.md">完整更新日誌</a></p>
 </div>
 
 </main>
 </div>
 
 <footer class="site-footer">
-  Momo Tools v2.135 · © 2026 Momo (tomideas) · 网格系统 © canfei / 火山字型 (hstype.com)
+  Momo Tools v2.147 · © 2026 Momo (tomideas) · 網格系統 © canfei / 火山字型 (hstype.com)
 </footer>
 
 <script src="docs.js"></script>

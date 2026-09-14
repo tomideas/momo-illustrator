@@ -1,7 +1,7 @@
 # Momo Tools — AI 开发说明文档
 
 > 适用工具：Cursor、Claude Code、GitHub Copilot 等
-> 当前版本：Bundle 2.146 | 最后更新：2026-09-14
+> 当前版本：Bundle 2.147 | 最后更新：2026-09-14
 
 ---
 

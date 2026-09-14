@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Momo Tools v2.101 — 使用说明</title>
+<title>Momo Tools v2.101 — 使用說明</title>
 <style>
   :root {
     --bg: #323232; --bg2: #3a3a3a; --bg-card: #3e3e3e;
@@ -44,120 +44,120 @@
 <body>
 
 <h1>Momo Tools <span class="badge">v2.101</span></h1>
-<p class="sub">Adobe Illustrator CEP 扩展面板 · 画板 / 颜色 / 文字 / 工具 · 最后更新 2026-06-19</p>
+<p class="sub">Adobe Illustrator CEP 擴充套件面板 · 畫板 / 顏色 / 文字 / 工具 · 最後更新 2026-06-19</p>
 
-<p class="tip">安装：将 <code>com.tomideas.illustratortools</code> 放到 <code>~/Library/Application Support/Adobe/CEP/extensions/</code>，重启 Illustrator 后在 <b>窗口 &gt; 扩展功能</b> 打开。</p>
+<p class="tip">安裝：將 <code>com.tomideas.illustratortools</code> 放到 <code>~/Library/Application Support/Adobe/CEP/extensions/</code>，重啟 Illustrator 後在 <b>視窗 &gt; 擴充套件功能</b> 開啟。</p>
 
-<!-- ══════════════ 画板 ══════════════ -->
-<h2>画板</h2>
+<!-- ══════════════ 畫板 ══════════════ -->
+<h2>畫板</h2>
 
-<div class="card"><h3>复制画板 <span class="badge">v1.1.2</span></h3>
-  <p>复制选中的画板及其所有内容，放在现有画板正下方。</p>
+<div class="card"><h3>複製畫板 <span class="badge">v1.1.2</span></h3>
+  <p>複製選中的畫板及其所有內容，放在現有畫板正下方。</p>
   <table>
-    <tr><td>选择画板</td><td>Shift 多选或输入范围（如 1-5, 8, 11-13）</td></tr>
-    <tr><td>名称编辑</td><td>勾选「重命名复制的画板」后，查找→替换文本。例：查找 FR_ 替换为 CN_</td></tr>
-    <tr><td>位置与间距</td><td>左右间距 / 上下间距 / 整体位移。默认自动检测</td></tr>
+    <tr><td>選擇畫板</td><td>Shift 多選或輸入範圍（如 1-5, 8, 11-13）</td></tr>
+    <tr><td>名稱編輯</td><td>勾選「重新命名複製的畫板」後，查詢→替換文字。例：查詢 FR_ 替換為 CN_</td></tr>
+    <tr><td>位置與間距</td><td>左右間距 / 上下間距 / 整體位移。預設自動檢測</td></tr>
   </table>
 </div>
 
 <div class="card"><h3>重新排列 <span class="badge">v1.5.8</span></h3>
-  <p>将画板按网格重新排列，可自定义每行数量和间距。</p>
+  <p>將畫板按網格重新排列，可自定義每行數量和間距。</p>
   <table>
-    <tr><td>每行个数</td><td>逗号分隔（3,3,2 = 第 1 行 3 个、第 2 行 3 个、第 3 行 2 个）</td></tr>
-    <tr><td>间距</td><td>左右间距 / 上下间距（pt）</td></tr>
-    <tr><td>放置位置</td><td>选区左上 / 某画板正下方（可偏移）</td></tr>
+    <tr><td>每行個數</td><td>逗號分隔（3,3,2 = 第 1 行 3 個、第 2 行 3 個、第 3 行 2 個）</td></tr>
+    <tr><td>間距</td><td>左右間距 / 上下間距（pt）</td></tr>
+    <tr><td>放置位置</td><td>選區左上 / 某畫板正下方（可偏移）</td></tr>
   </table>
 </div>
 
-<div class="card"><h3>画板更名 <span class="badge">v1.2.1</span></h3>
-  <p>批量或单独重命名画板。4 种命名规则：</p>
+<div class="card"><h3>畫板更名 <span class="badge">v1.2.1</span></h3>
+  <p>批次或單獨重新命名畫板。4 種命名規則：</p>
   <table>
-    <tr><td>编号</td><td><code>FR_{n}</code> → FR_01, FR_02… 占位符：<code>{n}</code>=序号 <code>{i}</code>=画板号 <code>{name}</code>=原名</td></tr>
-    <tr><td>替换</td><td>查找原名字部分 → 替换为新文本。支持正则匹配</td></tr>
-    <tr><td>逐行</td><td>逐行输入新名称，空行保留原名</td></tr>
-    <tr><td>后缀</td><td>在原名末尾追加固定文字。例：后缀 _v2 → FR_01_v2</td></tr>
+    <tr><td>編號</td><td><code>FR_{n}</code> → FR_01, FR_02… 佔位符：<code>{n}</code>=序號 <code>{i}</code>=畫板號 <code>{name}</code>=原名</td></tr>
+    <tr><td>替換</td><td>查詢原名字部分 → 替換為新文字。支援正則匹配</td></tr>
+    <tr><td>逐行</td><td>逐行輸入新名稱，空行保留原名</td></tr>
+    <tr><td>字尾</td><td>在原名末尾追加固定文字。例：字尾 _v2 → FR_01_v2</td></tr>
   </table>
 </div>
 
-<!-- ══════════════ 颜色 ══════════════ -->
-<h2>颜色</h2>
+<!-- ══════════════ 顏色 ══════════════ -->
+<h2>顏色</h2>
 
-<div class="card"><h3>颜色标签生成</h3>
-  <p>选取对象后自动生成 CMYK 色块标签。可设置色块尺寸、字体、排列方向、位置等。</p>
+<div class="card"><h3>顏色標籤生成</h3>
+  <p>選取物件後自動生成 CMYK 色塊標籤。可設定色塊尺寸、字型、排列方向、位置等。</p>
 </div>
 
-<div class="card"><h3>颜色检查</h3>
-  <p>扫描文件中的填色和描边颜色，统计并标注不符合规范的颜色（如 RGB 混入 CMYK 文件）。支持文字和形状两种对象类型。</p>
+<div class="card"><h3>顏色檢查</h3>
+  <p>掃描檔案中的填色和描邊顏色，統計並標註不符合規範的顏色（如 RGB 混入 CMYK 檔案）。支援文字和形狀兩種物件型別。</p>
 </div>
 
-<div class="card"><h3>颜色库</h3>
-  <p>管理多组 CMYK 颜色，支持：</p>
+<div class="card"><h3>顏色庫</h3>
+  <p>管理多組 CMYK 顏色，支援：</p>
   <table>
-    <tr><td>提取</td><td>从 Illustrator 选中对象提取颜色</td></tr>
-    <tr><td>增加</td><td>手动输入 CMYK 值新增</td></tr>
-    <tr><td>点击色块</td><td>应用到选中对象的填充</td></tr>
-    <tr><td>••• 菜单</td><td>新建/重命名/删除颜色组、排序、导入/导出 JSON</td></tr>
+    <tr><td>提取</td><td>從 Illustrator 選中物件提取顏色</td></tr>
+    <tr><td>增加</td><td>手動輸入 CMYK 值新增</td></tr>
+    <tr><td>點選色塊</td><td>應用到選中物件的填充</td></tr>
+    <tr><td>••• 選單</td><td>新建/重新命名/刪除顏色組、排序、匯入/匯出 JSON</td></tr>
   </table>
 </div>
 
 <!-- ══════════════ 文字 ══════════════ -->
 <h2>文字</h2>
 
-<div class="card"><h3>文字样式检查 <span class="badge">v8.1.8</span></h3>
-  <p>扫描文字框，找出字体、字号、行距不一致处，用橙色框标出。支持同一字号/字体/颜色分组，可选文本框内部混合检查。</p>
+<div class="card"><h3>文字樣式檢查 <span class="badge">v8.1.8</span></h3>
+  <p>掃描文字框，找出字型、字號、行距不一致處，用橙色框標出。支援同一字號/字型/顏色分組，可選文字框內部混合檢查。</p>
 </div>
 
-<div class="card"><h3>文字溢出检查 <span class="badge">v5.9.3</span></h3>
-  <p>检测文字是否超出文本框（红色 + 标识），用红框标注。</p>
-  <p>三条规则：</p>
+<div class="card"><h3>文字溢位檢查 <span class="badge">v5.9.3</span></h3>
+  <p>檢測文字是否超出文字框（紅色 + 標識），用紅框標註。</p>
+  <p>三條規則：</p>
   <table>
-    <tr><td>M4a</td><td>内容字数超出行字数（垂直溢出）</td></tr>
-    <tr><td>M8</td><td>转点文字后内容缩短（水平溢出）</td></tr>
-    <tr><td>M12</td><td>段落高度超出文本框（尾端空段溢出）</td></tr>
+    <tr><td>M4a</td><td>內容字數超出行字數（垂直溢位）</td></tr>
+    <tr><td>M8</td><td>轉點文字後內容縮短（水平溢位）</td></tr>
+    <tr><td>M12</td><td>段落高度超出文字框（尾端空段溢位）</td></tr>
   </table>
 </div>
 
-<div class="card"><h3>尾端空白 / 空段检查 <span class="badge">v1.0.1</span></h3>
-  <p>检查文本框末尾多余空格、Tab、空段落，用橙色框标出。</p>
+<div class="card"><h3>尾端空白 / 空段檢查 <span class="badge">v1.0.1</span></h3>
+  <p>檢查文字框末尾多餘空格、Tab、空段落，用橙色框標出。</p>
 </div>
 
 <!-- ══════════════ 工具 ══════════════ -->
 <h2>工具</h2>
 
-<div class="card"><h3>网格系统 <span class="badge">v1.0.0</span></h3>
-  <p>在画板上绘制网格参考线。3 种类型：</p>
+<div class="card"><h3>網格系統 <span class="badge">v1.0.0</span></h3>
+  <p>在畫板上繪製網格參考線。3 種型別：</p>
   <table>
-    <tr><td>瑞士网格</td><td>列数/行数 + 间距。适合排版设计</td></tr>
-    <tr><td>等分网格</td><td>N 等分 + 间距 + 可选对角线。适合海报/封面</td></tr>
-    <tr><td>黄金比例</td><td>斐波那契数列分割 + 双轴模式。适合摄影构图</td></tr>
+    <tr><td>瑞士網格</td><td>列數/行數 + 間距。適合排版設計</td></tr>
+    <tr><td>等分網格</td><td>N 等分 + 間距 + 可選對角線。適合海報/封面</td></tr>
+    <tr><td>黃金比例</td><td>斐波那契數列分割 + 雙軸模式。適合攝影構圖</td></tr>
   </table>
-  <p>支持 px/mm/pt 单位转换、内边距 4 边同步、实时预览图层 <code>_网格预览</code>、一键转为 Illustrator 参考线。</p>
-  <p class="tip">来源：© 2026 canfei. 火山字型 (hstype.com)</p>
+  <p>支援 px/mm/pt 單位轉換、內邊距 4 邊同步、實時預覽圖層 <code>_網格預覽</code>、一鍵轉為 Illustrator 參考線。</p>
+  <p class="tip">來源：© 2026 canfei. 火山字型 (hstype.com)</p>
 </div>
 
-<div class="card"><h3>批量页码</h3>
-  <p>为多个画板自动添加页码文字。可设置位置、起始页数、自定义格式。</p>
+<div class="card"><h3>批次頁碼</h3>
+  <p>為多個畫板自動新增頁碼文字。可設定位置、起始頁數、自定義格式。</p>
 </div>
 
-<div class="card"><h3>笔记 (Momo Notes)</h3>
-  <p>多分页笔记面板，支持 Markdown 表格、拖曳排序、内联重命名。最多 10 个分页。</p>
-  <p>从主面板「笔记」按钮打开。需要在 Illustrator 重启后手动打开。</p>
+<div class="card"><h3>筆記 (Momo Notes)</h3>
+  <p>多分頁筆記面板，支援 Markdown 表格、拖曳排序、內聯重新命名。最多 10 個分頁。</p>
+  <p>從主面板「筆記」按鈕開啟。需要在 Illustrator 重啟後手動開啟。</p>
 </div>
 
-<!-- ══════════════ 开发诊断 ══════════════ -->
-<h2>开发诊断工具</h2>
-<div class="warn">面板底部版本号 v2.101，连点 <b>3 次</b> 显示以下隐藏工具。</div>
+<!-- ══════════════ 開發診斷 ══════════════ -->
+<h2>開發診斷工具</h2>
+<div class="warn">面板底部版本號 v2.101，連點 <b>3 次</b> 顯示以下隱藏工具。</div>
 
-<div class="card"><h3>溢出诊断</h3>
-  <p>交互式逐框诊断：自动选取每个文本框并缩放，显示脚本判断结果，询问是否有红色 +，最后输出 FP/FN 对比报告。</p>
+<div class="card"><h3>溢位診斷</h3>
+  <p>互動式逐框診斷：自動選取每個文字框並縮放，顯示指令碼判斷結果，詢問是否有紅色 +，最後輸出 FP/FN 對比報告。</p>
 </div>
 
-<div class="card"><h3>尾端空白诊断</h3>
-  <p>交互式逐框诊断：显示尾端字符可视化（↵=Enter, ·=空格），询问是否应标记，输出对比报告。</p>
+<div class="card"><h3>尾端空白診斷</h3>
+  <p>互動式逐框診斷：顯示尾端字元視覺化（↵=Enter, ·=空格），詢問是否應標記，輸出對比報告。</p>
 </div>
 
-<div class="card"><h3>重置所有设置</h3>
-  <p>清除所有颜色库、笔记和工具偏好设置，恢复出厂状态。</p>
+<div class="card"><h3>重置所有設定</h3>
+  <p>清除所有顏色庫、筆記和工具偏好設定，恢復出廠狀態。</p>
 </div>
 
 </body>
