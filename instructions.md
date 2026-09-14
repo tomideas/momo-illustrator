@@ -1,7 +1,7 @@
 # Momo Tools — AI 开发说明文档
 
 > 适用工具：Cursor、Claude Code、GitHub Copilot 等
-> 当前版本：Bundle 2.135 | 最后更新：2026-07-26
+> 当前版本：Bundle 2.146 | 最后更新：2026-09-14
 
 ---
 
@@ -67,11 +67,7 @@ rsync -av --exclude="*.png" --exclude=".DS_Store" \
 | `js/panel.js` | `var PANEL_VERSION` | `"2.xx"` |
 | `CHANGELOG.md` | 顶部新增条目 | `## [2.xx] — YYYY-MM-DD` |
 
-Notes 面板有独立版本，修改 `note.html` 还需更新：
-
-| 文件 | 位置 |
-|------|------|
-| `CSXS/manifest.xml` | `<Extension Id="...note" Version="1.x" />` |
+Notes 由 `jsx/scripts/momo_notes.jsx` 打开为原生 ScriptUI 非模态窗口；修改时同步更新 Bundle 与 CHANGELOG 版本。
 
 ---
 
@@ -98,7 +94,7 @@ extension/com.tomideas.illustratortools/
 │   ├── illustrator_text_style_checker_v8.3.1_compact_cn.jsx  # 样式检查
 │   ├── artboard_duplicate_v1.1.2.jsx   # 复制画板
 │   ├── artboard_renamer_v1.2.1.jsx     # 画板更名
-│   ├── artboard_relayout_v1.5.9.jsx    # 重新排列
+│   ├── artboard_relayout_v1.6.3.jsx    # 重新排列
 │   ├── add_page_numbers_tomideas.jsx   # 批量页码
 │   ├── grid_system_v1.3.1.jsx          # 网格系统 v1.3.5（蒙版边界、完整设置记忆、整组输出）
 │   ├── generate_color_box.jsx          # 颜色标签生成
@@ -169,19 +165,17 @@ bind("btn-trailing-debug","research_trailing_text_probe.jsx");
 **⚠️ 颜色库已知陷阱（勿重蹈）：**
 - **目录用 ExtendScript 建，不要用 `cep.fs.makedir`**：`cep.fs.makedir` 在部分环境不可靠，建不出 `MomoTools/` 目录会导致写文件全失败、数据只进易失的 localStorage。`initPath` 用 `Folder().create()` 建目录；`saveLibrary` cep.fs 失败时有 `writeFileViaAI()` ExtendScript 后备。
 - **保存有防抖**：编辑走 `saveLibraryDebounced()`（200ms）。已绑 `beforeunload`/`pagehide` → `flushSave()` 立即落盘，别移除。
-- **颜色以 CMYK 为准**：`refreshHexFromAI()` 每次载入用 CMYK 重算并覆盖 `hex`。**hex 与 CMYK 必须保持一致** —— 编辑器 hex 输入须同步用 `hexToCmyk()` 更新 CMYK 字段，否则 hex 蓝 + CMYK 0,0,0,0 重启后会被覆盖成白色（套用到对象也会是白）。
-- **提取结果以当前 Illustrator 文档的原生 Color Picker / Eyedropper 表示为准**：不同文件的 ICC 配置会产生不同的等价 CMYK，禁止用固定公式、固定配置或固定 CMYK 门槛推断。转换必须在目标文件为 `app.activeDocument` 时调用 `app.convertSampleColor()`。Illustrator DOM 若把纯 K 灰展开为四色 CMYK，只能在候选纯 K 的 RGB 相符，且 `K → RGB → CMYK` 回转能还原 DOM 四色值时归一化为 K-only；不符合回转指纹的复合灰/富黑必须保留原值。CEP/ExtendScript 不公开文档 ICC 名称或原生吸管最终配方，透明度、混合模式、渐变、图片及效果叠加后的屏幕像素也不等同于对象填色提取，勿宣称这些场景可由 DOM 填色做到完全一致。
-- `FS_UTF8 = 4` 是正确的 CEP UTF-8 常量，勿改。
+- **颜色以 source 原值为准**：2.140 起保存 `source.type` 与原始通道小数；RGB、CMYK、Gray、Lab 与 Spot 分别还原。Spot 保留名称、基础颜色、色彩模型与 tint。HEX 与衍生 CMYK 只用于预览，不可反向覆盖 source。编辑 CMYK 通道明确转普通 CMYK，编辑 HEX 明确转 RGB；仅改名称保留原始 source。
+- **提取忠实读取对象填色**：禁止将四色灰猜测成纯 K、提前取整或用简单公式转换 RGB→CMYK。颜色空间转换通过当前 Illustrator 的 `app.convertSampleColor()`；跨文档颜色模式会由宿主转换并提示。CEP 不公开文档 ICC 名称或原生吸管最终配方，不保证透明度、混合、渐变、图像及效果叠加后的屏幕像素等同于 DOM 填色。
+- **CEP 编码参数必须为字串 `"UTF-8"`（`cep.encoding.UTF8`）**：2.140 现场验证数值 `4` 返回 `ERR_INVALID_PARAMS=2`，旧记录“4 是正确 UTF-8 常量”错误。官方 CEP 12 定义为 `"UTF-8"`。
 
 ### Notes 存储
 
-```
-localStorage["MomoTools_NoteTabs"]    = JSON.stringify(tabNames[])
-localStorage["MomoTools_NoteTab_0"]   = tab0 content (innerHTML)
-localStorage["MomoTools_NoteTab_1"]   = tab1 content (innerHTML)
-localStorage["MomoTools_NoteActive"]  = activeIdx
-localStorage["MomoTools_NoteFontSize"] = fontSize
-```
+2.140 起 `js/note_storage.js` 将分页名称、顺序、内容、活动分页、字体与更新时间保存为单个完整快照：
+- `localStorage["MomoTools_Notes_v2"]` 与 `_backup` 保存最近快照；旧 `MomoTools_NoteTab_*` 等键保留但不再写入。
+- `{userData}/MomoTools/notes.0.json` 和 `notes.1.json` 交替写入并读回验证；失败时保留另一份有效文件。
+- 输入即同步写 localStorage，文件副本防抖；切换／关闭标签前捕获当前内容，失焦／隐藏／退出补写文件。
+- `initUI()` 与恢复显示不得调用内容重载。只在显式打开或聚焦时恢复异常 1×1 视口，避免后台／折叠面板被强制展开。
 
 ---
 
@@ -234,9 +228,21 @@ function detectTrailingIssue(tf) {
 
 ---
 
+### artboard_relayout_v1.6.3.jsx（重新排列）
+
+按行/列把选中画板连同内容一起重排。核心是 `relayoutSelected()` 与 `assignItemsToMoves()`。
+
+**⚠️ 已知陷阱（2026-08-21 连环踩坑，勿重蹈）：**
+- **内容分配必须一次性、用「移动前」的原始画板范围算**：不要逐个画板边移边用 `document.selectObjectsOnActiveArtboard()` 现取内容——前一个画板挪过去的内容会落进下一个画板「移动前」的范围，被误当成后者的内容一起带走，导致部分画板内容丢失（变空白）、部分重叠串位。正确做法：先用全部目标画板的原始 `artboardRect` 一次性把每个顶层 pageItem（群组整体移动，不递归子项）按重叠面积分配好，再统一挪动。
+- **列/行间距要按每个画板自身尺寸累加，不要用统一格子尺寸**：不能用「全部目标画板里最大宽/高」当作固定格子（`cellW`/`cellH`）来算每列/每行的位移——选中画板尺寸不一致时（例如封面/封底与横向汇总画板混在一起），窄画板之间会出现远超设置间距的空隙。要逐行流式排版：每列按该画板自身实际宽度累加 + 间距，每行换行按该行内画板的实际最大高度 + 间距。
+- **`overlapArea` 选择归属画板时，初始阈值不能是 `0`，必须 `< 0`（如 `-1`）**：纯水平/垂直的线条（手势图里连接图标与徽标的虚线）几何范围宽或高为 0，与任何画板的重叠面积恒为 0，阈值若从 0 开始，零面积重叠永远赢不了，会被漏分配、排列后原地不动。
+- **挪动 `artboardRect` 前必须先 `document.artboards.setActiveArtboardIndex()`**：目标画板不是当前画板时，部分 Illustrator 版本设置 `artboardRect` 会直接抛 `an Illustrator error occurred: 1346458189 ('PARM')`。这行赋值必须包 try/catch，单个画板失败不能中断其余画板的排列；整个移动循环外层要包 try/finally，确保进度浮窗关闭、`app.coordinateSystem` 恢复始终执行，不会因为中途抛错而卡死或留下半挪状态。
+
+---
+
 ### note.html（Momo Notes 面板）
 
-独立 CEP 扩展（`com.tomideas.illustratortools.note`），通过 `requestOpenExtension` 打开。
+独立 CEP 扩展（`com.tomideas.illustratortools.notes`），通过 `requestOpenExtension` 打开。不要将编辑器嵌入主面板，否则使用笔记时会遮住其他工具。
 
 **关键实现：**
 - 存储：`saveContent` 用 `content.innerHTML`（保留 `<div>`/`<br>`/表格 HTML），`loadContent` 用 `content.innerHTML =` 还原
@@ -245,7 +251,7 @@ function detectTrailingIssue(tf) {
 - **⚠️ `\r\n` 标准化**：贴上和 `loadContent` 都须 `replace(/\r\n?/g, "\n")`。Chromium 41 的 contenteditable 中 `\r`（carriage return）会把游标拉回行首导致后续文字覆盖前面行
 - Markdown 表格：粘贴时检测 `| --- |` 语法，调用 `renderMarkdownTables()` 转为 HTML `<table>`
 - 复制为纯文本：拦截 `copy` 事件，强制 `text/plain`
-- **⚠️ 首次打开**：`requestOpenExtension` 须连调两次。CEP 首次调用只初始化面板（加载 HTML/JS），第二次才把面板带到前台。见 `panel.js:124`
+- **首次打开**：先 `requestOpenExtension`，再发送 `com.tomideas.notes.recover`；仅当 Notes 未回复可用尺寸时才重试一次，避免无条件重复打开。
 
 ---
 

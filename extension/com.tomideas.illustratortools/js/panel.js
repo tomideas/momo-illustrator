@@ -1,5 +1,5 @@
 (function () {
-    var PANEL_VERSION = "2.135";
+    var PANEL_VERSION = "2.146";
     var SystemPath = { EXTENSION: "extension" };
 
     function CSInterface() {}
@@ -95,10 +95,8 @@
             var ref = commandKey === "fillStroke" ? null : window.MomoToolsColorReference;
             var script;
             if (ref) {
-                var c = Math.max(0, Math.min(100, Number(ref.c) || 0));
-                var m = Math.max(0, Math.min(100, Number(ref.m) || 0));
-                var y = Math.max(0, Math.min(100, Number(ref.y) || 0));
-                var k = Math.max(0, Math.min(100, Number(ref.k) || 0));
+                var Color = window.MomoColorSource, original;
+                try { original = Color.source(ref); } catch(e) { alert(e.message); return; }
                 script =
                     '(function(){' +
                     'if(!app.documents.length){return "E:no_doc";}' +
@@ -109,7 +107,8 @@
                     'tmpLayer=doc.layers.add();tmpLayer.name="__MomoTools_SelectSame__";' +
                     'var ab=doc.artboards[doc.artboards.getActiveArtboardIndex()].artboardRect;' +
                     'tmp=tmpLayer.pathItems.rectangle(ab[1],ab[0],1,1);tmp.name="__MomoTools_SelectSame_Reference__";' +
-                    'var ck=new CMYKColor();ck.cyan=' + c + ';ck.magenta=' + m + ';ck.yellow=' + y + ';ck.black=' + k + ';' +
+                    Color.prelude() +
+                    'var ck=MomoColor.make(' + Color.literal(original) + ',doc);' +
                     (commandKey === "fill"
                         ? 'tmp.filled=true;tmp.fillColor=ck;tmp.stroked=false;'
                         : 'tmp.filled=false;tmp.stroked=true;tmp.strokeColor=ck;tmp.strokeWidth=1;') +
@@ -148,7 +147,7 @@
     }
 
     bind("btn-duplicate",    "artboard_duplicate_v1.1.2.jsx");
-    bind("btn-relayout",     "artboard_relayout_v1.5.9.jsx");
+    bind("btn-relayout",     "artboard_relayout_v1.6.3.jsx");
     bind("btn-renamer",      "artboard_renamer_v1.2.1.jsx");
     bind("btn-grid",         "grid_system_v1.3.1.jsx");
     bind("btn-page-numbers", "add_page_numbers_tomideas.jsx");
@@ -186,19 +185,8 @@
         });
     });
 
-    document.getElementById("btn-note").addEventListener("click", function () {
-        // 第一次調用喚起面板；第二次延遲 300ms 作為 fallback（首次點擊只初始化不顯示時補一刀）。
-        // 改為非同步：避免同步連調在第一次 CEF 渲染進程還沒就緒時被第二次打斷 → 白屏。
-        try {
-            cs.requestOpenExtension("com.tomideas.illustratortools.note", "");
-        } catch (e) {
-            if (typeof console !== "undefined") console.log("open note panel error:", e);
-        }
-        setTimeout(function () {
-            try {
-                cs.requestOpenExtension("com.tomideas.illustratortools.note", "");
-            } catch (e) {}
-        }, 300);
+    document.getElementById("btn-note").addEventListener("click",function(){
+        runScript("momo_notes.jsx");
     });
 
     var footer = document.getElementById("footer-version");

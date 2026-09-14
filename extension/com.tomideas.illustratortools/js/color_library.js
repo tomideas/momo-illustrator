@@ -10,7 +10,10 @@
     }
 
     // ── State ────────────────────────────────────────────────────
-    var library    = { version: "1.0", groups: [] };
+    var library    = { version: "2.0", groups: [] };
+    var Color = window.MomoColorSource;
+    var editorSource = null, editorRevision = 0, editorPending = false, editorPreviewValid = true;
+    var libraryLoaded = false, captureRequest = 0;
     var sortDir    = "asc"; // asc / desc
 
     var curGroup   = 0;   // current group index
@@ -28,12 +31,7 @@
 
     function setReferenceColor(col, swatch) {
         clearReferenceColor();
-        window.MomoToolsColorReference = {
-            c: Number(col.c) || 0,
-            m: Number(col.m) || 0,
-            y: Number(col.y) || 0,
-            k: Number(col.k) || 0
-        };
+        window.MomoToolsColorReference = { source: Color.source(col) };
         swatch.classList.add("cl-sw-reference");
     }
 
@@ -55,7 +53,7 @@
     }
 
     // ExtendScript 写文件后备：cep.fs.writeFile 仍失败时改用此法（与导出相同机制，可靠）。
-    function writeFileViaAI(json) {
+    function writeFileViaAI(json, cb) {
         if (!libPath) return;
         var script =
             '(function(){try{' +
@@ -64,11 +62,25 @@
             'f.write(decodeURIComponent("' + encodeURIComponent(json) + '"));' +
             'f.close();return "OK";' +
             '}catch(e){return "ERR:"+e;}})()';
-        evalAI(script, function () {});
+        evalAI(script, function (r) { if(cb)cb(r === "OK"); });
+    }
+
+    function validLibrary(value) {
+        if(!value || !Array.isArray(value.groups))return false;
+        try {
+            value.groups.forEach(function(group) {
+                if(!group || typeof group.name!=="string" || !Array.isArray(group.colors))throw new Error("颜色组数据无效");
+                group.colors.forEach(function(col) {
+                    if(!col || typeof col.name!=="string" || (col.hex!==undefined && typeof col.hex!=="string"))throw new Error("颜色数据无效");
+                    Color.source(col);
+                });
+            });
+            return true;
+        }catch(e){return false;}
     }
 
     // ── File I/O via cep.fs ──────────────────────────────────────
-    var FS_UTF8 = 4; // CEP cep.fs encoding constant for UTF-8
+    var FS_UTF8 = "UTF-8"; // CEP expects an encoding name, not a numeric constant.
 
     function getCepFs() {
         return window.cep && window.cep.fs ? window.cep.fs : null;
@@ -85,7 +97,7 @@
                 if (res.err === 0 && res.data) {
                     try {
                         var parsed = JSON.parse(res.data);
-                        if (parsed && Array.isArray(parsed.groups)) {
+                        if (validLibrary(parsed)) {
                             library = parsed;
                             loaded = true;
                         }
@@ -100,7 +112,7 @@
                 var stored = window.localStorage.getItem("MomoTools_ColorLibrary");
                 if (stored) {
                     var parsed = JSON.parse(stored);
-                    if (parsed && Array.isArray(parsed.groups)) {
+                    if (validLibrary(parsed)) {
                         library = parsed;
                         loaded = true;
                     }
@@ -108,6 +120,7 @@
             } catch (e) {}
         }
 
+        libraryLoaded = true;
         // Only create default momo group if NO data was loaded (first install)
         if (!loaded && library.groups.length === 0) {
             library.groups.push({
@@ -142,6 +155,8 @@
     }
 
     function saveLibrary() {
+        if (!libraryLoaded) return;
+        library.version = "2.0";
         var json = JSON.stringify(library, null, 2);
 
         var fsErr = false;
@@ -174,7 +189,9 @@
         // cep.fs 写文件失败时，改用 ExtendScript 后备写入（异步，通常可靠）
         var aiFallback = false;
         if (fsErr && libPath) {
-            writeFileViaAI(json);
+            writeFileViaAI(json, function(ok) {
+                if(!ok)toast(lsErr ? "保存失败：文件与本地存储均不可用" : "已暂存本地，文件保存失败，请导出备份");
+            });
             aiFallback = true;
         }
 
@@ -215,46 +232,14 @@
         }, duration);
     }
 
-    // ── Convert CMYK → hex via Illustrator (ICC-accurate) ────
-    function cmykToHexViaAI(cols, cb) {
-        if (!cols || !cols.length) { if (cb) cb({}); return; }
-        var parts = [];
-        for (var i = 0; i < cols.length; i++) {
-            parts.push(Math.round(cols[i].c) + "," + Math.round(cols[i].m) + "," + Math.round(cols[i].y) + "," + Math.round(cols[i].k));
-        }
-        var script =
-            '(function(){' +
-            'try{' +
-            'if(!app.documents.length){return "ERR";}' +
-            'var doc=app.activeDocument;' +
-            'var items="' + parts.join("|") + '";' +
-            'var arr=items.split("|");' +
-            'var h=function(n){var s=Math.round(n).toString(16);return s.length<2?"0"+s:s;};' +
-            'var result=[];' +
-            'for(var i=0;i<arr.length;i++){' +
-            'var p=arr[i].split(",");' +
-            'try{' +
-            'var rgb=app.convertSampleColor(ImageColorSpace.CMYK,[+p[0],+p[1],+p[2],+p[3]],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
-            'result.push(h(rgb[0])+h(rgb[1])+h(rgb[2]));' +
-            '}catch(e1){' +
-            'var r2=255*(1-(+p[0])/100)*(1-(+p[3])/100);' +
-            'var g2=255*(1-(+p[1])/100)*(1-(+p[3])/100);' +
-            'var b2=255*(1-(+p[2])/100)*(1-(+p[3])/100);' +
-            'result.push(h(r2)+h(g2)+h(b2));' +
-            '}' +
-            '}' +
-            'return result.join("|");' +
-            '}catch(e3){return "E:CONV";}' +
-            '})()';
+    // Preview is derived from the original color, never the other way around.
+    function colorInfo(source, cb) {
+        var script = '(function(){try{' + Color.prelude() +
+            'return MomoColor.json(MomoColor.info(' + Color.literal(source) + '));' +
+            '}catch(e){return "E:"+e;}})()';
         evalAI(script, function (r) {
-            if (!r || r === "ERR" || r === "E:CONV") { if (cb) cb({}); return; }
-            if (r.indexOf("E:") === 0) { if (cb) cb({}); return; }
-            var map = {};
-            var hexes = r.split("|");
-            for (var i = 0; i < cols.length && i < hexes.length; i++) {
-                map[cols[i].id] = hexes[i].toUpperCase();
-            }
-            if (cb) cb(map);
+            try { var result = JSON.parse(r); if (result && result.source && result.hex) { cb(result); return; } } catch (e) {}
+            cb(null);
         });
     }
 
@@ -284,8 +269,7 @@
     }
 
     function cmykLabel(col) {
-        return "C" + Math.round(col.c) + " M" + Math.round(col.m) +
-               " Y" + Math.round(col.y) + " K" + Math.round(col.k);
+        try { return Color.label(Color.source(col)); } catch (e) { return "颜色数据无效"; }
     }
 
     function rgbLabel(r, g, b) { return "R" + r + " G" + g + " B" + b; }
@@ -299,26 +283,6 @@
     function h2(n) {
         var s = n.toString(16).toUpperCase();
         return s.length < 2 ? "0" + s : s;
-    }
-
-    function hexToCmyk(hex) {
-        hex = hex.replace(/^#/, "");
-        if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-        if (hex.length !== 6) return null;
-        var r = parseInt(hex.substring(0,2), 16);
-        var g = parseInt(hex.substring(2,4), 16);
-        var b = parseInt(hex.substring(4,6), 16);
-        if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
-        var rr = r / 255, gg = g / 255, bb = b / 255;
-        var k = 1 - Math.max(rr, gg, bb);
-        if (k >= 1) return { c: 0, m: 0, y: 0, k: 100 };
-        var ic = 1 - k;
-        return {
-            c: Math.round((ic - rr) / ic * 100),
-            m: Math.round((ic - gg) / ic * 100),
-            y: Math.round((ic - bb) / ic * 100),
-            k: Math.round(k * 100)
-        };
     }
 
     function hexToRgb(hex) {
@@ -466,39 +430,49 @@
         refreshHexFromAI();
     }
 
-    // Ask Illustrator for ICC-accurate hex values, then update swatch tooltips
     function refreshHexFromAI() {
-        if (!library.groups.length) return;
         var group = library.groups[curGroup];
         if (!group || !group.colors || !group.colors.length) return;
-        cmykToHexViaAI(group.colors, function (map) {
-            if (!map) { toast("hex转换：未收到结果"); return; }
-            var updated = 0;
-            for (var i = 0; i < group.colors.length; i++) {
-                if (map[group.colors[i].id]) {
-                    group.colors[i].hex = map[group.colors[i].id];
-                    updated++;
+        var colors = group.colors.slice(), sources;
+        try { sources = colors.map(function(c) { return Color.source(c); }); } catch(e) { toast(e.message); return; }
+        var script = '(function(){' + Color.prelude() + 'var a=' + Color.literal(sources) + ',out=[];' +
+            'for(var i=0;i<a.length;i++){try{out.push(MomoColor.info(a[i]));}catch(e){out.push(null);}}return MomoColor.json(out);})()';
+        evalAI(script, function(raw) {
+            var result; try { result = JSON.parse(raw); } catch(e) { return; }
+            if (!Array.isArray(result)) return;
+            for(var i=0;i<colors.length;i++) {
+                var col=colors[i];
+                // A late preview must not alter a color edited/deleted while conversion ran.
+                if(result[i] && group.colors.indexOf(col)>=0 && Color.literal(Color.source(col))===Color.literal(sources[i])) {
+                    col.hex=result[i].hex;
+                    col.c=result[i].cmyk[0];col.m=result[i].cmyk[1];col.y=result[i].cmyk[2];col.k=result[i].cmyk[3];
+                    col.source=sources[i];
                 }
             }
-            if (updated > 0) {
-                saveLibraryDebounced();
-                renderSwatches();
-            }
+            saveLibraryDebounced();
+            if(library.groups[curGroup]===group) renderSwatches();
         });
     }
 
     // ── Color editor ─────────────────────────────────────────────
     function openEditor(colorIdx) {
+        editorRevision++;
+        editorPending = false;
+        editorPreviewValid = true;
+        document.getElementById("cl-ed-ok").disabled = false;
         editingIdx = colorIdx;
         var group = library.groups[curGroup];
         var col = (colorIdx >= 0 && group && group.colors[colorIdx])
                   ? group.colors[colorIdx] : null;
 
-        var c = col ? Math.round(col.c) : 0;
-        var m = col ? Math.round(col.m) : 0;
-        var y = col ? Math.round(col.y) : 0;
-        var k = col ? Math.round(col.k) : 0;
+        var c = col ? col.c : 0;
+        var m = col ? col.m : 0;
+        var y = col ? col.y : 0;
+        var k = col ? col.k : 0;
 
+        editorSource = Color.source(col || {c:0,m:0,y:0,k:0});
+        if(editorSource.type==="CMYK"){c=editorSource.values[0];m=editorSource.values[1];y=editorSource.values[2];k=editorSource.values[3];}
+        showSource();
         document.getElementById("cl-ed-name").value = col ? col.name : "新颜色";
         var initHex = col && col.hex ? col.hex.replace("#", "") : cmykToHex({c:c,m:m,y:y,k:k}).replace("#", "");
         document.getElementById("cl-ed-hex").value = initHex;
@@ -514,9 +488,13 @@
         document.getElementById("cl-editor").style.display = "block";
         var ni = document.getElementById("cl-ed-name");
         ni.focus(); ni.select();
+        if(col)updateSourcePreview();
     }
 
     function closeEditor() {
+        editorRevision++;
+        editorPending = false;
+        editorSource = null;
         editingIdx = -2;
         var ed = document.getElementById("cl-editor");
         if (ed) ed.style.display = "none";
@@ -529,16 +507,11 @@
             hexInput.value = forceHex.toUpperCase();
         }
 
-        var hexVal = hexInput.value || "000000";
-        if (hexVal.length !== 6) {
-            var cVal = parseInt(document.getElementById("cl-ed-c").value, 10);
-            var mVal = parseInt(document.getElementById("cl-ed-m").value, 10);
-            var yVal = parseInt(document.getElementById("cl-ed-y").value, 10);
-            var kVal = parseInt(document.getElementById("cl-ed-k").value, 10);
-            if (!isNaN(cVal) && !isNaN(mVal) && !isNaN(yVal) && !isNaN(kVal)) {
-                var rgb = cmykToRgb(cVal, mVal, yVal, kVal);
-                hexVal = h2(rgb.r) + h2(rgb.g) + h2(rgb.b);
-            }
+        var hexVal = hexInput.value;
+        if(!/^[0-9a-fA-F]{6}$/.test(hexVal)) {
+            document.getElementById("cl-ed-preview").style.background="transparent";
+            ["r","g","b"].forEach(function(key){document.getElementById("cl-ed-rgb-"+key).textContent="—";});
+            return;
         }
 
         var r = parseInt(hexVal.substring(0, 2), 16) || 0;
@@ -556,40 +529,48 @@
         if (rb) rb.textContent = "B" + b;
     }
 
-    function saveEditorColor() {
-        var name = (document.getElementById("cl-ed-name").value || "").trim() || "新颜色";
+    function showSource() {
+        var el = document.getElementById("cl-ed-source");
+        if(el && editorSource) el.textContent = Color.label(editorSource) + " · 原值保存";
+    }
 
+    function updateSourcePreview() {
+        var revision = ++editorRevision;
+        editorPending = true;
+        editorPreviewValid = false;
+        document.getElementById("cl-ed-ok").disabled = true;
+        showSource();
+        colorInfo(editorSource, function(info) {
+            if(revision !== editorRevision || editingIdx === -2) return;
+            editorPending = false;
+            document.getElementById("cl-ed-ok").disabled = false;
+            if(!info) { document.getElementById("cl-ed-hex").value="";updateEditorPreview();toast("预览转换失败；原始色值仍会保留");return; }
+            editorPreviewValid=true;
+            ["c","m","y","k"].forEach(function(key,i){document.getElementById("cl-ed-"+key).value=info.cmyk[i];});
+            updateEditorPreview(info.hex);
+        });
+    }
+
+    function saveEditorColor() {
+        if (editorPending || !editorSource || editingIdx === -2) return;
+        try { Color.validate(editorSource); } catch(e) { toast(e.message); return; }
+        var name = (document.getElementById("cl-ed-name").value || "").trim() || "新颜色";
         var group = library.groups[curGroup];
         if (!group) return;
-
-        var c = parseInt(document.getElementById("cl-ed-c").value, 10);
-        var m = parseInt(document.getElementById("cl-ed-m").value, 10);
-        var y = parseInt(document.getElementById("cl-ed-y").value, 10);
-        var k = parseInt(document.getElementById("cl-ed-k").value, 10);
-        if (isNaN(c)) c = 0; if (isNaN(m)) m = 0; if (isNaN(y)) y = 0; if (isNaN(k)) k = 0;
-        c = Math.max(0, Math.min(100, c));
-        m = Math.max(0, Math.min(100, m));
-        y = Math.max(0, Math.min(100, y));
-        k = Math.max(0, Math.min(100, k));
-
-        var hexVal = (document.getElementById("cl-ed-hex").value || "").replace(/^#/, "").toUpperCase();
-        if (hexVal.length !== 6) {
-            var rgb = cmykToRgb(c, m, y, k);
-            hexVal = h2(rgb.r) + h2(rgb.g) + h2(rgb.b);
-        }
-
-        var entry = { id: "c" + Date.now(), name: name,
-            c: c, m: m, y: y, k: k, hex: hexVal };
+        var cmyk = ["c","m","y","k"].map(function(key){return Number(document.getElementById("cl-ed-"+key).value)||0;});
+        if(editorSource.type === "CMYK") cmyk = editorSource.values.slice();
+        var hex = document.getElementById("cl-ed-hex").value.replace(/^#/, "").toUpperCase();
+        var entry = {id:"c"+Date.now(),name:name,source:Color.source({source:editorSource}),
+            c:cmyk[0],m:cmyk[1],y:cmyk[2],k:cmyk[3]};
+        if(editorPreviewValid && /^[0-9A-F]{6}$/.test(hex))entry.hex=hex;
         if (editingIdx >= 0 && group.colors[editingIdx]) {
             entry.id = group.colors[editingIdx].id;
             group.colors[editingIdx] = entry;
-        } else {
-            group.colors.push(entry);
-        }
-
+        } else { group.colors.push(entry); }
         closeEditor();
         saveLibraryDebounced();
         renderSwatches();
+        refreshHexFromAI();
     }
 
     // ── Apply color to Illustrator selection ─────────────────────
@@ -597,7 +578,8 @@
         var group = library.groups[curGroup];
         if (!group || !group.colors[colorIdx]) return;
         var col = group.colors[colorIdx];
-        toast("已设为参考色；正在应用 C" + Math.round(col.c) + " M" + Math.round(col.m) + " Y" + Math.round(col.y) + " K" + Math.round(col.k) + "...", 800);
+        var original; try { original = Color.source(col); } catch(e) { toast(e.message); return; }
+        toast("正在应用 " + Color.label(original) + "...", 800);
 
         var script =
             '(function(){' +
@@ -605,9 +587,9 @@
             'if(!app.documents.length){return "E:no_doc";}' +
             'var sel=app.activeDocument.selection;' +
             'if(!sel||!sel.length){return "E:no_sel";}' +
-            'var ck=new CMYKColor();' +
-            'ck.cyan=' + col.c + ';ck.magenta=' + col.m + ';' +
-            'ck.yellow=' + col.y + ';ck.black=' + col.k + ';' +
+            Color.prelude() +
+            'var ck=MomoColor.make(' + Color.literal(original) + ',app.activeDocument);' +
+            'var converted=(' + Color.literal(original.type) + '==="RGB"&&app.activeDocument.documentColorSpace===DocumentColorSpace.CMYK)||(' + Color.literal(original.type) + '==="CMYK"&&app.activeDocument.documentColorSpace===DocumentColorSpace.RGB);' +
             'var n=0,skipped=0,det={};' +
             'function ap(items){for(var i=0;i<items.length;i++){try{' +
             'var it=items[i],t=it.typename;' +
@@ -618,7 +600,7 @@
             'else{det[t]=(det[t]||0)+1;skipped++;}' +
             '}catch(e){skipped++;}}}' +
             'ap(sel);' +
-            'var r="OK:"+n;if(skipped>0)r+=" skip:"+skipped;' +
+            'var r="OK:"+n;if(converted)r+=" converted";if(skipped>0)r+=" skip:"+skipped;' +
             'var dk=[];for(var k in det)dk.push(k+"("+det[k]+")");' +
             'if(dk.length)r+=" types:"+dk.join(",");' +
             'return r;' +
@@ -630,6 +612,7 @@
                 var parts = r.split(" ");
                 var n = parseInt(parts[0].slice(3), 10) || 0;
                 var msg = n > 0 ? "已应用到 " + n + " 个对象" : "未应用到任何对象（可能对象被锁定或无填色）";
+                if(r.indexOf(" converted")>=0)msg+="（已按目标文档颜色模式转换）";
                 var skipMatch = r.match(/skip:(\d+)/);
                 if (skipMatch) msg += "，跳过 " + skipMatch[1] + " 个";
                 var typesMatch = r.match(/types:(.+)/);
@@ -651,6 +634,7 @@
 
     // ── Capture fill color from Illustrator selection ─────────────
     function captureFromAI() {
+        var captureGroup=library.groups[curGroup],captureRevision=editorRevision,request=++captureRequest;
         if (!library.groups.length) {
             toast("请先新建颜色组"); return;
         }
@@ -696,64 +680,15 @@
             'var col=null;' +
             'for(var s=0;s<sel.length;s++){col=findFill(sel[s]);if(col){break;}}' +
             'if(!col){return "E:no_fill";}' +
-            // Illustrator DOM 有时把纯 K 灰按当前文档 ICC 展开为四色 CMYK；Color Picker 则保留纯 K 表示。
-            // 仅当纯 K 的 RGB 相符，且 RGB→CMYK 回转能还原 DOM 四色值时，才归一化为 K-only。
-            'function normalizeKOnly(c,m,y,k){' +
-            'if(Math.abs(c)<0.01&&Math.abs(m)<0.01&&Math.abs(y)<0.01){return [c,m,y,k];}' +
-            'try{' +
-            'var src=app.convertSampleColor(ImageColorSpace.CMYK,[c,m,y,k],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
-            'var lum=function(v){return 0.299*v[0]+0.587*v[1]+0.114*v[2];};' +
-            'var target=lum(src),lo=0,hi=100;' +
-            'for(var n=0;n<7;n++){var mid=Math.floor((lo+hi)/2);var mr=app.convertSampleColor(ImageColorSpace.CMYK,[0,0,0,mid],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);if(lum(mr)>target){lo=mid;}else{hi=mid;}}' +
-            'var bestK=k,bestD=1e9,bestRGB=null;' +
-            'for(var q=Math.max(0,lo-1);q<=Math.min(100,hi+1);q++){var kr=app.convertSampleColor(ImageColorSpace.CMYK,[0,0,0,q],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);var d=Math.pow(kr[0]-src[0],2)+Math.pow(kr[1]-src[1],2)+Math.pow(kr[2]-src[2],2);if(d<bestD){bestD=d;bestK=q;bestRGB=kr;}}' +
-            'if(bestD<=4&&bestRGB){' +
-            'var rt=app.convertSampleColor(ImageColorSpace.RGB,bestRGB,ImageColorSpace.CMYK,ColorConvertPurpose.defaultpurpose);' +
-            'var delta=Math.max(Math.abs(rt[0]-c),Math.abs(rt[1]-m),Math.abs(rt[2]-y),Math.abs(rt[3]-k));' +
-            'if(delta<=0.75){return [0,0,0,bestK];}' +
-            '}' +
-            '}catch(en){}' +
-            'return [c,m,y,k];' +
-            '}' +
-            'if(col.typename==="CMYKColor"){' +
-            'var c=+col.cyan,m=+col.magenta,y=+col.yellow,k=+col.black;' +
-            'var nk=normalizeKOnly(c,m,y,k);c=nk[0];m=nk[1];y=nk[2];k=nk[3];' +
-            'var hex="";' +
-            'try{' +
-            'var rgb=app.convertSampleColor(ImageColorSpace.CMYK,[c,m,y,k],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
-            'var h=function(n){var s=Math.round(n).toString(16);return s.length<2?"0"+s:s;};' +
-            'hex=h(rgb[0])+h(rgb[1])+h(rgb[2]);' +
-            '}catch(e){}' +
-            'return "S:"+Math.round(c)+":"+Math.round(m)+":"+Math.round(y)+":"+Math.round(k)+(hex?":"+hex:"");' +
-            '}' +
-            'if(col.typename==="RGBColor"){' +
-            'var h=function(n){var s=Math.round(n).toString(16);return s.length<2?"0"+s:s;};' +
-            'var hex=h(col.red)+h(col.green)+h(col.blue);' +
-            'var r=col.red/255,g=col.green/255,b=col.blue/255;' +
-            'var k=1-Math.max(r,g,b);' +
-            'if(k>=1){return "S:0:0:0:100:"+hex;}' +
-            'var ic=1-k;' +
-            'return "S:"+Math.round((ic-r)/ic*100)+":"+Math.round((ic-g)/ic*100)+":"+Math.round((ic-b)/ic*100)+":"+Math.round(k*100)+":"+hex;' +
-            '}' +
-            'if(col.typename==="NoColor"){return "E:no_fill";}' +
-            'if(col.typename==="SpotColor"){' +
-            'var sc=col.spot.color;' +
-            'if(sc.typename==="CMYKColor"){' +
-            'var c=+sc.cyan,m=+sc.magenta,y=+sc.yellow,k=+sc.black;' +
-            'var hex="";' +
-            'try{' +
-            'var rgb=app.convertSampleColor(ImageColorSpace.CMYK,[c,m,y,k],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
-            'var h=function(n){var s=Math.round(n).toString(16);return s.length<2?"0"+s:s;};' +
-            'hex=h(rgb[0])+h(rgb[1])+h(rgb[2]);' +
-            '}catch(e){}' +
-            'return "S:"+Math.round(c)+":"+Math.round(m)+":"+Math.round(y)+":"+Math.round(k)+(hex?":"+hex:"");' +
-            '}' +
-            '}' +
-            'return "E:type:"+col.typename;' +
-            '}catch(e3){return "E:err";}' +
+            Color.prelude() +
+            'var original=MomoColor.read(col),info;' +
+            'try{info=MomoColor.info(original);}catch(ep){info={source:original};}' +
+            'return "S:"+MomoColor.json(info);' +
+            '}catch(e3){return "E:type:"+e3;}' +
             '})()';
 
         evalAI(script, function (r) {
+            if(request!==captureRequest || captureRevision!==editorRevision || library.groups[curGroup]!==captureGroup)return;
             if (r === undefined || r === null || r === "") {
                 toast("提取失败"); return;
             }
@@ -766,20 +701,15 @@
                 return;
             }
             if (r.indexOf("S:") === 0) {
-                var parts = r.slice(2).split(":");
-                var c = Math.round(+parts[0]), m = Math.round(+parts[1]), y = Math.round(+parts[2]), k = Math.round(+parts[3]);
-                var hex = parts.length >= 5 ? parts[4] : cmykToHex({c:c,m:m,y:y,k:k}).replace("#", "");
-                editingIdx = -1;
-                document.getElementById("cl-ed-name").value = "C" + c + " M" + m + " Y" + y + " K" + k;
-                document.getElementById("cl-ed-hex").value = hex.toUpperCase();
-                document.getElementById("cl-ed-c").value = c;
-                document.getElementById("cl-ed-m").value = m;
-                document.getElementById("cl-ed-y").value = y;
-                document.getElementById("cl-ed-k").value = k;
-                updateEditorPreview();
-                document.getElementById("cl-editor").style.display = "block";
-                var ni = document.getElementById("cl-ed-name");
-                ni.focus(); ni.select();
+                var info; try { info=JSON.parse(r.slice(2)); Color.validate(info.source); } catch(e) { toast("提取结果无效"); return; }
+                openEditor(-1);
+                editorSource=info.source;
+                showSource();
+                document.getElementById("cl-ed-name").value=Color.label(editorSource);
+                if(info.cmyk) ["c","m","y","k"].forEach(function(key,i){document.getElementById("cl-ed-"+key).value=info.cmyk[i];});
+                if(info.hex){editorPreviewValid=true;updateEditorPreview(info.hex);}
+                else updateSourcePreview();
+                var ni=document.getElementById("cl-ed-name");ni.focus();ni.select();
             }
         });
     }
@@ -797,8 +727,8 @@
             if (!r || r === "CANCELLED" || r === "undefined") return;
             var imp;
             try { imp = JSON.parse(r); } catch (e) { return; }
-            if (!imp || !Array.isArray(imp.groups)) {
-                return;
+            if (!validLibrary(imp)) {
+                toast("导入失败：颜色库数据无效");return;
             }
 
             if (library.groups.length > 0) {
@@ -858,8 +788,8 @@
             if (!r || r === "CANCELLED" || r === "undefined") return;
             var imp;
             try { imp = JSON.parse(r); } catch (e) { return; }
-            if (!imp || !Array.isArray(imp.groups) || imp.groups.length === 0) {
-                return;
+            if (!validLibrary(imp) || imp.groups.length === 0) {
+                toast("导入失败：颜色组数据无效");return;
             }
 
             // Add first group from imported file to current library
@@ -887,7 +817,7 @@
         if (!group) return;
 
         // Export only the current group as a single-group library
-        var json = JSON.stringify({ version: "1.0", groups: [group] }, null, 2);
+        var json = JSON.stringify({ version: "2.0", groups: [group] }, null, 2);
         var script =
             '(function(){' +
             'var f=File.saveDialog("导出颜色组","JSON文件:*.json");' +
@@ -952,7 +882,7 @@
             var newName = save ? (input.value.trim() || g.name) : g.name;
             if (newName !== g.name) {
                 g.name = newName;
-        loadSwatches(); // includes sortGroups("asc")
+                sortGroups("asc");
                 saveLibraryDebounced();
             }
             input.style.display = "none";
@@ -1013,7 +943,7 @@
         // Group selector
         document.getElementById("cl-group-select").addEventListener("change", function () {
             var v = parseInt(this.value, 10);
-            if (!isNaN(v)) { curGroup = v; closeEditor(); renderSwatches(); }
+            if (!isNaN(v)) { curGroup = v; closeEditor(); renderSwatches(); refreshHexFromAI(); }
         });
 
         // ••• More menu
@@ -1068,58 +998,23 @@
         });
         document.getElementById("cl-btn-capture").addEventListener("click", captureFromAI);
 
-        // Editor: CMYK inputs → update hex via AI
-        ["cl-ed-c", "cl-ed-m", "cl-ed-y", "cl-ed-k"].forEach(function (id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            el.addEventListener("input", function () {
-                // Strip non-numeric characters
-                this.value = this.value.replace(/[^0-9]/g, "");
-                var nc = parseInt(document.getElementById("cl-ed-c").value, 10);
-                var nm = parseInt(document.getElementById("cl-ed-m").value, 10);
-                var ny = parseInt(document.getElementById("cl-ed-y").value, 10);
-                var nk = parseInt(document.getElementById("cl-ed-k").value, 10);
-                if (isNaN(nc) || isNaN(nm) || isNaN(ny) || isNaN(nk)) return;
-                var cc = Math.max(0, Math.min(100, nc));
-                var mm = Math.max(0, Math.min(100, nm));
-                var yy = Math.max(0, Math.min(100, ny));
-                var kk = Math.max(0, Math.min(100, nk));
-                // Convert CMYK to hex via AI ICC profile
-                var script2 =
-                    '(function(){' +
-                    'try{' +
-                    'var rgb=app.convertSampleColor(ImageColorSpace.CMYK,[' + cc + ',' + mm + ',' + yy + ',' + kk + '],ImageColorSpace.RGB,ColorConvertPurpose.defaultpurpose);' +
-                    'var h=function(n){var s=Math.round(n).toString(16);return s.length<2?"0"+s:s;};' +
-                    'return h(rgb[0])+h(rgb[1])+h(rgb[2]);' +
-                    '}catch(e){return "E:err";}' +
-                    '})()';
-                evalAI(script2, function (res) {
-                    if (res && res.indexOf("E:") !== 0 && res.length === 6) {
-                        updateEditorPreview(res);
-                    } else {
-                        updateEditorPreview();
-                    }
-                });
+        // Editing CMYK explicitly creates a process CMYK source; HEX creates an RGB source.
+        ["cl-ed-c", "cl-ed-m", "cl-ed-y", "cl-ed-k"].forEach(function(id) {
+            document.getElementById(id).addEventListener("input", function() {
+                var values=["c","m","y","k"].map(function(key){var raw=document.getElementById("cl-ed-"+key).value.trim();return raw===""?NaN:Number(raw);});
+                var next={type:"CMYK",values:values};
+                try { Color.validate(next); } catch(e) { editorRevision++;editorPending=true;document.getElementById("cl-ed-ok").disabled=true;return; }
+                editorSource=next;
+                updateSourcePreview();
             });
         });
-
-        // Editor: Hex input → 同步更新 CMYK 字段
-        // 颜色库以 CMYK 为准（refreshHexFromAI 每次载入会用 CMYK 重算 hex）。
-        // 若 hex 输入后不同步 CMYK，存下来 CMYK=0（白），重启后 hex 被覆盖成白色。
-        var hexInput = document.getElementById("cl-ed-hex");
-        hexInput.addEventListener("input", function () {
-            var raw = this.value.replace(/^#/, "").replace(/[^0-9a-fA-F]/g, "");
-            this.value = raw.toUpperCase();
-            if (raw.length === 6) {
-                var cmyk = hexToCmyk(raw);
-                if (cmyk) {
-                    document.getElementById("cl-ed-c").value = cmyk.c;
-                    document.getElementById("cl-ed-m").value = cmyk.m;
-                    document.getElementById("cl-ed-y").value = cmyk.y;
-                    document.getElementById("cl-ed-k").value = cmyk.k;
-                }
-            }
-            updateEditorPreview();
+        document.getElementById("cl-ed-hex").addEventListener("input", function() {
+            var raw=this.value.replace(/^#/, "").toUpperCase();this.value=raw;
+            if(!/^[0-9A-F]{6}$/.test(raw)){editorRevision++;editorPending=true;document.getElementById("cl-ed-ok").disabled=true;return;}
+            var rgb=hexToRgb(raw);
+            editorSource={type:"RGB",values:[rgb.r,rgb.g,rgb.b]};
+            updateEditorPreview(raw);
+            updateSourcePreview();
         });
         document.getElementById("cl-ed-ok").addEventListener("click", saveEditorColor);
         document.getElementById("cl-ed-cancel").addEventListener("click", closeEditor);

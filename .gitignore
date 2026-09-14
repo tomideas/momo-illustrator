@@ -35,3 +35,6 @@ extension/com.tomideas.illustratortools/PROJECT_INFO.md
 extension/com.tomideas.illustratortools/jsx/scripts/research_*.jsx
 extension/com.tomideas.illustratortools/jsx/scripts/debug_*.jsx
 extension/com.tomideas.illustratortools/jsx/scripts/diagnose_*.jsx
+
+# 構建產物（build artifacts）
+*.zip

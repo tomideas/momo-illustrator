@@ -4,12 +4,21 @@
 
 **Momo Tools** 是一个为 Adobe Illustrator 开发的 CEP (Common Extensibility Platform) 扩展面板，提供实用的设计工具和颜色库管理功能。
 
-- **版本**: 2.101
+- **版本**: 2.146
 - **支持软件**: Adobe Illustrator (17.0 - 99.9)
 - **技术栈**: HTML5 + CSS3 + JavaScript + ExtendScript (JSX)
 - **架构**: CEP 6.0 + CEP Bridge
 
 ---
+
+## 2.146 数据、颜色与笔记架构说明
+
+- 笔记使用 Illustrator 原生 ScriptUI 非模态窗口，避开第二个 CEP 网页实例的渲染白屏；打开后不会覆盖或锁住主工具界面。分页使用横向 Tab，编辑区为中性灰底。
+- 笔记采用完整快照保存，文件备份为 `{userData}/MomoTools/notes.0.json` 与 `notes.1.json`，自动选择最新有效副本。旧 localStorage 笔记键保留用于回退。恢复显示不会重载并覆盖当前编辑。
+- 色库格式升级为 2.0；旧版仅有 `c/m/y/k` 的条目按 CMYK 读取。新增 `source` 保存原始颜色类型和完整通道精度；专色还保存名称、定义、色彩模型与浓度。`hex` 和非原始空间的 `c/m/y/k` 仅供预览。
+- 编辑 CMYK 通道会保存为普通 CMYK；编辑 HEX 会保存为 RGB。仅改名称保留原始颜色类型。跨文档颜色模式时由 Illustrator 转换，并提示发生转换。
+- 专色预览仅供参考；应用保留专色定义及浓度。同名但定义不同的专色会阻止应用，避免修改已有文档色票。
+- 已被旧版取整或改写的原始色值无法自动恢复，重要品牌色请重新提取。
 
 ## 核心功能
 
@@ -174,7 +183,7 @@ function evalAI(script, cb) {
 - 执行 ExtendScript 文件
 - 显示版本号
 
-**版本号**: v2.101
+**版本号**: v2.142
 
 ### color_library.js - 核心业务逻辑
 
@@ -277,7 +286,7 @@ var editingIdx = -2;   // -2=关闭, -1=新增, ≥0=编辑
   ↓
 在颜色库中单击颜色块
   ↓
-色块高亮为「选取相同」参考色，同时应用到 Illustrator 选中对象的填充色
+色块高亮为「同色选择」参考色，同时应用到 Illustrator 选中对象的填充色
   ↓
 点击「填充颜色」或「描边色」可按该参考色调用 Illustrator 原生 Select Same
 ```
@@ -487,7 +496,7 @@ menu.classList.toggle("cl-menu-open");  // display: block/none
 ## 许可与信息
 
 - **开发者**: Momo (tomideas)
-- **版本**: 2.101
+- **版本**: 2.142
 - **最后更新**: 2026-05-26
 - **兼容性**: Illustrator 17.0 - 99.9
 

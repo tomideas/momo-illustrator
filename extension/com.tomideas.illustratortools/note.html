@@ -145,24 +145,20 @@
     <button id="zoom-in" class="zoom-btn" title="放大字体">+</button>
     <span class="sep"></span>
     <button id="clear-btn" class="tb-btn" title="清除目前分页内容">✕ 清除</button>
-    <button id="reload-btn" class="tb-btn" title="重新读取目前分页内容">↻ 重载</button>
+    <button id="reload-btn" class="tb-btn" title="恢复面板显示，保留当前编辑内容">↻ 恢复</button>
     <span class="spacer"></span>
     <span id="status"></span>
   </div>
 
+  <script src="js/note_storage.js"></script>
   <script>
     (function () {
-      // ── 全局安全网：任何未捕获错误都兜底重绘 ──
-      // 白屏自愈（initUI / 800ms 重绘）排在文件末尾，若前面某行 DOM 操作在 CEF
-      // 还原时序下先抛错（如 getElementById 返回 null → addEventListener 崩），
-      // 整个 IIFE 会在自愈代码注册之前中断 → 永久白屏。此处兜底，分段重试重绘。
-      var _healArmed=false;
-      window.onerror=function(){
-        if(_healArmed)return false;
-        _healArmed=true;
-        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},60);
-        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},300);
-        setTimeout(function(){try{if(typeof initUI==="function")initUI();}catch(e){}},800);
+      // Rendering recovery must never reload storage over the current editor.
+      window.onerror=function(message){
+        if(typeof console!=="undefined")console.error("[Momo Notes]",String(message));
+        setTimeout(function(){
+          try{setStatus("发生错误，当前编辑已保留","err");initUI();}catch(e){}
+        },60);
         return false;
       };
       // ── Theme ──
@@ -242,11 +238,12 @@
       setTimeout(tryRealTheme,100);
 
       // ── Note tabs ──
-      var MAX_TABS=10,LS_TABS="MomoTools_NoteTabs",LS_PREFIX="MomoTools_NoteTab_",LS_ACTIVE="MomoTools_NoteActive",LS_SIZE="MomoTools_NoteFontSize";
+      var MAX_TABS=10;
       var content=document.getElementById("content"),tabBar=document.getElementById("tab-bar"),fontLabel=document.getElementById("font-label"),statusEl=document.getElementById("status");
       var fontSize=13,MIN=9,MAX=32,STEP=1;
       var tabs=["笔记 1"],activeIdx=0,dragIdx=-1;
       var hasLoaded=false,lastLoadFailed=false,allowSave=true,statusTimer=null;
+      var contents=[""],store=window.MomoNoteStorage.create(),snapshot=null,fileTimer=null;
 
       function updateFontLabel(){fontLabel.textContent=fontSize+"px";}
       function setStatus(msg,kind){
@@ -260,56 +257,57 @@
         var t = (typeof content.innerText === "string") ? content.innerText : content.textContent;
         return String(t || "").replace(/\r\n?/g, "\n");
       }
-      function storedContent(idx){
-        try{return {ok:true,value:window.localStorage.getItem(LS_PREFIX+idx)};}
-        catch(e){lastLoadFailed=true;setStatus("读取失败: "+e.message,"err");return {ok:false,value:null};}
-      }
-      // 儲存用 innerHTML 才能保留貼上時渲染的 markdown 表格
       function saveContent(idx){
         if(!allowSave||!hasLoaded||lastLoadFailed)return;
-        try{window.localStorage.setItem(LS_PREFIX+idx,content.innerHTML);}catch(e){setStatus("保存失败: "+e.message,"err");}
+        contents[idx]=content.innerHTML;
       }
       function applyStoredContent(v){
         v=String(v||"").replace(/\r\n?/g,"\n");
-        // 舊資料相容：若不像 HTML（沒有 <），當純文字載入
-        if(v&&v.indexOf("<")===-1){content.textContent=v;}
-        else{content.innerHTML=v;}
+        if(v&&v.indexOf("<")===-1)content.textContent=v;
+        else content.innerHTML=v;
       }
       function loadContent(idx){
-        try{
-          var stored=storedContent(idx);
-          if(!stored.ok)return false;
-          var v=stored.value;
-          if(v===null)v="";
-          allowSave=false;
-          applyStoredContent(v);
-          allowSave=true;
-          hasLoaded=true;
-          lastLoadFailed=false;
-          return true;
-        }catch(e){allowSave=true;lastLoadFailed=true;setStatus("载入失败: "+e.message,"err");}
-        return false;
+        if(lastLoadFailed)return false;
+        allowSave=false;
+        applyStoredContent(contents[idx]||"");
+        allowSave=true;hasLoaded=true;
+        return true;
       }
-      function saveAllState(){try{window.localStorage.setItem(LS_TABS,JSON.stringify(tabs));window.localStorage.setItem(LS_ACTIVE,activeIdx);window.localStorage.setItem(LS_SIZE,fontSize);}catch(e){}}
-      var saveTimer=null;
-      function ds(){if(!allowSave)return;if(saveTimer)clearTimeout(saveTimer);saveTimer=setTimeout(function(){saveContent(activeIdx);saveAllState();},200);}
+      function saveFile(){
+        fileTimer=null;
+        if(snapshot && !store.saveFile(snapshot))setStatus("文件备份失败，请保留面板并重试","err");
+      }
+      function saveAllState(){
+        if(!hasLoaded||lastLoadFailed)return;
+        snapshot=store.snapshot(tabs,contents,activeIdx,fontSize);
+        var localOK=store.saveLocal(snapshot);
+        if(fileTimer)clearTimeout(fileTimer);
+        if(!localOK){
+          if(!store.saveFile(snapshot))setStatus("保存失败，当前编辑仍在面板中","err");
+          else setStatus("已保存到文件；本地缓存不可用","warn");
+        }else fileTimer=setTimeout(saveFile,200);
+      }
+      function ds(){
+        if(!allowSave)return;
+        // Save the current text immediately; only the extra disk copy is debounced.
+        saveContent(activeIdx);saveAllState();
+      }
+      function flushSave(){
+        ds();if(fileTimer){clearTimeout(fileTimer);fileTimer=null;}saveFile();
+      }
       content.addEventListener("input",ds);
+      content.addEventListener("blur",flushSave);
+      window.addEventListener("beforeunload",flushSave);
+      window.addEventListener("pagehide",flushSave);
       function reloadCurrent(showMsg){
-        var stored=storedContent(activeIdx);
-        if(!stored.ok)return false;
-        var v=stored.value;
-        if(v===null)v="";
-        if((content.innerHTML===""||lastLoadFailed)&&v!==""){
-          allowSave=false;
-          applyStoredContent(v);
-          allowSave=true;
-          hasLoaded=true;
-          lastLoadFailed=false;
-          if(showMsg)setStatus("已恢复","warn");
-          return true;
+        if(lastLoadFailed){
+          var retry=store.load();
+          if(!retry.state){setStatus(retry.error,"err");return;}
+          adoptState(retry.state);loadContent(activeIdx);
+          content.contentEditable="true";
         }
-        if(showMsg)setStatus("已重载","");
-        return false;
+        initUI();recoverDisplay(true);
+        if(showMsg)setStatus("已恢复显示，编辑内容保留","");
       }
 
       function escapeHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
@@ -431,20 +429,14 @@
         return function(){this.classList.remove("dragging");};
       }
       function reorderTabs(from,to){
+        if(lastLoadFailed||from<0||to<0||from>=tabs.length||to>=tabs.length)return;
         saveContent(activeIdx);
-        var contents=[];
-        for(var ci=0;ci<tabs.length;ci++){try{contents[ci]=window.localStorage.getItem(LS_PREFIX+ci)||"";}catch(e){contents[ci]="";}}
-        var moved=tabs.splice(from,1)[0];
-        tabs.splice(to,0,moved);
-        var movedC=contents.splice(from,1)[0];
-        contents.splice(to,0,movedC);
+        tabs.splice(to,0,tabs.splice(from,1)[0]);
+        contents.splice(to,0,contents.splice(from,1)[0]);
         if(activeIdx===from)activeIdx=to;
         else if(from<to&&activeIdx>from&&activeIdx<=to)activeIdx--;
         else if(from>to&&activeIdx>=to&&activeIdx<from)activeIdx++;
-        for(var cj=0;cj<contents.length;cj++){try{window.localStorage.setItem(LS_PREFIX+cj,contents[cj]);}catch(e){}}
-        try{window.localStorage.removeItem(LS_PREFIX+contents.length);}catch(e){}
-        renderTabs();
-        saveAllState();
+        renderTabs();saveAllState();
       }
       function renderTabs(){
         try{
@@ -460,14 +452,27 @@
             tabBar.appendChild(d);
           }
           if(tabs.length<MAX_TABS){var b=document.createElement("button");b.className="tab-add";b.textContent="+";b.title="新增分页（最多 "+MAX_TABS+" 个）";b.onclick=addTab;tabBar.appendChild(b);}
-          saveAllState();
         }catch(err){
           tabBar.innerHTML="<span style='color:#e06060;padding:4px;font-size:10px;'>Tab错误: "+err.message+"</span>";
         }
       }
-      function addTab(){if(tabs.length>=MAX_TABS)return;tabs.push("笔记 "+(tabs.length+1));switchTab(tabs.length-1);renderTabs();}
-      function closeTab(idx){if(isNaN(idx)||idx<0||idx>=tabs.length||tabs.length<=1)return;try{window.localStorage.removeItem(LS_PREFIX+idx);}catch(e){}tabs.splice(idx,1);for(var i=idx;i<tabs.length;i++){try{var v=window.localStorage.getItem(LS_PREFIX+(i+1));if(v!==null)window.localStorage.setItem(LS_PREFIX+i,v);else window.localStorage.removeItem(LS_PREFIX+i);window.localStorage.removeItem(LS_PREFIX+(i+1));}catch(e){}}if(activeIdx>=idx)activeIdx=Math.max(0,activeIdx-1);if(activeIdx>=tabs.length)activeIdx=tabs.length-1;loadContent(activeIdx);renderTabs();content.focus();}
-      function switchTab(idx){if(idx===activeIdx)return;saveContent(activeIdx);activeIdx=idx;loadContent(activeIdx);content.style.fontSize=fontSize+"px";renderTabs();content.focus();}
+      function addTab(){
+        if(lastLoadFailed||tabs.length>=MAX_TABS)return;
+        tabs.push("笔记 "+(tabs.length+1));contents.push("");switchTab(tabs.length-1);
+      }
+      function closeTab(idx){
+        if(lastLoadFailed||isNaN(idx)||idx<0||idx>=tabs.length||tabs.length<=1)return;
+        saveContent(activeIdx);
+        tabs.splice(idx,1);contents.splice(idx,1);
+        if(activeIdx>=idx)activeIdx=Math.max(0,activeIdx-1);
+        activeIdx=Math.min(activeIdx,tabs.length-1);
+        loadContent(activeIdx);renderTabs();saveAllState();content.focus();
+      }
+      function switchTab(idx){
+        if(lastLoadFailed||idx===activeIdx||idx<0||idx>=tabs.length)return;
+        saveContent(activeIdx);activeIdx=idx;loadContent(activeIdx);
+        content.style.fontSize=fontSize+"px";renderTabs();saveAllState();content.focus();
+      }
 
       document.getElementById("zoom-in").addEventListener("click",function(){if(fontSize<MAX){fontSize+=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
       document.getElementById("zoom-out").addEventListener("click",function(){if(fontSize>MIN){fontSize-=STEP;content.style.fontSize=fontSize+"px";updateFontLabel();ds();}});
@@ -475,34 +480,61 @@
       document.getElementById("reload-btn").addEventListener("click",function(){reloadCurrent(true);content.focus();});
 
 
-      try{
-        var st=window.localStorage.getItem(LS_TABS);if(st){var p=JSON.parse(st);if(Array.isArray(p)&&p.length>0){tabs=p.slice(0,MAX_TABS).map(function(v,i){return typeof v==="number"?"笔记 "+v:String(v);});}}
-        var a=parseInt(window.localStorage.getItem(LS_ACTIVE),10);if(!isNaN(a)&&a>=0&&a<tabs.length)activeIdx=a;
-        var sz=parseInt(window.localStorage.getItem(LS_SIZE),10);if(sz>=MIN&&sz<=MAX)fontSize=sz;
-      }catch(e){}
-      // init 整體兜底：任一步驟拋錯也保證 tab 列重繪，避免 workspace 還原時序競爭造成半白面板
+      function adoptState(state){
+        tabs=state.tabs.slice();contents=state.contents.slice();activeIdx=state.active;
+        fontSize=state.fontSize;lastLoadFailed=false;
+      }
+      var initial=store.load();
+      if(initial.state){adoptState(initial.state);loadContent(activeIdx);}
+      else{lastLoadFailed=true;content.contentEditable="false";setStatus(initial.error,"err");}
+
       function initUI(){
-        try{loadContent(activeIdx);}catch(e){}
-        try{content.style.fontSize=fontSize+"px";updateFontLabel();}catch(e){}
-        try{renderTabs();}catch(e){try{tabBar.innerHTML="";}catch(e2){}}
+        // Idempotent paint-only initialization: do not touch content or storage here.
+        content.style.fontSize=fontSize+"px";updateFontLabel();
+        if(!tabBar.firstChild)renderTabs();
       }
       initUI();
-      setTimeout(function(){reloadCurrent(false);},100);
-      setTimeout(function(){reloadCurrent(false);},500);
-      // AutoVisible 還原白屏自癒：若 tab 列仍為空（CEF 還原時序競爭），延遲重繪一次
-      setTimeout(function(){try{if(!tabBar.firstChild)initUI();}catch(e){}},800);
+      if(initial.state)saveAllState();
+      if(initial.recovered)setStatus("已从备份恢复笔记","warn");
 
-      // ── 強制重繪：CEF 偶爾把面板畫面渲染完卻沒實際刷到螢幕上（無 JS 報錯，純渲染層問題）。
-      // 面板重新可見時，極小幅改動再還原一個樣式屬性，逼 CEF 重新合成畫面。
-      function forceRepaint(){
-        try{
-          var v=document.body.style.zoom;
-          document.body.style.zoom="99.99%";
-          requestAnimationFrame(function(){document.body.style.zoom=v||"100%";});
-        }catch(e){}
+      var sizeKey="MomoTools_NoteWindowSize",lastSize={width:560,height:640},recoveryTimer=null;
+      try{var savedSize=JSON.parse(window.localStorage.getItem(sizeKey));if(savedSize&&savedSize.width>=300&&savedSize.height>=200)lastSize=savedSize;}catch(e){}
+      function reportReady(){
+        try{window.__adobe_cep__.dispatchEvent({type:"com.tomideas.notes.ready",scope:"APPLICATION",appId:"ILST",extensionId:"com.tomideas.illustratortools.notes3",data:JSON.stringify({width:window.innerWidth,height:window.innerHeight})});}catch(e){}
       }
-      document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")forceRepaint();});
-      window.addEventListener("focus",forceRepaint);
+      function forceRepaint(){
+        var old=document.body.style.zoom;
+        document.body.style.zoom="99.99%";
+        function restore(){document.body.style.zoom=old||"100%";}
+        try{requestAnimationFrame(restore);}catch(e){}
+        setTimeout(restore,80);
+      }
+      function recoverDisplay(requested){
+        if(document.visibilityState==="hidden"&&!requested)return;
+        initUI();
+        var w=window.innerWidth,h=window.innerHeight;
+        if(w>1&&h>1){
+          lastSize={width:Math.max(300,Math.min(1200,w)),height:Math.max(200,Math.min(3000,h))};
+          try{window.localStorage.setItem(sizeKey,JSON.stringify(lastSize));}catch(e){}
+          forceRepaint();reportReady();return;
+        }
+        if(!requested)return;
+        try{window.__adobe_cep__.resizeContent(lastSize.width,lastSize.height);}catch(e){console.warn("[Momo Notes] resize failed",String(e));}
+        if(recoveryTimer)clearTimeout(recoveryTimer);
+        recoveryTimer=setTimeout(function(){
+          recoveryTimer=null;forceRepaint();reportReady();
+          if(window.innerWidth<=1||window.innerHeight<=1)console.warn("[Momo Notes] viewport still invalid",window.innerWidth,window.innerHeight);
+        },200);
+      }
+      window.addEventListener("resize",function(){recoverDisplay(false);});
+      window.addEventListener("focus",function(){recoverDisplay(true);});
+      document.addEventListener("visibilitychange",function(){
+        if(document.visibilityState==="visible")recoverDisplay(document.hasFocus());
+        else flushSave();
+      });
+      try{window.__adobe_cep__.addEventListener("com.tomideas.notes.recover",function(){recoverDisplay(true);});}catch(e){}
+      try{window.__adobe_cep__.setScaleFactorChangedHandler(function(){recoverDisplay(document.hasFocus());});}catch(e){}
+      setTimeout(function(){recoverDisplay(document.hasFocus());},100);
   })();
   </script>
 </body>

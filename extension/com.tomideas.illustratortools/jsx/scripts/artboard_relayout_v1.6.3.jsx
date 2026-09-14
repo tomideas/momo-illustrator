@@ -3,7 +3,7 @@
 $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
 (function () {
-    var SCRIPT_VERSION = "1.5.9";
+    var SCRIPT_VERSION = "1.6.3";
 
     if (app.documents.length === 0) {
         alert("请先打开 Illustrator 文件。");
@@ -270,32 +270,15 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         return !(b[2] < rect[0] || b[0] > rect[2] || b[3] > rect[1] || b[1] < rect[3]);
     }
 
-    /** 收集与画板重叠的顶层 pageItems（群组整体移动，不递归子项） */
-    function collectItemsOnArtboard(document, abIndex) {
-        var rect = document.artboards[abIndex].artboardRect;
-        var found = [];
-
-        function walkLayers(layers) {
-            var i;
-            var j;
-            var item;
-            for (i = 0; i < layers.length; i++) {
-                for (j = 0; j < layers[i].pageItems.length; j++) {
-                    item = layers[i].pageItems[j];
-                    try {
-                        if (boundsOverlap(rect, item.geometricBounds)) {
-                            found.push(item);
-                        }
-                    } catch (e) {}
-                }
-                if (layers[i].layers.length) {
-                    walkLayers(layers[i].layers);
-                }
-            }
-        }
-
-        walkLayers(document.layers);
-        return found;
+    function overlapArea(rect, b) {
+        var left = Math.max(rect[0], b[0]);
+        var right = Math.min(rect[2], b[2]);
+        var top = Math.min(rect[1], b[1]);
+        var bottom = Math.max(rect[3], b[3]);
+        var w = right - left;
+        var h = top - bottom;
+        if (w <= 0 || h <= 0) return 0;
+        return w * h;
     }
 
     function shiftItemByDelta(document, item, dx, dy, isDoc) {
@@ -307,35 +290,60 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         item.position = [pos[0] + dx, pos[1] + dy];
     }
 
-    function moveArtboardAndContents(document, abIndex, dx, dy) {
-        if (dx === 0 && dy === 0) return;
+    /**
+     * 一次性把每个顶层 pageItem（群组整体移动，不递归子项）分配给
+     * 重叠面积最大的目标画板——必须用「移动前」的原始画板范围来判断，
+     * 且必须在任何画板真正移动之前，一次性对全部目标画板做完分配。
+     * 若逐个画板边移动边用 selectObjectsOnActiveArtboard() 现取，
+     * 前一个画板挪过去的内容会落在下一个画板「移动前」的范围内，
+     * 被误当成后者的内容一起带走，导致画板内容错位、重叠或变空。
+     */
+    function assignItemsToMoves(document, moves, originalRects) {
+        var buckets = [];
+        var i;
+        for (i = 0; i < moves.length; i++) buckets.push([]);
 
-        document.artboards.setActiveArtboardIndex(abIndex);
-
-        var docCS = CoordinateSystem.DOCUMENTCOORDINATESYSTEM;
-        var isDoc = app.coordinateSystem === docCS;
-        var items = [];
-        var j;
-
-        document.selectObjectsOnActiveArtboard();
-        for (j = 0; j < selection.length; j++) {
-            items.push(selection[j]);
+        function walkLayers(layers) {
+            var li;
+            var pi;
+            var item;
+            var bounds;
+            var mi;
+            var bestIdx;
+            var bestArea;
+            var area;
+            for (li = 0; li < layers.length; li++) {
+                for (pi = 0; pi < layers[li].pageItems.length; pi++) {
+                    item = layers[li].pageItems[pi];
+                    try {
+                        bounds = item.geometricBounds;
+                    } catch (e) {
+                        continue;
+                    }
+                    bestIdx = -1;
+                    // 起始值必须 < 0：纯水平/垂直的线（虚线连接线等）几何范围
+                    // 宽或高为 0，重叠面积恒为 0，若起始值是 0 就永远选不中。
+                    bestArea = -1;
+                    for (mi = 0; mi < moves.length; mi++) {
+                        if (!boundsOverlap(originalRects[mi], bounds)) continue;
+                        area = overlapArea(originalRects[mi], bounds);
+                        if (area > bestArea) {
+                            bestArea = area;
+                            bestIdx = mi;
+                        }
+                    }
+                    if (bestIdx >= 0) {
+                        buckets[bestIdx].push(item);
+                    }
+                }
+                if (layers[li].layers.length) {
+                    walkLayers(layers[li].layers);
+                }
+            }
         }
-        selection = null;
 
-        if (items.length === 0) {
-            items = collectItemsOnArtboard(document, abIndex);
-        }
-
-        for (j = 0; j < items.length; j++) {
-            try {
-                shiftItemByDelta(document, items[j], dx, dy, isDoc);
-            } catch (e) {}
-        }
-
-        var ab = document.artboards[abIndex];
-        var r = ab.artboardRect;
-        ab.artboardRect = [r[0] + dx, r[1] + dy, r[2] + dx, r[3] + dy];
+        walkLayers(document.layers);
+        return buckets;
     }
 
     function makeProgressWindow(total) {
@@ -495,8 +503,6 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         var sorted = sortIndexes(document, targetIndexes, options.sortOrder, sl.rowTol);
         var pattern = resolveRowPattern(sorted.length, options);
         var anchor = resolveAnchor(document, sorted, sl, options);
-        var cellW = sl.cellW;
-        var cellH = sl.cellH;
         var hGap = options.hGap;
         var vGap = options.vGap;
         var savedAb = document.artboards.getActiveArtboardIndex();
@@ -510,20 +516,31 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
         var newLeft;
         var newTop;
 
+        // 逐行流式排版：每列按该画板自身宽度累加，每行按该行内画板的
+        // 实际最大高度换行——而不是用「全部目标画板」里最宽/最高的
+        // 那个当作统一格子尺寸。选中的画板尺寸不一致时（例如封面/封底
+        // 与横向汇总画板混在一起），统一格子会让窄画板之间出现远超
+        // 设置间距的空隙，这正是「距离不对」的原因。
         var moves = [];
+        var rowTop = anchor.top;
         artIdx = 0;
         for (row = 0; row < pattern.length; row++) {
+            var cursorLeft = anchor.left;
+            var rowMaxH = 0;
             for (col = 0; col < pattern[row]; col++) {
                 idx = sorted[artIdx++];
-                newLeft = anchor.left + col * (cellW + hGap);
-                newTop = anchor.top - row * (cellH + vGap);
                 m = getMetrics(document.artboards[idx]);
+                newLeft = cursorLeft;
+                newTop = rowTop;
                 moves.push({
                     idx: idx,
                     dx: newLeft - m.left,
                     dy: newTop - m.top
                 });
+                cursorLeft += m.width + hGap;
+                if (m.height > rowMaxH) rowMaxH = m.height;
             }
+            rowTop -= rowMaxH + vGap;
         }
 
         var total = moves.length;
@@ -533,21 +550,55 @@ $.evalFile(File($.fileName).parent + "/_shared.jsx");
 
         app.coordinateSystem = CoordinateSystem.DOCUMENTCOORDINATESYSTEM;
 
+        // 先用「移动前」的画板范围一次性分配好每个画板对应的内容，
+        // 再统一挪动，避免逐个画板边移边选导致内容互相串位。
+        var originalRects = [];
         for (i = 0; i < moves.length; i++) {
-            var mv = moves[i];
-            moveArtboardAndContents(document, mv.idx, mv.dx, mv.dy);
-            if ((i + 1) % 10 === 0 || i === moves.length - 1) {
-                updateProgress(progWin, i + 1);
-            }
+            originalRects.push(document.artboards[moves[i].idx].artboardRect.slice());
         }
-
-        app.coordinateSystem = savedCoord;
+        var itemBuckets = assignItemsToMoves(document, moves, originalRects);
+        var failedNames = [];
 
         try {
-            document.artboards.setActiveArtboardIndex(savedAb);
-        } catch (eRestore) {}
+            for (i = 0; i < moves.length; i++) {
+                var mv = moves[i];
+                var bucket = itemBuckets[i];
+                var bi;
+                for (bi = 0; bi < bucket.length; bi++) {
+                    try {
+                        shiftItemByDelta(document, bucket[bi], mv.dx, mv.dy, true);
+                    } catch (e) {}
+                }
+                var ab = document.artboards[mv.idx];
+                var r = originalRects[i];
+                // 挪动前先把该画板设为当前画板——部分 Illustrator 版本在
+                // 目标画板不是当前画板时设置 artboardRect 会抛
+                // "an Illustrator error occurred: 1346458189 ('PARM')"。
+                try {
+                    document.artboards.setActiveArtboardIndex(mv.idx);
+                } catch (eActive) {}
+                try {
+                    ab.artboardRect = [r[0] + mv.dx, r[1] + mv.dy, r[2] + mv.dx, r[3] + mv.dy];
+                } catch (eRect) {
+                    failedNames.push(ab.name);
+                }
+                if ((i + 1) % 10 === 0 || i === moves.length - 1) {
+                    updateProgress(progWin, i + 1);
+                }
+            }
+        } finally {
+            app.coordinateSystem = savedCoord;
+            try {
+                document.artboards.setActiveArtboardIndex(savedAb);
+            } catch (eRestore) {}
+            progWin.close();
+        }
 
-        progWin.close();
+        if (failedNames.length) {
+            throw new Error(
+                "部分画板范围移动失败（内容已移动，画板本身未移动）：\n" + failedNames.join("、")
+            );
+        }
 
         return { moved: total, rows: pattern.length, pattern: pattern };
     }

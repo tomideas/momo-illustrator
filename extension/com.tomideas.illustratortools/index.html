@@ -75,6 +75,7 @@
     <div id="cl-swatches" class="cl-swatches"></div>
 
     <div id="cl-editor" class="cl-editor">
+      <div id="cl-ed-source" style="font-size:10px;margin-bottom:6px;overflow-wrap:break-word" title="修改 CMYK 通道会保存为普通 CMYK；修改 HEX 会保存为 RGB。专色预览仅供参考。"></div>
       <div class="cl-ed-name-row">
         <label>名称</label>
         <input id="cl-ed-name" type="text" class="cl-ed-text-input" />
@@ -90,10 +91,10 @@
         </div>
       </div>
       <div class="cl-ed-cmyk-row">
-        <span class="cl-ed-cmyk-label">C</span><input id="cl-ed-c" type="text" class="cl-ed-cmyk-input" maxlength="3" />
-        <span class="cl-ed-cmyk-label">M</span><input id="cl-ed-m" type="text" class="cl-ed-cmyk-input" maxlength="3" />
-        <span class="cl-ed-cmyk-label">Y</span><input id="cl-ed-y" type="text" class="cl-ed-cmyk-input" maxlength="3" />
-        <span class="cl-ed-cmyk-label">K</span><input id="cl-ed-k" type="text" class="cl-ed-cmyk-input" maxlength="3" />
+        <span class="cl-ed-cmyk-label">C</span><input id="cl-ed-c" type="text" class="cl-ed-cmyk-input" inputmode="decimal" />
+        <span class="cl-ed-cmyk-label">M</span><input id="cl-ed-m" type="text" class="cl-ed-cmyk-input" inputmode="decimal" />
+        <span class="cl-ed-cmyk-label">Y</span><input id="cl-ed-y" type="text" class="cl-ed-cmyk-input" inputmode="decimal" />
+        <span class="cl-ed-cmyk-label">K</span><input id="cl-ed-k" type="text" class="cl-ed-cmyk-input" inputmode="decimal" />
       </div>
       <div class="cl-ed-btns">
         <button id="cl-ed-del"    class="cl-ed-btn cl-ed-btn-del">删除</button>
@@ -234,6 +235,7 @@
     <div class="cl-menu-item" id="cl-mi-export-group">↑ 按组导出</div>
   </div>
 
+  <script src="js/color_source.js"></script>
   <script src="js/panel.js"></script>
   <script src="js/color_library.js"></script>
 </body>
