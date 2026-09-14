@@ -1,6 +1,6 @@
 # 🎨 Momo Tools — Adobe Illustrator Extension
 
-[繁體中文](README.zh-Hant.md) | English
+[中文](README.zh-Hant.md) | English
 
 ![Momo Tools main panel overview — Momo Tools & Momo Notes](site/momo-tools-preview.png?v=20260626-0155)
 
@@ -98,7 +98,7 @@ Source files live in [`site/`](site/). Changelog: [`CHANGELOG.md`](CHANGELOG.md)
 ```
 momo-illustrator/
 ├── README.md              # 📄 This file (English)
-├── README.zh-Hant.md      # 📄 繁體中文
+├── README.zh-Hant.md      # 📄 中文
 ├── CHANGELOG.md           # 📋 Version history
 ├── site/                  # 📖 User guide (GitHub Pages)
 │   ├── index.html
