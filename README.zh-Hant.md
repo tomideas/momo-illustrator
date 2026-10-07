@@ -1,4 +1,4 @@
-# 🎨 Momo Tools — Adobe Illustrator 擴充套件
+# Momo Tools — Adobe Illustrator 擴充套件
 
 中文 | [English](README.md)
 

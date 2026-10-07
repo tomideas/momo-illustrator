@@ -1,4 +1,4 @@
-# 🎨 Momo Tools — Adobe Illustrator Extension
+# Momo Tools — Adobe Illustrator Extension
 
 [中文](README.zh-Hant.md) | English
 
